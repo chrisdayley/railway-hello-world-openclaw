@@ -1,0 +1,18 @@
+{
+  "main": [
+    {"id":"m01","title":"The Broken Light","region":"Greenwake Vale","level":1,"objectives":["Reach Briarwatch","Recruit Mira","Investigate the first Moonfall disturbance"],"rewards":{"xp":180,"gold":90}},
+    {"id":"m02","title":"Echoes Under Moonfall","region":"Moonfall Ruins","level":4,"objectives":["Activate the ruin waystone","Defeat the Hollow Warden","Recover an Aether Lens"],"rewards":{"xp":360,"gold":180,"airshipPart":1}},
+    {"id":"m03","title":"Roads That Should Not Exist","region":"Skyreach Pass","level":7,"objectives":["Trace the vanished caravan road","Choose a faction ally","Open the observatory vault"],"rewards":{"xp":620,"gold":300}},
+    {"id":"m04","title":"The Cinderfen Bargain","region":"Cinderfen March","level":10,"objectives":["Find the drowned forge","Resolve the marsh faction conflict","Claim the Ember Compass"],"rewards":{"xp":900,"gold":460}},
+    {"id":"m05","title":"A Ship for the Upper Sky","region":"Sunmere Coast","level":13,"objectives":["Acquire a skyship hull","Secure three Aether cores","Recruit a navigator"],"rewards":{"xp":1250,"gold":650,"flightUnlock":true}},
+    {"id":"m06","title":"Crownstep","region":"Crownstep Isles","level":16,"objectives":["Use flight to reach the Crownstep chain","Break three storm anchors","Defeat the Crownstep Regent"],"rewards":{"xp":1800,"gold":900}},
+    {"id":"m07","title":"The Last Echo","region":"Skyreach Expanse","level":20,"objectives":["Enter the Everlight Spire","Choose which allies answer the call","Defeat the final guardian through any viable strategy"],"rewards":{"xp":2600,"gold":1500,"postgame":true}}
+  ],
+  "sideTemplates": [
+    {"type":"hunt","name":"Danger on the Road","rewardBias":"loot"},
+    {"type":"treasure","name":"A Map With No North","rewardBias":"secret"},
+    {"type":"companion","name":"Old Promises","rewardBias":"bond"},
+    {"type":"economy","name":"A Better Contract","rewardBias":"property"},
+    {"type":"faction","name":"Proof of Rank","rewardBias":"reputation"}
+  ]
+}
