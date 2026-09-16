@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "events": [
+    {
+      "id": "briar_king_walks",
+      "name": "The Briar King Walks",
+      "tier": "major",
+      "minLevel": 5,
+      "regions": ["greenwake_vale", "moonfall_ruins"],
+      "durationDays": 3,
+      "type": "roaming_boss",
+      "description": "A crown-antlered forest beast roams between Greenwake and Moonfall, empowering nearby briar creatures.",
+      "rewards": {"xp": 420, "gold": [120, 190], "guaranteed": ["briar_crown_shard"], "legendaryChance": 0.08},
+      "economyEffects": {"orchard": -0.15, "apothecary": 0.20}
+    },
+    {
+      "id": "moonfall_door",
+      "name": "The Moonfall Door",
+      "tier": "major",
+      "minLevel": 8,
+      "regions": ["moonfall_ruins"],
+      "durationDays": 2,
+      "type": "temporary_dungeon",
+      "description": "A sealed stairwell appears beneath Moonfall only while a silver eclipse hangs over the ruins.",
+      "rewards": {"xp": 650, "gold": [160, 240], "guaranteed": ["moonfall_cache"], "legendaryChance": 0.10}
+    },
+    {
+      "id": "broken_caravan",
+      "name": "Broken Caravan",
+      "tier": "local",
+      "minLevel": 3,
+      "regions": ["greenwake_vale", "cinderfen_march", "sunmere_coast"],
+      "durationDays": 2,
+      "type": "rescue_defense",
+      "description": "A trade caravan has been ambushed. Rescue survivors, recover cargo, and track the attackers.",
+      "rewards": {"xp": 240, "gold": [70, 130], "propertyRumorChance": 0.25},
+      "economyEffects": {"inn": 0.08, "market": 0.12, "trade": 0.12}
+    },
+    {
+      "id": "red_banner_muster",
+      "name": "Red Banner Muster",
+      "tier": "crisis",
+      "minLevel": 14,
+      "regions": ["cinderfen_march"],
+      "durationDays": 4,
+      "type": "faction_conflict",
+      "description": "Mercenary banners gather along the old war road. Multiple factions offer competing contracts.",
+      "rewards": {"xp": 1050, "gold": [280, 520], "factionRep": 2, "epicGuaranteed": true},
+      "economyEffects": {"smithy": 0.30, "stable": 0.18, "inn": 0.12}
+    },
+    {
+      "id": "starfall_beast",
+      "name": "Starfall Beast",
+      "tier": "mythic",
+      "minLevel": 28,
+      "regions": ["high_aster_range", "skyreach_expanse"],
+      "durationDays": 3,
+      "type": "mythic_boss",
+      "description": "A creature of living star-metal crashes from the upper dark and tears open a temporary sky-rift.",
+      "rewards": {"xp": 3600, "gold": [900, 1500], "guaranteed": ["starsteel"], "epicGuaranteed": true, "mythicChance": 0.12, "airshipPartChance": 0.35}
+    },
+    {
+      "id": "lantern_market",
+      "name": "Lantern Market",
+      "tier": "local",
+      "minLevel": 6,
+      "regions": ["sunmere_coast", "briarwatch"],
+      "durationDays": 2,
+      "type": "festival",
+      "description": "Traveling artisans and relic dealers fill the streets with temporary shops and unusual contracts.",
+      "rewards": {"rareVendorStock": true, "discountMin": 0.05, "discountMax": 0.18},
+      "economyEffects": {"inn": 0.28, "market": 0.35, "apothecary": 0.10}
+    },
+    {
+      "id": "glass_tide",
+      "name": "Glass Tide",
+      "tier": "major",
+      "minLevel": 16,
+      "regions": ["sunmere_coast"],
+      "durationDays": 3,
+      "type": "anomaly_hunt",
+      "description": "Crystal growths rise from the surf, spawning mirror creatures and exposing sealed sea caves.",
+      "rewards": {"xp": 900, "gold": [240, 400], "guaranteed": ["tideglass"], "legendaryChance": 0.07}
+    },
+    {
+      "id": "black_snow",
+      "name": "Black Snow",
+      "tier": "crisis",
+      "minLevel": 20,
+      "regions": ["high_aster_range"],
+      "durationDays": 3,
+      "type": "survival_dungeon",
+      "description": "Ash-dark snow blocks mountain roads while ancient constructs awaken beneath the drifts.",
+      "rewards": {"xp": 1550, "gold": [350, 650], "epicGuaranteed": true, "relicChance": 0.18}
+    }
+  ]
+}
