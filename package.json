@@ -1,9 +1,10 @@
 {
-  "name": "railway-hello-world-openclaw",
-  "version": "1.0.0",
+  "name": "everlight-vale-of-echoes",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "validate": "node scripts/validate-data.mjs"
   }
 }
