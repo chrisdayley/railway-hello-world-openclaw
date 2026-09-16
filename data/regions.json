@@ -1,0 +1,13 @@
+{
+  "regions":[
+    {"id":"greenwake","name":"Greenwake Vale","level":"1-4","hub":"Briarwatch","features":["starter secrets","first property broker","Windstrider stable","hidden grove boss"],"bosses":["Briar King event"]},
+    {"id":"moonfall","name":"Moonfall Ruins","level":"4-7","hub":"Moonfall Camp","features":["ancient vaults","cracked-wall secrets","Archive branch","Aether salvage"],"bosses":["Hollow Warden","Glasshorn Stag"]},
+    {"id":"skyreach","name":"Skyreach Pass","level":"7-10","hub":"Highroad Lodge","features":["mount shortcuts","storm puzzles","first vehicle workshop","faction conflict"],"bosses":["Stormbound Knight"]},
+    {"id":"cinderfen","name":"Cinderfen March","level":"10-13","hub":"Drowned Forge","features":["Ashen Synod","rare ore","swamp skiff routes","business contracts"],"bosses":["Cinder Maw","Red Banner world event"]},
+    {"id":"sunmere","name":"Sunmere Coast","level":"13-16","hub":"Sunmere Harbor","features":["water traversal","Skyfarers Guild","airship hull","premium trade properties"],"bosses":["Pearlback Leviathan"]},
+    {"id":"crownstep","name":"Crownstep Isles","level":"16-20","hub":"Crownstep Anchorage","features":["flight-only secrets","floating dungeons","rare land deeds","late-game companion quests"],"bosses":["Crownstep Regent"]},
+    {"id":"skyexpanse","name":"Skyreach Expanse","level":"20-24","hub":"Everlight Airship","features":["free flight","Mythic events","final-story dungeons","endgame crafting"],"bosses":["The Last Guardian"]},
+    {"id":"starfall","name":"Starfall Hollow","level":"postgame","hub":"none","features":["superboss route","Mythic crafting","ultimate hidden treasure"],"bosses":["The Unmoored Star"]}
+  ],
+  "explorationRules":{"visibleUnreachableSecrets":true,"fastTravelEarly":true,"backtrackingMinimized":true,"flightRecontextualizesOldRegions":true}
+}
