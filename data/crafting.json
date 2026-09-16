@@ -1,0 +1,16 @@
+{
+  "materials":["Iron Ore","Moonsteel","Emberglass","Aether Shard","Sunmere Pearl","Ancient Fiber","Star Metal"],
+  "recipes":[
+    {"id":"tonic","name":"Restorative Tonic","type":"consumable","cost":{"herbs":3,"gold":10},"effect":"restore health"},
+    {"id":"fieldKit","name":"Field Repair Kit","type":"utility","cost":{"ore":2,"herbs":1,"gold":20},"effect":"repair/boost gear between rests"},
+    {"id":"rareWeapon","name":"Masterwork Weapon","type":"gear","cost":{"ore":7,"aether":1,"gold":80},"rarityFloor":"Rare"},
+    {"id":"rareArmor","name":"Masterwork Armor","type":"gear","cost":{"ore":9,"fiber":2,"gold":95},"rarityFloor":"Rare"},
+    {"id":"windstrider1","name":"Windstrider Tack I","type":"mount","cost":{"fiber":4,"ore":2,"gold":120},"effect":"mount speed +10%"},
+    {"id":"windstrider2","name":"Windstrider Tack II","type":"mount","cost":{"fiber":6,"moonsteel":2,"gold":260},"effect":"mount speed +15%, rough terrain"},
+    {"id":"skiff","name":"Sunmere Skiff","type":"vehicle","cost":{"fiber":8,"pearl":3,"ore":5,"gold":420},"effect":"water traversal"},
+    {"id":"airshipHull","name":"Everlight Airship Hull","type":"vehicle","cost":{"ore":14,"moonsteel":6,"aether":5,"gold":900},"effect":"airship construction stage 1"},
+    {"id":"airshipCore","name":"Aether Lift Core","type":"vehicle","cost":{"aether":8,"emberglass":4,"gold":1250},"effect":"airship construction stage 2"},
+    {"id":"starDrive","name":"Star Drive","type":"vehicle","cost":{"starMetal":3,"aether":10,"gold":2200},"effect":"endgame flight upgrade"}
+  ],
+  "gearUpgrade":{"max":8,"bossMaterialsRequiredFrom":5,"propertyDiscount":"smithy","factionBonuses":["Ironbound","Ashen Synod"]}
+}
