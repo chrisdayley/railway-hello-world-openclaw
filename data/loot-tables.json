@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "rarities": ["Common","Uncommon","Rare","Epic","Legendary","Mythic"],
+  "bosses": {
+    "hollow_warden": [
+      {"item":"warden_alloy","chance":1.0,"quantity":[1,2]},
+      {"item":"hollowguard_helm","chance":0.22},
+      {"item":"wardens_edge","chance":0.12},
+      {"item":"echo_buckler","chance":0.10},
+      {"item":"hollow_sigil","chance":0.04},
+      {"item":"warden_unbound","chance":0.008}
+    ],
+    "glasshorn_stag": [
+      {"item":"glasshorn_shard","chance":1.0,"quantity":[1,2]},
+      {"item":"stagstep_boots","chance":0.25},
+      {"item":"moonrack_bow","chance":0.12},
+      {"item":"antler_crown","chance":0.08},
+      {"item":"glassheart_charm","chance":0.04},
+      {"item":"white_comet_bow","chance":0.01}
+    ],
+    "bellowsaint_rusk": [
+      {"item":"ember_core","chance":1.0},
+      {"item":"rusk_plate","chance":0.24},
+      {"item":"bellows_hammer","chance":0.13},
+      {"item":"furnace_ring","chance":0.07},
+      {"item":"living_anvil","chance":0.012}
+    ],
+    "oryyx_skybound": [
+      {"item":"sky_stone","chance":1.0},
+      {"item":"oryyx_wingguard","chance":0.21},
+      {"item":"aster_focus","chance":0.14},
+      {"item":"stormstep_boots","chance":0.08},
+      {"item":"skybreak_relic","chance":0.015}
+    ],
+    "starfall_beast": [
+      {"item":"starsteel","chance":1.0,"quantity":[2,5]},
+      {"item":"starfall_mantle","chance":0.14},
+      {"item":"meteor_fang","chance":0.10},
+      {"item":"aether_core","chance":0.08},
+      {"item":"falling_heaven","chance":0.02}
+    ]
+  },
+  "enemyFamilies": {
+    "briar": {"gold":[2,8],"materialChance":0.35,"gearChance":0.18,"rarityWeights":{"Common":0.58,"Uncommon":0.30,"Rare":0.10,"Epic":0.018,"Legendary":0.002}},
+    "ruin_construct": {"gold":[4,12],"materialChance":0.48,"gearChance":0.24,"rarityWeights":{"Common":0.42,"Uncommon":0.34,"Rare":0.18,"Epic":0.05,"Legendary":0.01}},
+    "mercenary": {"gold":[8,20],"materialChance":0.22,"gearChance":0.34,"rarityWeights":{"Common":0.36,"Uncommon":0.36,"Rare":0.20,"Epic":0.065,"Legendary":0.014,"Mythic":0.001}},
+    "skybeast": {"gold":[12,30],"materialChance":0.50,"gearChance":0.35,"rarityWeights":{"Common":0.22,"Uncommon":0.34,"Rare":0.28,"Epic":0.12,"Legendary":0.035,"Mythic":0.005}}
+  }
+}
