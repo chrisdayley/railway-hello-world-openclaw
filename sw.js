@@ -1,7 +1,8 @@
-const CACHE='everlight-v4-offline-b';
+const CACHE='everlight-v4-runtime';
 const CORE=[
   './','./index.html','./manifest.webmanifest',
   './icons/icon-192.svg','./icons/icon-512.svg',
+  './js/data.js','./js/systems.js','./js/game.js',
   './data/world-events.json','./data/properties.json','./data/loot-tables.json',
   './data/quests.json','./data/factions.json','./data/companions.json','./data/crafting.json','./data/regions.json'
 ];
