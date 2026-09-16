@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "properties": [
+    {"id":"ember_anvil","name":"Ember & Anvil Smithy","region":"briarwatch","type":"smithy","purchase":350,"revenue":[45,80],"cost":20,"perk":"gear_upgrade_discount_8","upgrades":[{"name":"Better Forge","cost":220,"revenueMultiplier":1.2},{"name":"Master Smith","cost":520,"rareStock":true}]},
+    {"id":"mooncup_inn","name":"Mooncup Inn","region":"briarwatch","type":"inn","purchase":500,"revenue":[60,110],"cost":32,"perk":"free_briarwatch_rest","upgrades":[{"name":"Extra Rooms","cost":300,"revenueMultiplier":1.25},{"name":"Famous Kitchen","cost":640,"festivalBonus":0.25}]},
+    {"id":"greenbottle","name":"Greenbottle Apothecary","region":"briarwatch","type":"apothecary","purchase":420,"revenue":[50,90],"cost":24,"perk":"consumable_discount_10","upgrades":[{"name":"Herb Cellar","cost":260,"revenueMultiplier":1.15,"ingredientYield":true},{"name":"Alchemy Lab","cost":580,"rareStock":true}]},
+    {"id":"eastfield","name":"Eastfield Parcel","region":"briarwatch","type":"land","purchase":260,"developmentChoices":[{"type":"orchard","buildCost":180,"revenue":[30,52],"cost":8,"perk":"inn_synergy"},{"type":"stable","buildCost":340,"revenue":[42,76],"cost":18,"perk":"mount_upgrade_discount_10"},{"type":"workshop","buildCost":300,"revenue":[38,82],"cost":17,"perk":"crafting_discount_8"}]},
+    {"id":"ashbridge_mine","name":"Old Ember Mine","region":"cinderfen_march","type":"mine","purchase":1200,"revenue":[120,210],"cost":72,"perk":"smithy_cost_reduction","upgrades":[{"name":"Deep Shafts","cost":850,"revenueMultiplier":1.2},{"name":"Aether Drill","cost":1900,"rareMaterialChance":0.12}]},
+    {"id":"lumenport_warehouse","name":"Saltglass Warehouse","region":"sunmere_coast","type":"warehouse","purchase":1450,"revenue":[140,245],"cost":80,"perk":"trade_event_bonus","upgrades":[{"name":"Expanded Docks","cost":1000,"revenueMultiplier":1.22},{"name":"Private Auction Floor","cost":2200,"rareStock":true}]},
+    {"id":"starrest_conservatory","name":"Aster Conservatory","region":"high_aster_range","type":"magical_conservatory","purchase":1750,"revenue":[135,270],"cost":95,"perk":"relic_crafting_bonus","upgrades":[{"name":"Resonance Garden","cost":1100,"revenueMultiplier":1.2},{"name":"Astral Lens","cost":2500,"eventForecast":true}]},
+    {"id":"crownstep_shipyard","name":"Crownstep Sky-Dock","region":"crownstep_isles","type":"landmark","purchase":6200,"revenue":[380,700],"cost":240,"perk":"airship_upgrade_discount_12","upgrades":[{"name":"Second Berth","cost":3500,"revenueMultiplier":1.18},{"name":"Storm Crane","cost":6200,"airshipMaterialYield":true}]}
+  ]
+}
