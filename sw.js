@@ -1,8 +1,8 @@
-const CACHE='everlight-v4-controller';
+const CACHE='everlight-v6-enchanted';
 const CORE=[
   './','./index.html','./manifest.webmanifest',
   './icons/icon-192.svg','./icons/icon-512.svg',
-  './js/data.js','./js/systems.js','./js/game.js','./js/controller.js',
+  './js/data.js','./js/systems.js','./js/visuals.js','./js/game.js','./js/controller.js',
   './data/world-events.json','./data/properties.json','./data/loot-tables.json',
   './data/quests.json','./data/factions.json','./data/companions.json','./data/crafting.json','./data/regions.json'
 ];
