@@ -1,0 +1,10 @@
+{
+  "companions": [
+    {"id":"mira","name":"Mira","role":"balanced scout","recruit":"Briarwatch","combat":"quick melee + interrupt shot","bondPerks":["enemy warning","critical assist","shared dodge window"],"quest":"The Lantern She Left Burning"},
+    {"id":"torren","name":"Torren","role":"tank","recruit":"Cinderfen March","combat":"guard stance + stagger","bondPerks":["damage share","taunt","revive once per rest"],"quest":"Mud and Oaths"},
+    {"id":"elya","name":"Elya","role":"mage support","recruit":"Moonfall Ruins","combat":"barriers + elemental bolts","bondPerks":["mana recovery","status cleanse","spell echo"],"quest":"A Name in the Stone"},
+    {"id":"rennic","name":"Rennic","role":"ranged hunter","recruit":"Sunmere Coast","combat":"bow pressure + traps","bondPerks":["rare drop marking","weak-point reveal","trap crafting"],"quest":"The Beast That Knows His Scent"},
+    {"id":"ves","name":"Ves","role":"rogue utility","recruit":"Gilded Hand questline","combat":"bleed + flank","bondPerks":["lock bypass","merchant leverage","bonus ambush damage"],"quest":"The Price of a Favor"}
+  ],
+  "rules":{"active":1,"swapAtWaystone":true,"bondMax":5,"companionsNeverPermanentlyDie":true}
+}
