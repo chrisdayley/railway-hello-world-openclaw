@@ -9,8 +9,9 @@
   <meta name="description" content="Everlight: Vale of Echoes — a solo fantasy action RPG built for mobile.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles/game-v3.css?v=24">
-  <link rel="stylesheet" href="styles/visual-v22.css?v=24">
+  <link rel="stylesheet" href="styles/game-v3.css?v=25">
+  <link rel="stylesheet" href="styles/visual-v22.css?v=25">
+  <link rel="stylesheet" href="styles/equipment-v25.css?v=25">
   <title>Everlight: Vale of Echoes</title>
 </head>
 <body>
@@ -62,7 +63,7 @@
             </div>
           </div>
           <button id="objectiveBtn" class="objective glass" aria-label="Current objective and journal"><span class="objective-kicker">Current thread</span><strong id="objectiveTitle">A Voice in the Vale</strong><span id="objectiveText">Find the source of the call</span></button>
-          <div class="top-actions"><div id="goldChip" class="currency glass" aria-label="Gold"><span>✦</span><b id="goldText">35</b></div><button id="fullscreenBtn" class="icon-btn glass" aria-label="Enter fullscreen">⛶</button><button id="pauseBtn" class="icon-btn glass" aria-label="Pause and settings">Ⅱ</button></div>
+          <div class="top-actions"><div id="goldChip" class="currency glass" aria-label="Gold"><span>✦</span><b id="goldText">35</b></div><button id="fullscreenBtn" class="icon-btn glass" aria-label="Enter fullscreen">⛶</button><button id="pauseBtn" class="icon-btn glass menu-button" aria-label="Open character and game menu">☰<small>Menu</small></button></div>
         </header>
         <div id="bossHud" class="boss-hud is-hidden" aria-live="polite"><span>HOLLOW WARDEN</span><div><i id="bossBar"></i></div></div>
         <div id="tutorial" class="tutorial is-hidden" aria-live="polite"></div>
@@ -92,8 +93,8 @@
 
     <section id="journal" class="modal-layer is-hidden" role="dialog" aria-modal="true" aria-labelledby="journalTitle">
       <div class="journal glass-heavy">
-        <header><div><span class="eyebrow">Adventurer's journal</span><h2 id="journalTitle">Everlight Chronicle</h2></div><button id="closeJournal" class="icon-btn" aria-label="Close journal">×</button></header>
-        <nav class="journal-tabs" role="tablist" aria-label="Journal sections"><button class="active" role="tab" aria-selected="true" data-tab="quest">Quests</button><button role="tab" aria-selected="false" data-tab="gear">Gear</button><button role="tab" aria-selected="false" data-tab="skills">Skills</button><button role="tab" aria-selected="false" data-tab="factions">Factions</button><button role="tab" aria-selected="false" data-tab="world">World</button><button role="tab" aria-selected="false" data-tab="economy">Ledger</button><button role="tab" aria-selected="false" data-tab="settings">Settings</button></nav>
+        <header><div><span class="eyebrow">Journey paused</span><h2 id="journalTitle">Your Adventure</h2></div><button id="closeJournal" class="icon-btn" aria-label="Close journal">×</button></header>
+        <nav class="journal-tabs" role="tablist" aria-label="Journal sections" aria-orientation="vertical"><button role="tab" aria-selected="false" data-tab="gear"><span aria-hidden="true">♙</span>Character</button><button class="active" role="tab" aria-selected="true" data-tab="quest"><span aria-hidden="true">◇</span>Quests</button><button role="tab" aria-selected="false" data-tab="skills"><span aria-hidden="true">✧</span>Skills</button><button role="tab" aria-selected="false" data-tab="factions"><span aria-hidden="true">⚑</span>Factions</button><button role="tab" aria-selected="false" data-tab="world"><span aria-hidden="true">⌘</span>World</button><button role="tab" aria-selected="false" data-tab="economy"><span aria-hidden="true">▤</span>Ledger</button><button role="tab" aria-selected="false" data-tab="settings"><span aria-hidden="true">⚙</span>Settings</button></nav>
         <div id="journalBody" class="journal-body" role="tabpanel"></div>
       </div>
     </section>
@@ -110,12 +111,14 @@
     </section>
   </main>
   <div id="srUpdates" class="sr-only" aria-live="assertive"></div>
-  <script>window.__EVERLIGHT_EXPECTED_BUILD__='24';window.__EVERLIGHT_EXPECTED_VISUAL_BUILD__='22';</script>
-  <script src="js/visual-upgrade-v22.js?v=24"></script>
-  <script src="js/world-atlas-v22.js?v=24"></script>
-  <script src="js/exploration-v24.js?v=24"></script>
-  <script src="js/actors-v24.js?v=24"></script>
-  <script src="js/game-v4.js?v=24"></script>
+  <script>window.__EVERLIGHT_EXPECTED_BUILD__='25';window.__EVERLIGHT_EXPECTED_VISUAL_BUILD__='22';</script>
+  <script src="js/visual-upgrade-v22.js?v=25"></script>
+  <script src="js/world-atlas-v22.js?v=25"></script>
+  <script src="js/exploration-v24.js?v=25"></script>
+  <script src="js/actors-v24.js?v=25"></script>
+  <script src="js/camera-v25.js?v=25"></script>
+  <script src="js/equipment-v25.js?v=25"></script>
+  <script src="js/game-v4.js?v=25"></script>
   <script>
     (() => {
       const build = window.__EVERLIGHT_EXPECTED_BUILD__;
@@ -128,7 +131,7 @@
         return;
       }
       if ('serviceWorker' in navigator) addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=24', { updateViaCache: 'none' }).then(registration => registration.update());
+        navigator.serviceWorker.register('./sw.js?v=25', { updateViaCache: 'none' }).then(registration => registration.update());
       });
     })();
   </script>

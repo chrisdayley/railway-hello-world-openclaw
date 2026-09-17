@@ -3,6 +3,8 @@
 This repository hosts **Everlight**, a mobile-first 2D fantasy action RPG designed to run as an offline-capable PWA on iPhone without the App Store.
 
 ## Current playable build
+**Character & Camera (v25)** replaces the old gear list with a mobile character view, equipped slots, filtered pack, exact before/after build stats and earned five-star equipment upgrades. Its camera gives full-character visibility priority over map boundaries so the HUD cannot hide the player. The Menu button opens Character; a persistent section rail keeps the rest of the adventure menus accessible. Existing saves migrate to schema 7 without resetting progress.
+
 **Roads & Doors (v24)** adds solid buildings aligned to Northford's painted architecture, seven signed walk-in entrances, a town map with destination tracking, animated pixel characters throughout, and running. It expands the authored game with the Bellkeeper's House and a three-chamber optional cistern dungeon: two valves, a keeper battle, a unique reward and a shortcut home. The Aether Lens also reveals a three-clue revisit quest with a Guildhall travel reward.
 
 Every visible house in atlas settlements now has a collision footprint and a working door to an interior, merchant, innkeeper or resident. The bow now fires ranged arrows. Existing systems include:
