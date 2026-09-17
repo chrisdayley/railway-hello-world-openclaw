@@ -1,8 +1,14 @@
 # Everlight Build
 
-Current mobile build marker: **v24-roads-and-doors**
+Current mobile build marker: **v25-character-and-camera**
 
-Version: **0.10.0**
+Version: **0.11.0**
+
+- Mobile character paper doll, equipped weapon/armor/charm slots, filtered inventory and before/after stat comparisons.
+- Five-star gear upgrades with visible next-rank benefits, gold/material costs and real combat effects.
+- Persistent menu navigation, visible Menu button, saved rank migration and no equip-to-heal exploit.
+- Camera guard accounts for the full sprite, actual HUD geometry, mounts and canvas cropping; map edges cannot override player visibility.
+- Research and implementation notes: docs/EQUIPMENT_V25.md.
 
 - Animated original pixel actors replace every triangular resident placeholder and the old player fallback.
 - Seven aligned Northford entrances, exterior building collision, automatic walk-in doors and safe return positions.
