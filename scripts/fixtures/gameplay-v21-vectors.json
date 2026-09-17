@@ -1,0 +1,169 @@
+{
+  "meta": {
+    "contractVersion": 21,
+    "seed": 1337,
+    "description": "Deterministic Everlight expanded-milestone gameplay vectors"
+  },
+  "scenarios": [
+    {
+      "id": "enemy-telegraph-timing",
+      "initial": {
+        "enemy": {
+          "id": "wisp-telegraph",
+          "kind": "wisp",
+          "x": 560,
+          "y": 397,
+          "dead": false,
+          "phase": "windup",
+          "phaseElapsedMs": 0,
+          "durations": { "windup": 420, "strike": 120, "recover": 580 },
+          "strikeStarted": false,
+          "hitResolved": false
+        }
+      },
+      "actions": [
+        { "type": "step", "ms": 419, "expect": { "clockMs": 419, "enemy": { "phase": "windup", "phaseElapsedMs": 419, "strikeStarted": false } } },
+        { "type": "step", "ms": 1, "expect": { "clockMs": 420, "enemy": { "phase": "strike", "phaseElapsedMs": 0, "strikeStarted": true } } },
+        { "type": "step", "ms": 119, "expect": { "clockMs": 539, "enemy": { "phase": "strike", "phaseElapsedMs": 119, "hitResolved": false } } },
+        { "type": "step", "ms": 1, "expect": { "clockMs": 540, "enemy": { "phase": "recover", "phaseElapsedMs": 0, "hitResolved": true } } },
+        { "type": "step", "ms": 579, "expect": { "clockMs": 1119, "enemy": { "phase": "recover", "phaseElapsedMs": 579 } } },
+        { "type": "step", "ms": 1, "expect": { "clockMs": 1120, "enemy": { "phase": "chase", "phaseElapsedMs": 0 } } }
+      ]
+    },
+    {
+      "id": "loot-drop-and-pickup",
+      "initial": {
+        "enemy": { "id": "wisp-0", "kind": "wisp", "x": 540, "y": 390, "dead": false },
+        "player": { "gold": 35, "pickups": 0 },
+        "world": { "loot": [] }
+      },
+      "actions": [
+        { "type": "command", "name": "enemy.kill", "payload": { "enemyId": "wisp-0", "dropId": "drop-wisp-0", "kind": "gold", "amount": 9 }, "expect": { "enemy": { "dead": true }, "player": { "gold": 35 }, "world": { "loot": [{ "id": "drop-wisp-0", "kind": "gold", "amount": 9, "x": 540, "y": 390 }] } } },
+        { "type": "command", "name": "loot.pickup", "payload": { "id": "drop-wisp-0" }, "expect": { "player": { "gold": 44, "pickups": 1 }, "world": { "loot": [] } } }
+      ]
+    },
+    {
+      "id": "camera-safe-zone-tracking",
+      "initial": {
+        "player": { "x": 640, "y": 350 },
+        "world": { "camera": { "x": 0, "y": 0 } }
+      },
+      "actions": [
+        { "type": "command", "name": "player.move", "payload": { "x": 640, "y": 350 }, "expect": { "world": { "camera": { "x": 0, "y": 0 } } } },
+        { "type": "command", "name": "player.move", "payload": { "x": 800, "y": 400 }, "expect": { "world": { "camera": { "x": 128, "y": 22 } } } },
+        { "type": "command", "name": "player.move", "payload": { "x": 1880, "y": 1000 }, "expect": { "world": { "camera": { "x": 960, "y": 540 } } } }
+      ]
+    },
+    {
+      "id": "zone-transitions",
+      "initial": {
+        "player": { "x": 900, "y": 350 },
+        "world": { "zone": "northford", "previousZone": null, "transitionCount": 0 }
+      },
+      "actions": [
+        { "type": "command", "name": "player.move", "payload": { "x": 1000, "y": 350 }, "expect": { "world": { "zone": "greenwake", "previousZone": "northford", "transitionCount": 1 } } },
+        { "type": "command", "name": "player.move", "payload": { "x": 1100, "y": 350 }, "expect": { "world": { "zone": "greenwake", "transitionCount": 1 } } },
+        { "type": "command", "name": "player.move", "payload": { "x": 900, "y": 350 }, "expect": { "world": { "zone": "northford", "previousZone": "greenwake", "transitionCount": 2 } } }
+      ]
+    },
+    {
+      "id": "shop-purchase",
+      "initial": {
+        "player": { "gold": 120, "inventory": [] },
+        "shop": { "stock": { "field-tonic": 2 } }
+      },
+      "actions": [
+        { "type": "command", "name": "shop.buy", "payload": { "itemId": "field-tonic", "price": 25 }, "expect": { "player": { "gold": 95, "inventory": [{ "id": "field-tonic", "quantity": 1 }] }, "shop": { "stock": { "field-tonic": 1 } } } }
+      ]
+    },
+    {
+      "id": "quest-progression",
+      "initial": { "quest": { "id": "prologue", "stage": 0, "wispsDefeated": 0 } },
+      "actions": [
+        { "type": "command", "name": "quest.event", "payload": { "event": "mira.choice" }, "expect": { "quest": { "stage": 1 } } },
+        { "type": "command", "name": "quest.event", "payload": { "event": "wisp.defeated" }, "expect": { "quest": { "stage": 1, "wispsDefeated": 1 } } },
+        { "type": "command", "name": "quest.event", "payload": { "event": "wisp.defeated" }, "expect": { "quest": { "stage": 1, "wispsDefeated": 2 } } },
+        { "type": "command", "name": "quest.event", "payload": { "event": "wisp.defeated" }, "expect": { "quest": { "stage": 2, "wispsDefeated": 3 } } },
+        { "type": "command", "name": "quest.event", "payload": { "event": "waystone.awakened" }, "expect": { "quest": { "stage": 3 } } },
+        { "type": "command", "name": "quest.event", "payload": { "event": "warden.defeated" }, "expect": { "quest": { "stage": 4 } } }
+      ]
+    },
+    {
+      "id": "faction-join",
+      "initial": { "factions": { "active": null, "memberships": {} } },
+      "actions": [
+        { "type": "command", "name": "faction.join", "payload": { "id": "ironbound", "rank": "Initiate", "reputation": 1 }, "expect": { "factions": { "active": "ironbound", "memberships": { "ironbound": { "rank": "Initiate", "reputation": 1 } } } } }
+      ]
+    },
+    {
+      "id": "skill-unlock",
+      "initial": { "player": { "skillPoints": 1, "unlockedSkills": [] } },
+      "actions": [
+        { "type": "command", "name": "skill.unlock", "payload": { "id": "crescent-slash" }, "expect": { "player": { "skillPoints": 0, "unlockedSkills": ["crescent-slash"] } } }
+      ]
+    },
+    {
+      "id": "equipment-equip",
+      "initial": {
+        "player": {
+          "baseAttack": 12,
+          "attack": 12,
+          "inventory": [{ "id": "iron-blade", "kind": "weapon", "power": 8 }],
+          "equipment": { "weapon": null }
+        }
+      },
+      "actions": [
+        { "type": "command", "name": "equipment.equip", "payload": { "slot": "weapon", "itemId": "iron-blade" }, "expect": { "player": { "attack": 20, "equipment": { "weapon": "iron-blade" } } } }
+      ]
+    },
+    {
+      "id": "mount-toggle",
+      "initial": { "player": { "ownedMounts": ["windstrider"], "activeMount": null, "speedMultiplier": 1 } },
+      "actions": [
+        { "type": "command", "name": "mount.toggle", "payload": { "id": "windstrider", "speedMultiplier": 1.5 }, "expect": { "player": { "activeMount": "windstrider", "speedMultiplier": 1.5 } } },
+        { "type": "command", "name": "mount.toggle", "payload": { "id": "windstrider", "speedMultiplier": 1.5 }, "expect": { "player": { "activeMount": null, "speedMultiplier": 1 } } }
+      ]
+    },
+    {
+      "id": "save-load-migration",
+      "initial": {},
+      "actions": [
+        {
+          "type": "migrate",
+          "save": {
+            "version": 5,
+            "style": "ranger",
+            "x": 612,
+            "y": 344,
+            "hp": 74,
+            "maxHp": 100,
+            "mana": 51,
+            "maxMana": 60,
+            "stam": 83,
+            "maxStam": 100,
+            "gold": 187,
+            "level": 4,
+            "xp": 28,
+            "quest": 3,
+            "storyChoice": "mercy",
+            "inventory": [{ "id": "roadworn-blade", "kind": "weapon", "power": 12 }],
+            "settings": { "sound": false, "leftHanded": true }
+          },
+          "expect": {
+            "version": 21,
+            "migratedFrom": 5,
+            "player": { "x": 612, "y": 344, "hp": 74, "mana": 51, "stamina": 83, "gold": 187, "level": 4, "xp": 28, "style": "ranger" },
+            "story": { "questStage": 3, "storyChoice": "mercy", "chapterComplete": false },
+            "inventory": [{ "id": "roadworn-blade", "kind": "weapon", "power": 12 }],
+            "skills": { "points": 0, "unlocked": [] },
+            "mounts": { "owned": [], "active": null },
+            "economy": { "day": 1, "properties": {} },
+            "events": { "active": [], "history": [] },
+            "settings": { "sound": false, "haptics": true, "leftHanded": true }
+          }
+        }
+      ]
+    }
+  ]
+}
+
