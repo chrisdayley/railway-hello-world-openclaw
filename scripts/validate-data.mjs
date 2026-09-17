@@ -1,5 +1,5 @@
 import fs from 'fs';
-const files=['world-events.json','properties.json','loot-tables.json','quests.json','factions.json','companions.json','crafting.json','regions.json'];
+const files=['world-events.json','properties.json','loot-tables.json','quests.json','factions.json','companions.json','crafting.json','regions.json','campaign.json'];
 let failed=false;
 for(const f of files){
   try{const p=`data/${f}`,v=JSON.parse(fs.readFileSync(p,'utf8'));if(!v||typeof v!=='object')throw new Error('root is not an object');console.log(`✓ ${p}`)}

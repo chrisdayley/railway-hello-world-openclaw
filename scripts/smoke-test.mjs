@@ -1,10 +1,10 @@
 import fs from 'node:fs';
 
 const html = fs.readFileSync('index.html','utf8');
-const js = fs.readFileSync('js/game-v3.js','utf8');
+const js = fs.readFileSync('js/game-v4.js','utf8');
 const requiredIds = [
   'titleScreen','pathScreen','gameScreen','gameCanvas','continueBtn','newGameBtn','hpBar','manaBar','stamBar',
-  'objectiveBtn','joystick','attackBtn','spellBtn','dodgeBtn','interactBtn','dialogue','journal','chapterComplete'
+  'objectiveBtn','joystick','attackBtn','spellBtn','dodgeBtn','interactBtn','dialogue','journal','interactionPanel','chapterComplete'
 ];
 
 for (const id of requiredIds) {
@@ -16,7 +16,7 @@ const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);
 const duplicates = ids.filter((id,index) => ids.indexOf(id)!==index);
 if (duplicates.length) throw new Error(`Duplicate IDs: ${[...new Set(duplicates)].join(', ')}`);
 
-for (const path of ['styles/game-v3.css','js/game-v3.js','assets/northford-twilight.jpg','assets/hero-player.webp','manifest.webmanifest','sw.js']) {
+for (const path of ['styles/game-v3.css','js/game-v4.js','assets/northford-twilight.jpg','assets/hero-player-v2.png','manifest.webmanifest','sw.js']) {
   if (!fs.existsSync(path)) throw new Error(`Missing core asset: ${path}`);
 }
 
