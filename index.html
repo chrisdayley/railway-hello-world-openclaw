@@ -9,8 +9,8 @@
   <meta name="description" content="Everlight: Vale of Echoes — a solo fantasy action RPG built for mobile.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles/game-v3.css?v=21.2">
-  <link rel="stylesheet" href="styles/visual-v22.css?v=22">
+  <link rel="stylesheet" href="styles/game-v3.css?v=23">
+  <link rel="stylesheet" href="styles/visual-v22.css?v=23">
   <title>Everlight: Vale of Echoes</title>
 </head>
 <body>
@@ -89,7 +89,7 @@
 
     <section id="journal" class="modal-layer is-hidden" role="dialog" aria-modal="true" aria-labelledby="journalTitle">
       <div class="journal glass-heavy">
-        <header><div><span class="eyebrow">Adventurer's journal</span><h2 id="journalTitle">Northford Chronicle</h2></div><button id="closeJournal" class="icon-btn" aria-label="Close journal">×</button></header>
+        <header><div><span class="eyebrow">Adventurer's journal</span><h2 id="journalTitle">Everlight Chronicle</h2></div><button id="closeJournal" class="icon-btn" aria-label="Close journal">×</button></header>
         <nav class="journal-tabs" role="tablist" aria-label="Journal sections"><button class="active" role="tab" aria-selected="true" data-tab="quest">Quests</button><button role="tab" aria-selected="false" data-tab="gear">Gear</button><button role="tab" aria-selected="false" data-tab="skills">Skills</button><button role="tab" aria-selected="false" data-tab="factions">Factions</button><button role="tab" aria-selected="false" data-tab="world">World</button><button role="tab" aria-selected="false" data-tab="economy">Ledger</button><button role="tab" aria-selected="false" data-tab="settings">Settings</button></nav>
         <div id="journalBody" class="journal-body" role="tabpanel"></div>
       </div>
@@ -97,7 +97,7 @@
 
     <section id="interactionPanel" class="modal-layer is-hidden" role="dialog" aria-modal="true" aria-labelledby="interactionTitle">
       <div class="interaction-card glass-heavy">
-        <header><div><span class="eyebrow">Northford services</span><h2 id="interactionTitle">Merchant</h2></div><button id="closeInteraction" class="icon-btn" aria-label="Close">×</button></header>
+        <header><div><span class="eyebrow">Local services</span><h2 id="interactionTitle">Merchant</h2></div><button id="closeInteraction" class="icon-btn" aria-label="Close">×</button></header>
         <div id="interactionBody" class="interaction-body"></div>
       </div>
     </section>
@@ -107,14 +107,15 @@
     </section>
   </main>
   <div id="srUpdates" class="sr-only" aria-live="assertive"></div>
-  <script>window.__EVERLIGHT_EXPECTED_BUILD__='21';window.__EVERLIGHT_EXPECTED_VISUAL_BUILD__='22';</script>
-  <script src="js/visual-upgrade-v22.js?v=22"></script>
-  <script src="js/game-v4.js?v=21.2"></script>
+  <script>window.__EVERLIGHT_EXPECTED_BUILD__='23';window.__EVERLIGHT_EXPECTED_VISUAL_BUILD__='22';</script>
+  <script src="js/visual-upgrade-v22.js?v=23"></script>
+  <script src="js/world-atlas-v22.js?v=23"></script>
+  <script src="js/game-v4.js?v=23"></script>
   <script>
     (() => {
       const build = window.__EVERLIGHT_EXPECTED_BUILD__;
       if (window.__EVERLIGHT_BUILD__ !== build) {
-        location.replace(`./index.html?v=${build}&visual=22&refresh=${Date.now()}`);
+        location.replace(`./index.html?v=${build}&refresh=${Date.now()}`);
         return;
       }
       if (window.__EVERLIGHT_VISUAL_BUILD__ !== window.__EVERLIGHT_EXPECTED_VISUAL_BUILD__) {
@@ -122,7 +123,7 @@
         return;
       }
       if ('serviceWorker' in navigator) addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=22', { updateViaCache: 'none' }).then(registration => registration.update());
+        navigator.serviceWorker.register('./sw.js?v=23', { updateViaCache: 'none' }).then(registration => registration.update());
       });
     })();
   </script>

@@ -1,11 +1,12 @@
-const CACHE = 'everlight-v22-visual-overhaul';
-const CURRENT_BUILD_URL = './index.html?v=21&visual=22';
+const CACHE = 'everlight-v23-living-interiors-r1';
+const CURRENT_BUILD_URL = './index.html?v=23';
 const CORE = [
-  './','./index.html','./manifest.webmanifest','./styles/game-v3.css','./styles/visual-v22.css','./js/game-v4.js','./js/visual-upgrade-v22.js',
-  './assets/northford-twilight.jpg','./assets/hero-atlas-concept.png','./assets/hero-player-v2.png',
-  './assets/hero-walk-v22.png','./assets/hero-attack-v22.png','./assets/enemies-v22.png',
+  './','./index.html','./manifest.webmanifest','./styles/game-v3.css','./styles/visual-v22.css','./js/visual-upgrade-v22.js','./js/world-atlas-v22.js','./js/game-v4.js',
+  './assets/northford-twilight.jpg','./assets/hero-atlas-concept.png','./assets/hero-player-v2.png','./assets/hero-walk-v22.png','./assets/hero-attack-v22.png','./assets/enemies-v22.png',
   './assets/mira-scout.png','./assets/hollow-warden.png',
   './assets/greenwake-vale-v1.jpg','./assets/moonfall-ruins-v1.jpg',
+  './assets/interior-smithy-v1.jpg','./assets/interior-apothecary-v1.jpg','./assets/interior-inn-v1.jpg',
+  './assets/interior-guildhall-v1.jpg','./assets/interior-stable-v1.jpg',
   './data/campaign.json','./data/quests.json','./data/factions.json','./data/companions.json',
   './data/regions.json','./data/loot-tables.json','./data/properties.json','./data/world-events.json','./data/crafting.json',
   './icons/icon-192.svg','./icons/icon-512.svg','./icons/apple-touch-icon.png'
@@ -23,7 +24,7 @@ self.addEventListener('activate', event => {
       .then(() => self.clients.matchAll({ type: 'window' }))
       .then(clients => Promise.all(clients.map(client => {
         const url = new URL(client.url);
-        return url.searchParams.get('visual') === '22' ? null : client.navigate(CURRENT_BUILD_URL).catch(() => null);
+        return url.searchParams.get('v') === '23' ? null : client.navigate(CURRENT_BUILD_URL).catch(() => null);
       })))
   );
 });

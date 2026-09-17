@@ -3,7 +3,7 @@
 This repository hosts **Everlight**, a mobile-first 2D fantasy action RPG designed to run as an offline-capable PWA on iPhone without the App Store.
 
 ## Current playable build
-**World Awakens (v21)** expands the opening from a single combat arena into the first connected RPG chapter. It includes:
+**Living Interiors (v23)** keeps the authored Chapter I and systemic world atlas, while rebuilding Northford's enterable buildings as explorable places. It includes:
 
 - three gameplay backgrounds with meaningful opening bonuses;
 - a HUD-safe tracking camera across Northford, Greenwake Vale, Moonfall Ruins, four shop/service interiors, the Guildhall, and Windstrider Stable;
@@ -13,8 +13,14 @@ This repository hosts **Everlight**, a mobile-first 2D fantasy action RPG design
 - enterable shops, buying, an inn/day cycle, early fast travel, four joinable factions, skill trees, a mount, world-event rumors, and a first property ledger purchase;
 - autosave/continue, quest and lore journal, accessibility options, procedural audio and optional haptics;
 - a responsive landscape HUD, safe-area support and offline service worker shell.
+- 288 connected explorable areas across 12 regions, including settlements, wilderness, landmarks and 36+ dungeons;
+- 546 persistent hidden caches, region-scaled monsters, roaming elites and rarity-scaled equipment drops;
+- generated Wayfarer contracts, active/expired world-event state, 96 purchasable business or land opportunities, upgrades, operating costs, variable daily profits, property values and a rolling portfolio ledger;
+- attunable Waystones, route discovery and a persistent 288-area exploration journal.
+- five distinct illustrated, collision-aware interiors with resident NPCs, readable environmental storytelling, inspectable lore, concealed caches, unique treasure and two additional local side quests.
+- generated settlements now include regional merchants and named residents with biome-specific rumors, while landmarks and dungeons contain persistent lore discoveries and cache clues.
 
-The data-driven campaign pack in `data/campaign.json` and `docs/CAMPAIGN_30_40_HOURS.md` defines the full 32.5-hour main route, 24 optional side quests, seven regions, faction gates, companions, vehicles, bosses, properties and late-game airship progression. v21 makes Chapter I playable and establishes the reusable runtime systems for the remaining chapters.
+The authored campaign pack in `data/campaign.json` and `docs/CAMPAIGN_30_40_HOURS.md` defines the 32.5-hour main route, while v22 supplies the large connected exploration and economy substrate needed to build those chapters out in play.
 
 ## Play / install on iPhone
 Once GitHub Pages is enabled for this repository and the deployment succeeds, open the Pages URL in Safari, let the game load once, then use **Share → Add to Home Screen**. The service worker caches the game for offline play after that first successful load.
