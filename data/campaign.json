@@ -1,0 +1,381 @@
+{
+  "version": 1,
+  "campaignId": "everlight_main_campaign",
+  "title": "Everlight: Vale of Echoes",
+  "subtitle": "The Crown of Roads",
+  "premise": "The shattered Everlight Ways are being forced awake by Lord Vael Corven. The player is not a chosen heir: they become important by deciding who may use the restored roads, what communities receive their power, and whether the network should be free, governed, or silenced.",
+  "timeModel": {
+    "mainStoryHours": 32.5,
+    "mainStoryRangeHours": [30, 40],
+    "optionalSideQuestHours": 18.2,
+    "optionalFactionAndEconomyHours": 8.0,
+    "postgameHours": [4, 7],
+    "measurement": "First-play estimate with ordinary exploration, required combat retries, dialogue, and travel after early fast-travel unlock; optional side quests, property optimization, recurring world events, and postgame are excluded from the 32.5-hour main total."
+  },
+  "campaignRules": {
+    "chapterOrder": ["ch00", "ch01", "ch02", "ch03", "ch04", "ch05", "ch06", "ch07", "ch08"],
+    "flexibleChapters": ["ch03", "ch04", "ch05"],
+    "mainRegions": ["greenwake", "moonfall", "skyreach", "cinderfen", "sunmere", "crownstep", "skyexpanse"],
+    "postgameRegion": "starfall",
+    "fastTravelUnlockChapter": "ch01",
+    "firstMountUnlockChapter": "ch01",
+    "firstVehicleUnlockChapter": "ch05",
+    "freeFlightUnlockChapter": "ch07",
+    "lightDeathPenalty": "Respawn at the most recent waystone or safe camp, keep story and quest state, and lose at most ten percent of carried unbanked gold capped by chapter.",
+    "factionPolicy": "The player may earn early ranks in every faction. Two late rival gates are mutually exclusive for capstone ranks and rewards, but no choice blocks the critical path.",
+    "bossPolicy": "Every required boss supports viable melee, ranged, magic, hybrid, defensive, and companion-assisted solutions. Preparation changes difficulty but never supplies a mandatory single counter.",
+    "economyPolicy": "Property ownership accelerates upgrades, vehicles, and optional projects but is never required to finish the campaign. All income resolves through in-game days and the central ledger.",
+    "companionPolicy": "Mira is recruited by the story. All other companions are optional, remain available after their introduction, and no critical-path objective requires one named companion.",
+    "eventPolicy": "Recurring in-game world events enrich pacing and rewards but cannot expire essential story content or permanently destroy owned assets."
+  },
+  "acts": [
+    {"id": "act1", "title": "The Vale Wakes", "chapters": ["ch00", "ch01", "ch02"], "estimatedHours": 7.5, "levelRange": [1, 7], "dramaticQuestion": "Why are the Ways waking, and what did the first awakened road ask of the player?"},
+    {"id": "act2", "title": "Roads of the Broken Kingdoms", "chapters": ["ch03", "ch04", "ch05"], "estimatedHours": 13.0, "levelRange": [7, 16], "dramaticQuestion": "Can the regions cooperate before Corven turns restoration into control?"},
+    {"id": "act3", "title": "The Crown of Roads", "chapters": ["ch06", "ch07"], "estimatedHours": 9.0, "levelRange": [16, 24], "dramaticQuestion": "Who should govern the restored network, and what cost will the player accept to reach the Spire?"},
+    {"id": "finale", "title": "The Last Echo", "chapters": ["ch08"], "estimatedHours": 3.0, "levelRange": [23, 26], "dramaticQuestion": "Will the Everlight become a public road, a guarded trust, a single ruler's instrument, or a sleeping power once more?"}
+  ],
+  "npcs": [
+    {"id": "mira", "name": "Mira Vale", "roles": ["companion", "surveyor", "emotional_anchor"], "home": "greenwake", "arc": "Her missing survey team and distrust of institutions force her to decide whether hope can be organized without becoming control."},
+    {"id": "elya", "name": "Elya", "roles": ["companion", "ruin_mage", "archive_contact"], "home": "moonfall", "arc": "A name erased from Moonfall's records may be hers, or may belong to the intelligence speaking through her spells."},
+    {"id": "torren", "name": "Torren Pike", "roles": ["companion", "shieldbearer", "cinderfen_guide"], "home": "cinderfen", "arc": "A former road captain must choose between protecting people and protecting the institution that failed them."},
+    {"id": "rennic", "name": "Rennic", "roles": ["companion", "hunter", "navigator"], "home": "sunmere", "arc": "A sea-beast that follows his trail is guarding the truth about the expedition he abandoned."},
+    {"id": "ves", "name": "Ves", "roles": ["companion", "infiltrator", "gilded_hand_contact"], "home": "sunmere", "arc": "Every favor has a price until the player gives Ves a reason to choose loyalty without leverage."},
+    {"id": "vael_corven", "name": "Lord Vael Corven", "roles": ["antagonist", "way_engineer", "former_reformer"], "home": "skyexpanse", "arc": "Corven is correct that Aeralis is fragmenting, but believes only centralized control can save it. He becomes the warning at the heart of every player choice."},
+    {"id": "nym", "name": "Nym", "roles": ["waystone_voice", "ancient_intelligence_fragment"], "home": "moonfall", "arc": "Nym's growing personhood reveals that the Ways remember their users and that the Last Guardian is made from accumulated human choices."},
+    {"id": "reeve_elowen", "name": "Reeve Elowen Reed", "roles": ["briarwatch_leader", "main_quest_giver"], "home": "greenwake", "arc": "She wants prosperity without selling Briarwatch's future to the first powerful patron."},
+    {"id": "fenra_quill", "name": "Fenra Quill", "roles": ["property_broker", "ledger_tutor"], "home": "greenwake", "arc": "A hard-nosed broker who quietly structures local ownership to prevent absentee rule."},
+    {"id": "daren_anvil", "name": "Daren Anvil", "roles": ["smith", "upgrade_tutor"], "home": "greenwake", "arc": "His failing forge becomes the player's first proof that investment can change a town."},
+    {"id": "iona_greenbottle", "name": "Iona Greenbottle", "roles": ["apothecary", "crafting_tutor"], "home": "greenwake", "arc": "She tracks how the returning Ways alter plants, medicine, and monsters."},
+    {"id": "stablemaster_rook", "name": "Rook Alder", "roles": ["stablemaster", "mount_tutor"], "home": "greenwake", "arc": "He teaches that a mount is a partner and traversal tool, not a speed tax."},
+    {"id": "curator_lio", "name": "Curator Lio Senn", "roles": ["archive_leader", "relic_scholar"], "home": "moonfall", "arc": "Lio values preservation so fiercely that living communities can become secondary to the record."},
+    {"id": "warden_arven", "name": "Captain Arven Holt", "roles": ["ironbound_leader", "monster_hunter"], "home": "cinderfen", "arc": "Arven protects the roads, but his answer to dangerous magic is increasingly indiscriminate."},
+    {"id": "magister_selka", "name": "Ash-Magister Selka", "roles": ["ashen_leader", "experimental_mage"], "home": "cinderfen", "arc": "Selka believes risky knowledge is safer in trained hands than buried, and repeatedly tests the limits of that belief."},
+    {"id": "broker_oren", "name": "Oren Valegold", "roles": ["gilded_hand_leader", "property_financier"], "home": "sunmere", "arc": "Oren can mobilize resources faster than any council, but always expects ownership in return."},
+    {"id": "captain_iri", "name": "Captain Iri Cloudwake", "roles": ["skyfarers_leader", "pilot", "airship_mentor"], "home": "sunmere", "arc": "Iri wants the sky to remain open and will support any ending that prevents a monopoly on travel."},
+    {"id": "bryn_coil", "name": "Bryn Coil", "roles": ["vehicle_engineer", "airship_engineer"], "home": "skyreach", "arc": "A brilliant mechanic afraid of heights builds the machine that forces her to face the open sky."},
+    {"id": "regent_solvi", "name": "Regent Solvi Aster", "roles": ["crownstep_ruler", "political_gatekeeper"], "home": "crownstep", "arc": "Solvi must decide whether inherited stewardship is service or merely a polished form of possession."},
+    {"id": "last_guardian", "name": "Aurelion, Last Guardian", "roles": ["network_intelligence", "final_judge", "postgame_superboss_seed"], "home": "skyexpanse", "arc": "Aurelion preserves the intentions of countless former users and can become partner, prison, or enemy depending on the player's proof."}
+  ],
+  "shops": [
+    {"id": "shop_ember_anvil", "name": "Ember & Anvil", "region": "greenwake", "hub": "Briarwatch", "keeper": "daren_anvil", "categories": ["melee_weapons", "armor", "enhancement"], "unlock": "ch01_q02", "propertyId": "ember_anvil", "signatureStock": ["counterweight_hilt", "wayfarer_mail"]},
+    {"id": "shop_greenbottle", "name": "Greenbottle Apothecary", "region": "greenwake", "hub": "Briarwatch", "keeper": "iona_greenbottle", "categories": ["potions", "coatings", "bombs"], "unlock": "ch01_q01", "propertyId": "greenbottle", "signatureStock": ["briar_tonic", "clearwater_salve"]},
+    {"id": "shop_windstrider", "name": "Alder Windstrider Stable", "region": "greenwake", "hub": "Briarwatch", "keeper": "stablemaster_rook", "categories": ["mounts", "saddles", "mount_upgrades"], "unlock": "ch01_q04", "signatureStock": ["windstrider", "trail_saddlebags"]},
+    {"id": "shop_quill_deeds", "name": "Quill Deeds & Ledger", "region": "greenwake", "hub": "Briarwatch", "keeper": "fenra_quill", "categories": ["properties", "land", "portfolio_upgrades"], "unlock": "sq_deeds_of_hope", "signatureStock": ["eastfield_deed", "regional_ledger"]},
+    {"id": "shop_moonfall_exchange", "name": "Moonfall Relic Exchange", "region": "moonfall", "hub": "Moonfall Camp", "keeper": "curator_lio", "categories": ["relics", "magic_foci", "maps"], "unlock": "ch02_q02", "signatureStock": ["hollow_lens", "moonthread_focus"]},
+    {"id": "shop_highroad_outfitter", "name": "Highroad Outfitters", "region": "skyreach", "hub": "Highroad Lodge", "keeper": "bryn_coil", "categories": ["ranged_weapons", "climbing_gear", "vehicle_parts"], "unlock": "ch03_q01", "signatureStock": ["stormline_bow", "gripspike_boots"]},
+    {"id": "shop_drowned_forge", "name": "The Rekindled Forge", "region": "cinderfen", "hub": "Drowned Forge", "keeper": "torren", "categories": ["heavy_armor", "ore_refining", "gear_enhancement"], "unlock": "ch04_q04", "propertyId": "ashbridge_mine", "signatureStock": ["bellows_plate", "emberguard_buckler"]},
+    {"id": "shop_cloister_catalysts", "name": "Cloister Catalyst Bench", "region": "cinderfen", "hub": "Drowned Forge", "keeper": "magister_selka", "categories": ["spell_catalysts", "status_coatings", "risky_relics"], "unlock": "faction_gate_ember_lens", "signatureStock": ["heartcoal_fragment", "cinder_bloom"]},
+    {"id": "shop_lumenport_market", "name": "Lumenport Grand Market", "region": "sunmere", "hub": "Sunmere Harbor", "keeper": "broker_oren", "categories": ["all_weapons", "trade_goods", "property_auctions"], "unlock": "ch05_q01", "propertyId": "lumenport_warehouse", "signatureStock": ["tideglass_blade", "auction_token"]},
+    {"id": "shop_skyfarer_dock", "name": "Cloudwake Sky Dock", "region": "sunmere", "hub": "Sunmere Harbor", "keeper": "captain_iri", "categories": ["skiff_upgrades", "airship_parts", "navigation_charts"], "unlock": "ch05_q03", "signatureStock": ["sunmere_skiff", "aether_keel"]},
+    {"id": "shop_ves_nightmarket", "name": "Ves's Night Market", "region": "sunmere", "hub": "Sunmere Harbor", "keeper": "ves", "categories": ["lock_tools", "rare_consumables", "black_market_gear"], "unlock": "sq_price_of_a_favor", "signatureStock": ["shadowwire", "quietstep_charm"]},
+    {"id": "shop_crownstep_shipyard", "name": "Crownstep Sky-Dock", "region": "crownstep", "hub": "Crownstep Anchorage", "keeper": "bryn_coil", "categories": ["airship_modules", "flight_gear", "cargo_upgrades"], "unlock": "ch06_q04", "propertyId": "crownstep_shipyard", "signatureStock": ["storm_ward", "relic_scanner"]},
+    {"id": "shop_expanse_workshop", "name": "Everlight Airship Workshop", "region": "skyexpanse", "hub": "Everlight Airship", "keeper": "captain_iri", "categories": ["endgame_crafting", "airship_modules", "companion_gear"], "unlock": "ch07_q01", "signatureStock": ["constellation_sail", "guardian_alloy"]}
+  ],
+  "factionChoiceGates": [
+    {
+      "id": "faction_gate_sponsorship",
+      "chapter": "ch03",
+      "quest": "ch03_q02",
+      "prompt": "Who sponsors the first restoration expedition?",
+      "choices": [
+        {"faction": "ironbound", "immediateEffect": "Warden escorts reduce ambushes and open a combat route.", "reward": "counter_training"},
+        {"faction": "archive", "immediateEffect": "Archive maps reveal two secret rooms and a puzzle route.", "reward": "treasure_sense_pulse"},
+        {"faction": "gilded", "immediateEffect": "The Hand supplies a repair crew and a profitable salvage contract.", "reward": "property_transaction_discount"},
+        {"faction": "ashen", "immediateEffect": "The Synod stabilizes a volatile shortcut with a harder anomaly fight.", "reward": "status_effect_training"},
+        {"faction": "skyfarers", "immediateEffect": "Skyfarers open a neutral climbing route and vehicle cache.", "reward": "vehicle_crafting"}
+      ],
+      "exclusivity": "none",
+      "criticalPathImpact": "Changes route, allies, and reward; all choices reach the observatory vault."
+    },
+    {
+      "id": "faction_gate_ember_lens",
+      "chapter": "ch04",
+      "quest": "ch04_q03",
+      "prompt": "Who receives the unstable Ember Lens?",
+      "choices": [
+        {"faction": "ironbound", "commitment": "Seal dangerous experiments and turn the forge into a protected public works foundry.", "capstoneAvailable": true, "locksCapstoneFaction": "ashen", "worldEffect": "Safer roads, stronger smithy and stable contracts, fewer volatile spell stocks.", "companionReaction": {"torren": 1, "elya": -1}},
+        {"faction": "ashen", "commitment": "Permit controlled research and turn the forge into an experimental aether laboratory.", "capstoneAvailable": true, "locksCapstoneFaction": "ironbound", "worldEffect": "More anomaly events and spell catalysts, higher short-term regional business risk.", "companionReaction": {"elya": 1, "torren": -1}},
+        {"faction": "skyfarers", "commitment": "Place the Lens in neutral transit custody; neither rival receives a capstone oath.", "capstoneAvailable": false, "worldEffect": "Balanced road safety and vehicle efficiency; both rivals remain at mid rank."}
+      ],
+      "exclusivity": "ironbound_and_ashen_capstones_mutually_exclusive",
+      "criticalPathImpact": "Changes Cinder Maw arena support and regional economy, never boss viability."
+    },
+    {
+      "id": "faction_gate_tidemirror_codex",
+      "chapter": "ch05",
+      "quest": "ch05_q04",
+      "prompt": "Who controls the recovered Tidemirror Codex and its property records?",
+      "choices": [
+        {"faction": "archive", "commitment": "Make the records public after scholarly restoration.", "capstoneAvailable": true, "locksCapstoneFaction": "gilded", "worldEffect": "More relic routes and public deeds; slower but cheaper property discovery.", "companionReaction": {"mira": 1, "ves": -1}},
+        {"faction": "gilded", "commitment": "Use private capital to restore the harbor and auction premium rights.", "capstoneAvailable": true, "locksCapstoneFaction": "archive", "worldEffect": "Earlier premium listings and higher trade income; some secrets require purchase or leverage.", "companionReaction": {"ves": 1, "mira": -1}},
+        {"faction": "skyfarers", "commitment": "Give navigational data to the public while sealing private ownership records.", "capstoneAvailable": false, "worldEffect": "Best travel access, neutral property market, both rivals remain at mid rank."}
+      ],
+      "exclusivity": "archive_and_gilded_capstones_mutually_exclusive",
+      "criticalPathImpact": "Changes infiltration, exploration clues, and economy offers; the Leviathan encounter remains multi-route."
+    },
+    {
+      "id": "faction_gate_sky_dock",
+      "chapter": "ch06",
+      "quest": "ch06_q03",
+      "prompt": "Under whose charter will the completed airship fly?",
+      "choices": [
+        {"faction": "skyfarers", "endingFlag": "open_skies", "effect": "Public routes, strongest mobility support, moderate faction levy."},
+        {"faction": "player_primary_faction", "endingFlag": "chartered_power", "effect": "Faction-specific combat module and stronger finale troops, but rival trust falls."},
+        {"faction": null, "endingFlag": "independent_captain", "effect": "Higher construction cost, no levy, and the broadest coalition challenge in chapter seven."}
+      ],
+      "exclusivity": "charter_choice_is_permanent_but_does_not_remove_regions_or_finale_endings",
+      "criticalPathImpact": "Changes airship module, finale support objective, and epilogue ownership."
+    }
+  ],
+  "companionRecruitment": [
+    {"companion": "mira", "chapter": "ch00", "quest": "ch00_q02", "required": true, "method": "Defend Northford together and answer what the Way sounded like.", "combatTutorial": "Marked targets and interrupt shot", "bondQuest": "sq_lantern_left_burning"},
+    {"companion": "elya", "chapter": "ch02", "quest": "ch02_q02", "required": false, "method": "Free her from a repeating Moonfall memory without erasing it.", "combatTutorial": "Barrier, cleanse, and elemental bolt", "bondQuest": "sq_name_in_stone"},
+    {"companion": "torren", "chapter": "ch04", "quest": "ch04_q01", "required": false, "method": "Rescue his road crew and let him testify about the failed causeway defense.", "combatTutorial": "Guard intercept, stagger, and emergency revive", "bondQuest": "sq_mud_and_oaths"},
+    {"companion": "rennic", "chapter": "ch05", "quest": "ch05_q02", "required": false, "method": "Track the beast shadowing the harbor and spare or confront it after learning its purpose.", "combatTutorial": "Weak-point mark, bow pressure, and traps", "bondQuest": "sq_beast_knows_scent"},
+    {"companion": "ves", "chapter": "ch05", "quest": "sq_price_of_a_favor", "required": false, "method": "Settle Ves's impossible debt through stealth, payment, public exposure, or a faction bargain.", "combatTutorial": "Flank, bleed, and lock bypass", "bondQuest": "sq_price_of_a_favor"}
+  ],
+  "mountsAndVehicles": [
+    {"id": "windstrider", "type": "mount", "unlockChapter": "ch01", "unlockQuest": "ch01_q04", "mandatory": true, "role": "Early fast land travel and sprinting over broken roads.", "upgrades": ["sprint_stamina", "rough_terrain", "trail_saddlebags"], "frictionRule": "Summon outside combat; discovered waystones remain faster for repeat travel."},
+    {"id": "warden_warhorse", "type": "mount", "unlockChapter": "ch04", "unlockQuest": "sq_roadkeepers_oath", "mandatory": false, "role": "Durable faction mount with charge utility.", "upgrades": ["armored_tack", "charge_stagger", "emergency_guard"]},
+    {"id": "marshrunner", "type": "mount", "unlockChapter": "ch04", "unlockQuest": "sq_mud_and_oaths", "mandatory": false, "role": "Crosses mud and shallow water and reveals Cinderfen shortcuts.", "upgrades": ["reed_step", "bog_sprint", "salvage_panniers"]},
+    {"id": "sunmere_skiff", "type": "vehicle", "unlockChapter": "ch05", "unlockQuest": "ch05_q03", "mandatory": true, "role": "Short sea routes, island exploration, and the Pearlback pursuit.", "upgrades": ["cargo_hold", "treasure_sonar", "reinforced_sail"]},
+    {"id": "cinderwing_drake", "type": "mount", "unlockChapter": "ch07", "unlockQuest": "sq_ashen_crown", "mandatory": false, "role": "Limited-endurance faction flight for combat mobility; never replaces the airship.", "upgrades": ["thermal_climb", "ember_dash", "ash_ward"]},
+    {"id": "everlight_airship", "type": "vehicle", "unlockChapter": "ch07", "unlockQuest": "ch07_q02", "mandatory": true, "role": "Late-game free flight, mobile hub, and access to floating dungeons and old-region secrets.", "constructionMilestones": ["moonfall_aether_core", "sunmere_hull_deed", "recruit_bryn", "cinderfen_ember_compass", "crownstep_storm_keel", "resolve_sky_dock_charter"], "upgrades": ["engine", "hull", "cargo_hold", "workshop", "map_room", "stormsail", "relic_scanner", "combat_ward"]}
+  ],
+  "skillTreeUnlockBeats": [
+    {"id": "skill_beat_00", "chapter": "ch00", "level": 1, "unlock": "core_controls", "choices": {"blade": "Three-hit strike combo", "ranged": "Quick aimed shot", "arcane": "Aether bolt", "universal": "Dodge with brief invulnerability"}, "respec": "Free until chapter two."},
+    {"id": "skill_beat_01", "chapter": "ch01", "level": 3, "unlock": "first_discipline_point", "choices": {"blade": "Guard Break", "ranged": "Quickdraw", "arcane": "Aether Ward", "universal": "Perfect Dodge pulse"}, "respec": "Low-cost at any waystone."},
+    {"id": "skill_beat_02", "chapter": "ch02", "level": 5, "unlock": "relic_attunement_and_tier_two", "choices": {"blade": "Riposte", "ranged": "Pinning Shot", "arcane": "Elemental Weave", "hybrid": "Weapon Spellbind"}, "respec": "Available at Moonfall Camp."},
+    {"id": "skill_beat_03", "chapter": "ch03", "level": 8, "unlock": "mobility_branch", "choices": {"blade": "Dash Slash", "ranged": "Vault Shot", "arcane": "Echo Step", "universal": "Mount dismount strike"}, "respec": "Available at Highroad Lodge."},
+    {"id": "skill_beat_04", "chapter": "ch04", "level": 11, "unlock": "control_branch", "choices": {"blade": "Staggering Cyclone", "ranged": "Trap Link", "arcane": "Status Cascade", "companion": "Rally Command"}, "respec": "Faction trainers discount their own branch but do not gate it."},
+    {"id": "skill_beat_05", "chapter": "ch05", "level": 14, "unlock": "resource_mastery", "choices": {"blade": "Momentum Guard", "ranged": "Marked Refund", "arcane": "Mana Siphon", "hybrid": "Relic Overcharge"}, "respec": "Available at the Lumenport bathhouse."},
+    {"id": "skill_beat_06", "chapter": "ch06", "level": 17, "unlock": "companion_signature", "choices": {"blade": "Shared Bulwark", "ranged": "Crossfire", "arcane": "Spell Echo", "companion": "Second support companion slot"}, "respec": "Available aboard the grounded airship."},
+    {"id": "skill_beat_07", "chapter": "ch07", "level": 21, "unlock": "capstone_choice", "choices": {"blade": "Roadkeeper's Resolve", "ranged": "Stormline Volley", "arcane": "Living Constellation", "hybrid": "Everlight Convergence"}, "respec": "Capstone can be changed at a Grand Waystation for a meaningful in-game cost."},
+    {"id": "skill_beat_08", "chapter": "ch08", "level": 24, "unlock": "final_mastery_slot", "choices": {"blade": "Master Counter", "ranged": "Unbroken Focus", "arcane": "World Ward", "universal": "Last Stand"}, "respec": "Finale entrance offers one free full respec."}
+  ],
+  "bosses": [
+    {"id": "boss_hollow_warden", "name": "Hollow Warden", "region": "moonfall", "chapter": "ch02", "required": true, "phases": 2, "arena": "Circular seal chamber with pillars and a breakable outer ring.", "coreReads": ["red expanding wind-up ring", "weapon raise", "floor-rune pulse"], "solutions": {"melee": "Parry or dodge through sweeps and punish the exposed core.", "ranged": "Use pillars to break charge lines and attack after impacts.", "magic": "Ward the radial burst or detonate runes at range.", "companion": "Interrupt summons and create a revive window."}, "rewards": ["warden_alloy", "moonfall_aether_core", "hollow_warden_loot_table"]},
+    {"id": "boss_stormbound_knight", "name": "Stormbound Knight", "region": "skyreach", "chapter": "ch03", "required": true, "phases": 3, "arena": "Observatory bridge with grounded shelters and rotating lightning rods.", "coreReads": ["charged lance line", "thunderclap radius", "rod polarity"], "solutions": {"melee": "Stay inside lance reach, counter shield turns, and use shelters during overcharge.", "ranged": "Redirect rods and punish aerial recovery.", "magic": "Ground lightning into charged sigils or barrier the pulse.", "companion": "Order an interrupt while repositioning between shelters."}, "rewards": ["storm_key", "observatory_drive", "stormbound_cache"]},
+    {"id": "boss_cinder_maw", "name": "Bellowsaint Rusk, the Cinder Maw", "region": "cinderfen", "chapter": "ch04", "required": true, "phases": 3, "arena": "Flooded forge with cooling sluices, anvils, and safe high ground.", "coreReads": ["furnace inhale", "molten trail", "armor vent glow"], "solutions": {"melee": "Break leg armor, use anvils as cover, and punish cooled vents.", "ranged": "Trigger sluices and target vents from the catwalk.", "magic": "Use any control or barrier school to survive heat waves; no ice spell is required.", "companion": "Torren can hold aggro, while any companion can activate a distant sluice."}, "rewards": ["ember_compass", "cinder_maw_scale", "forge_deed_option"]},
+    {"id": "boss_pearlback_leviathan", "name": "Pearlback Leviathan", "region": "sunmere", "chapter": "ch05", "required": true, "phases": 3, "arena": "Skiff pursuit into broken Tidemirror platforms and a final sheltered cove.", "coreReads": ["wake direction", "fin shadow", "sonic inhale"], "solutions": {"melee": "Board exposed shell plates and strike anchors during close passes.", "ranged": "Hit glowing barnacles and rigging targets during the pursuit.", "magic": "Ward the sonic burst and overload tide mirrors from shore.", "companion": "Navigator companions shorten pursuit hazards; others protect the skiff or expose weak points."}, "rewards": ["tideglass_codex", "pearlback_keel", "leviathan_pearl"]},
+    {"id": "boss_crownstep_regent", "name": "The Crownstep Regent", "region": "crownstep", "chapter": "ch06", "required": true, "phases": 3, "arena": "A terraced storm court whose three anchors can be disabled in any order.", "coreReads": ["crown beam sweep", "anchor tether", "summoned wind lanes"], "solutions": {"melee": "Ride wind lanes into close-range stagger opportunities.", "ranged": "Break exposed anchor relays from safe terraces.", "magic": "Reverse tethers or protect a terrace with zones and barriers.", "companion": "Assign a companion to delay one anchor while fighting another."}, "rewards": ["storm_keel", "crownstep_charter", "regent_relic"]},
+    {"id": "boss_last_guardian", "name": "The Last Guardian", "region": "skyexpanse", "chapter": "ch07", "required": true, "phases": 3, "arena": "A floating Waystation that rearranges between offense, traversal, and memory phases.", "coreReads": ["constellation telegraph", "platform resonance", "memory echo pose"], "solutions": {"melee": "Chain platform launches and counter the guardian's mirrored weapon.", "ranged": "Control remote relays and break constellations before they converge.", "magic": "Attune matching runes or brute-force them with sustained resource management.", "companion": "High bond converts one memory attack into an assist; low bond remains fully winnable."}, "rewards": ["guardian_alloy", "meridian_access", "final_mastery_slot"]},
+    {"id": "boss_vael_corven", "name": "Lord Vael Corven", "region": "skyexpanse", "chapter": "ch08", "required": true, "phases": 3, "arena": "Meridian Spire ascends through duel floor, collapsing lattice, and open-sky crown.", "coreReads": ["adaptive weapon stance", "lattice path lighting", "binding-channel cadence"], "solutions": {"melee": "Read stance changes, counter his duel strings, and use lattice gaps as punish windows.", "ranged": "Maintain angles, interrupt relay captures, and punish channel recovery.", "magic": "Contest hazards with zones, wards, summons, or resource burst without a required element.", "companion": "All recruited companions provide distinct support, but solo completion remains viable."}, "rewards": ["corven_seal", "ending_choice", "postgame_unlock"]},
+    {"id": "boss_briar_king", "name": "The Briar King", "region": "greenwake", "chapter": "ch01", "required": false, "source": "world_event:briar_king_walks", "solutions": {"melee": "Cut summon vines and stay beneath antler sweeps.", "ranged": "Break crown buds before the charge.", "magic": "Clear roots with damage, control, or wards.", "companion": "Mira marks safe charge lanes."}, "rewards": ["briar_crown_shard", "greenwake_trade_boost"]},
+    {"id": "boss_glasshorn_stag", "name": "Glasshorn Stag", "region": "moonfall", "chapter": "ch02", "required": false, "solutions": {"melee": "Deflect shard volleys and punish after wall impacts.", "ranged": "Break antler crystals while kiting through cover.", "magic": "Shatter reflections with any burst or disrupt them with control.", "companion": "A companion can bait one mirrored charge."}, "rewards": ["glasshorn_shard", "glasshorn_loot_table"]},
+    {"id": "boss_unmoored_star", "name": "The Unmoored Star", "region": "starfall", "chapter": "postgame", "required": false, "phases": 4, "arena": "A zero-gravity hollow reached only by a fully upgraded airship.", "solutions": {"melee": "Use gravity wells to close distance and counter starblade arcs.", "ranged": "Pin orbiting shards before they form constellations.", "magic": "Stabilize or exploit gravity phases with several spell schools.", "companion": "Bond capstones change assist patterns, not access or victory conditions."}, "rewards": ["mythic_star_core", "ultimate_airship_aura", "aurelion_truth"]}
+  ],
+  "chapters": [
+    {
+      "id": "ch00",
+      "act": "act1",
+      "title": "The Road Remembers",
+      "region": "greenwake",
+      "subregion": "Northford",
+      "levelRange": [1, 2],
+      "estimatedHours": 0.75,
+      "storyQuestion": "Did the waking Way ask for help, or command the player to open it?",
+      "mainQuests": [
+        {"id": "ch00_q01", "title": "Lanterns at Dusk", "estimatedMinutes": 10, "objectives": ["Choose Vanguard, Wayfinder, or Lightweaver starting bias", "Learn movement, interact, strike, aether, and dodge through village tasks", "Follow the impossible chime to the lantern plaza"], "rewards": ["starter_kit", "journal"]},
+        {"id": "ch00_q02", "title": "A Voice Under Stone", "estimatedMinutes": 15, "objectives": ["Meet Mira and answer what the Way sounded like", "Defend civilians from corrupted echoes", "Fight beside Mira and learn marked-target feedback"], "choices": ["heard_plea", "heard_command"], "rewards": ["mira_recruited", "companion_commands"]},
+        {"id": "ch00_q03", "title": "The Broken Seal", "estimatedMinutes": 20, "objectives": ["Open the Northford waystone chamber", "Defeat the seal guardian using any starting bias", "Restore, bind, or silence the defeated seal"], "choices": ["restore_road", "bind_to_northford", "silence_way"], "rewards": ["northford_waystone", "first_story_flag"]}
+      ],
+      "completionState": "Mira joins, the first decision enters the journal, and Corven's distant reply is heard through the stone."
+    },
+    {
+      "id": "ch01",
+      "act": "act1",
+      "title": "The Vale Wakes",
+      "region": "greenwake",
+      "hub": "Briarwatch",
+      "levelRange": [2, 4],
+      "estimatedHours": 2.25,
+      "storyQuestion": "Can a town benefit from the Ways without surrendering its future?",
+      "mainQuests": [
+        {"id": "ch01_q01", "title": "Road to Briarwatch", "estimatedMinutes": 30, "objectives": ["Escort Northford survivors along the awakening road", "Clear a Briarling ambush and discover a hidden grove", "Activate the Briarwatch waystone"], "rewards": ["fast_travel", "greenbottle_shop", "first_skill_point"]},
+        {"id": "ch01_q02", "title": "Three Small Fires", "estimatedMinutes": 35, "objectives": ["Help the forge, apothecary, and inn recover from the disturbance", "Choose which business receives scarce roadstone first", "Read the first daily economy report"], "rewards": ["ember_anvil_shop", "economy_ledger_preview", "town_trust"]},
+        {"id": "ch01_q03", "title": "A Map With No North", "estimatedMinutes": 35, "objectives": ["Follow Mira's missing-team markers", "Solve a readable environment clue chain", "Reveal the Moonfall approach and a later-flight secret"], "rewards": ["moonfall_route", "secret_map_layer"]},
+        {"id": "ch01_q04", "title": "Wind on Four Feet", "estimatedMinutes": 35, "objectives": ["Calm a trapped Windstrider without combat or defeat its captors", "Complete a mounted obstacle route", "Return by mount or unlocked waystone"], "rewards": ["windstrider", "mount_upgrade_tree"]}
+      ],
+      "recommendedSideQuests": ["sq_deeds_of_hope", "sq_lantern_left_burning", "sq_briar_king_hunt"],
+      "completionState": "Briarwatch becomes the first open hub; property, mount, crafting, and early faction rumors are visible but optional."
+    },
+    {
+      "id": "ch02",
+      "act": "act1",
+      "title": "Echoes Under Moonfall",
+      "region": "moonfall",
+      "hub": "Moonfall Camp",
+      "levelRange": [4, 7],
+      "estimatedHours": 4.5,
+      "storyQuestion": "Are the echoes recordings, ghosts, or people still trapped inside the network?",
+      "mainQuests": [
+        {"id": "ch02_q01", "title": "Silver Leaves, Empty Names", "estimatedMinutes": 50, "objectives": ["Reach Moonfall through the survey team's abandoned camp", "Use sound, tile, and enemy-position clues to find two routes", "Recover the team's field ledger"], "rewards": ["moonfall_camp", "relic_slot"]},
+        {"id": "ch02_q02", "title": "A Name in the Stone", "estimatedMinutes": 55, "objectives": ["Find Elya inside a repeating memory", "Preserve, rewrite, or break the loop", "Activate the ruin waystone with Elya or the recovered sequence"], "choices": ["preserve_memory", "rewrite_memory", "break_loop"], "rewards": ["elya_recruit_available", "moonfall_exchange", "archive_contact"]},
+        {"id": "ch02_q03", "title": "The Hollow Procession", "estimatedMinutes": 60, "objectives": ["Trace constructs carrying light toward the lower seal", "Open three seal wings in any order", "Learn that Corven is forcing nodes awake from afar"], "rewards": ["hollow_seal_access", "tier_two_skills"]},
+        {"id": "ch02_q04", "title": "Warden of an Empty City", "estimatedMinutes": 65, "objectives": ["Enter the seal chamber", "Defeat the Hollow Warden", "Recover the Aether Lens and hear Nym's first complete sentence"], "boss": "boss_hollow_warden", "rewards": ["moonfall_aether_core", "aether_key_fragment_1", "nym_awakened"]}
+      ],
+      "recommendedSideQuests": ["sq_name_in_stone", "sq_glasshorn_trail", "sq_moonfall_door"],
+      "completionState": "A distant Skyreach beacon ignites. The player sees Corven for the first time and unlocks the three-region Act II route."
+    },
+    {
+      "id": "ch03",
+      "act": "act2",
+      "title": "Roads That Should Not Exist",
+      "region": "skyreach",
+      "hub": "Highroad Lodge",
+      "levelRange": [7, 10],
+      "estimatedHours": 3.75,
+      "flexOrder": 1,
+      "storyQuestion": "Is restoring connection worth empowering whoever can rebuild it fastest?",
+      "mainQuests": [
+        {"id": "ch03_q01", "title": "The Vanished Mile", "estimatedMinutes": 45, "objectives": ["Follow a road that appears only during storms", "Rescue a caravan displaced several years in one night", "Bring Bryn Coil to Highroad Lodge"], "rewards": ["highroad_outfitter", "bryn_recruited", "vehicle_workshop"]},
+        {"id": "ch03_q02", "title": "Five Offers at the Lodge", "estimatedMinutes": 45, "objectives": ["Hear restoration plans from all five factions", "Complete one sponsor trial and preview the other routes", "Choose a nonexclusive expedition sponsor"], "choiceGate": "faction_gate_sponsorship", "rewards": ["first_faction_rank", "sponsor_route"]},
+        {"id": "ch03_q03", "title": "The Observatory Road", "estimatedMinutes": 60, "objectives": ["Cross storm bridges using mount, climbing gear, or repaired lifts", "Restore two optional shelters", "Open the observatory vault without a mandatory faction tool"], "rewards": ["observatory_access", "mobility_skill_branch"]},
+        {"id": "ch03_q04", "title": "Knight of the Last Weather", "estimatedMinutes": 55, "objectives": ["Align lightning rods", "Defeat the Stormbound Knight", "Recover Corven's route calculations"], "boss": "boss_stormbound_knight", "rewards": ["storm_key", "airship_drive_blueprint", "act2_route_forecast"]}
+      ],
+      "recommendedSideQuests": ["sq_caravan_out_of_time", "sq_stormglass_tower", "sq_bryn_grounded_dream"],
+      "completionState": "The player gains the airship drive blueprint and proof that Corven's lattice can close roads as easily as open them."
+    },
+    {
+      "id": "ch04",
+      "act": "act2",
+      "title": "The Cinderfen Bargain",
+      "region": "cinderfen",
+      "hub": "Drowned Forge",
+      "levelRange": [10, 13],
+      "estimatedHours": 4.5,
+      "flexOrder": 2,
+      "storyQuestion": "Who may take risks with a power that can save a region or poison it?",
+      "mainQuests": [
+        {"id": "ch04_q01", "title": "Mud and Oaths", "estimatedMinutes": 50, "objectives": ["Rescue Torren's road crew", "Cross the flooded causeway through combat, repair, or marsh route", "Hear why the old defense failed"], "rewards": ["torren_recruit_available", "cinderfen_waystone"]},
+        {"id": "ch04_q02", "title": "A Forge Beneath the Water", "estimatedMinutes": 55, "objectives": ["Drain the upper Drowned Forge", "Restore the ore lift and one optional crafting wing", "Discover the unstable Ember Lens"], "rewards": ["drowned_forge_station", "control_skill_branch"]},
+        {"id": "ch04_q03", "title": "Ash or Iron", "estimatedMinutes": 55, "objectives": ["Investigate Ironbound and Synod claims", "Survive a Lens instability event", "Commit the Lens to Ironbound, Ashen, or neutral Skyfarer custody"], "choiceGate": "faction_gate_ember_lens", "rewards": ["rival_capstone_path", "regional_economy_state"]},
+        {"id": "ch04_q04", "title": "The Cinder Maw", "estimatedMinutes": 70, "objectives": ["Open the lower forge through one of three support routes", "Defeat Bellowsaint Rusk", "Claim the Ember Compass without extinguishing the public forge"], "boss": "boss_cinder_maw", "rewards": ["ember_compass", "rekindled_forge_shop", "aether_key_fragment_2"]}
+      ],
+      "recommendedSideQuests": ["sq_mud_and_oaths", "sq_old_ember_mine", "sq_red_banner_contract", "sq_roadkeepers_oath"],
+      "completionState": "Cinderfen's roads reopen with a faction-shaped economy; the Ember Compass becomes the airship's navigation heart."
+    },
+    {
+      "id": "ch05",
+      "act": "act2",
+      "title": "The Tidemirror Compact",
+      "region": "sunmere",
+      "hub": "Sunmere Harbor",
+      "levelRange": [13, 16],
+      "estimatedHours": 4.75,
+      "flexOrder": 3,
+      "storyQuestion": "Can trade fund restoration without turning every road, secret, and home into private property?",
+      "mainQuests": [
+        {"id": "ch05_q01", "title": "A Harbor for Sale", "estimatedMinutes": 50, "objectives": ["Enter Lumenport during a deed auction", "Expose or exploit a forged district claim", "Secure access to the old shipyard"], "rewards": ["lumenport_market", "sunmere_waystone", "premium_property_preview"]},
+        {"id": "ch05_q02", "title": "The Beast That Knows His Scent", "estimatedMinutes": 55, "objectives": ["Track Rennic and the creature shadowing him", "Recover the lost expedition beacon", "Recruit Rennic or leave him guarding the coast until later"], "rewards": ["rennic_recruit_available", "treasure_chart_system"]},
+        {"id": "ch05_q03", "title": "Hull, Sail, and Promise", "estimatedMinutes": 55, "objectives": ["Repair the Sunmere Skiff", "Complete a short island route and ship-combat tutorial", "Secure the salvage hull deed for Bryn"], "rewards": ["sunmere_skiff", "airship_hull_deed", "skyfarers_deckhand"]},
+        {"id": "ch05_q04", "title": "The Tidemirror Vault", "estimatedMinutes": 55, "objectives": ["Navigate mirror caves through combat, puzzle, or Ves's infiltration route", "Recover the Codex", "Choose Archive, Gilded, or Skyfarer custody"], "choiceGate": "faction_gate_tidemirror_codex", "rewards": ["tidemirror_codex", "resource_mastery_branch"]},
+        {"id": "ch05_q05", "title": "Pearlback", "estimatedMinutes": 70, "objectives": ["Pursue the Leviathan by skiff", "Defeat it across pursuit, platform, and cove phases", "Use the revealed route to locate Crownstep"], "boss": "boss_pearlback_leviathan", "rewards": ["pearlback_keel", "crownstep_route", "aether_key_fragment_3"]}
+      ],
+      "recommendedSideQuests": ["sq_beast_knows_scent", "sq_price_of_a_favor", "sq_saltglass_warehouse", "sq_glass_tide"],
+      "completionState": "The player holds three regional components, a hull deed, and a political choice about ownership; Corven activates the control lattice."
+    },
+    {
+      "id": "ch06",
+      "act": "act3",
+      "title": "Crownstep",
+      "region": "crownstep",
+      "hub": "Crownstep Anchorage",
+      "levelRange": [16, 20],
+      "estimatedHours": 4.0,
+      "storyQuestion": "Is stewardship legitimate when ordinary people never consented to it?",
+      "mainQuests": [
+        {"id": "ch06_q01", "title": "The Isles Above the Tide", "estimatedMinutes": 45, "objectives": ["Reach Crownstep by upgraded skiff or Skyfarer lift", "Activate two island waystones", "Learn why Regent Solvi hid the storm anchors"], "rewards": ["crownstep_waystones", "anchorage_access"]},
+        {"id": "ch06_q02", "title": "Three Anchors", "estimatedMinutes": 65, "objectives": ["Break the military anchor", "Redirect the weather anchor", "Free the memory anchor", "Choose the order and preserve optional island services"], "rewards": ["storm_anchor_set", "companion_signature_branch"]},
+        {"id": "ch06_q03", "title": "A Charter for the Sky", "estimatedMinutes": 50, "objectives": ["Present the hull, drive, compass, and keel", "Resolve faction claims over the sky dock", "Choose Skyfarer, faction, or independent charter"], "choiceGate": "faction_gate_sky_dock", "rewards": ["airship_frame", "charter_module"]},
+        {"id": "ch06_q04", "title": "The Empty Crown", "estimatedMinutes": 60, "objectives": ["Enter the storm court", "Defeat the Crownstep Regent construct", "Persuade, depose, or bind Solvi to a public compact"], "boss": "boss_crownstep_regent", "choices": ["public_compact", "regent_stewardship", "free_isles"], "rewards": ["storm_keel", "crownstep_shipyard", "grand_waystation_map"]}
+      ],
+      "recommendedSideQuests": ["sq_crownstep_gardens", "sq_sky_dock_deed", "sq_regents_letters"],
+      "completionState": "The grounded Everlight Airship is assembled, but Corven closes the lower Ways and retreats into the Skyreach Expanse."
+    },
+    {
+      "id": "ch07",
+      "act": "act3",
+      "title": "The Upper Sky",
+      "region": "skyexpanse",
+      "hub": "Everlight Airship",
+      "levelRange": [20, 24],
+      "estimatedHours": 5.0,
+      "storyQuestion": "Can a coalition remain free when crisis makes a single commander efficient?",
+      "mainQuests": [
+        {"id": "ch07_q01", "title": "Ship of Many Hands", "estimatedMinutes": 60, "objectives": ["Recruit a minimum viable crew from neutral NPCs or faction allies", "Install engine, map room, and one player-chosen module", "Resolve Bryn's fear during a tethered flight test"], "rewards": ["airship_workshop", "crew_system", "capstone_skill_choice"]},
+        {"id": "ch07_q02", "title": "Maiden Flight", "estimatedMinutes": 45, "objectives": ["Launch the Everlight Airship", "Learn ascent, cruise, landing, and emergency ward controls", "Return to one earlier-region flight secret"], "rewards": ["free_flight", "old_region_flight_markers"]},
+        {"id": "ch07_q03", "title": "Three Grand Waystations", "estimatedMinutes": 80, "objectives": ["Restore the Orchard Station through combat or community investment", "Restore the Storm Station through traversal or engineering", "Restore the Mirror Station through puzzle or faction leverage"], "rewards": ["coalition_routes", "meridian_route", "ending_support_score"]},
+        {"id": "ch07_q04", "title": "Allies Who Answer", "estimatedMinutes": 45, "objectives": ["Resolve one faction capstone or neutral coalition project", "Complete a companion readiness conversation", "Choose combat, logistics, or ward support for the assault"], "rewards": ["finale_support_package", "companion_epilogue_flags"]},
+        {"id": "ch07_q05", "title": "The Last Guardian", "estimatedMinutes": 70, "objectives": ["Enter the floating Waystation", "Defeat the Last Guardian", "Learn that Aurelion is made from remembered choices rather than a neutral machine"], "boss": "boss_last_guardian", "rewards": ["meridian_access", "guardian_alloy", "final_mastery_slot"]}
+      ],
+      "recommendedSideQuests": ["sq_old_roads_new_sky", "sq_starfall_signal", "sq_companion_council"],
+      "completionState": "Free flight is fully functional, the coalition reaches Meridian, and the player understands the moral cost of every final option."
+    },
+    {
+      "id": "ch08",
+      "act": "finale",
+      "title": "The Last Echo",
+      "region": "skyexpanse",
+      "subregion": "Meridian Spire",
+      "levelRange": [23, 26],
+      "estimatedHours": 3.0,
+      "storyQuestion": "What is the restored Everlight for, and who can be trusted with it?",
+      "mainQuests": [
+        {"id": "ch08_q01", "title": "Meridian Basin", "estimatedMinutes": 45, "objectives": ["Land through Corven's blockade", "Use chosen allies to open two of three assault routes", "Secure a final rest, shop, and free respec point"], "rewards": ["spire_foothold", "free_final_respec"]},
+        {"id": "ch08_q02", "title": "A World Made Orderly", "estimatedMinutes": 45, "objectives": ["Ascend through memories of each regional choice", "Answer Corven's argument using deeds recorded in the campaign", "Disable, capture, or bypass three lattice relays"], "rewards": ["corven_duel_access", "ending_context"]},
+        {"id": "ch08_q03", "title": "Lord of the Ways", "estimatedMinutes": 60, "objectives": ["Defeat Corven's adaptive duel phase", "Survive the collapsing lattice", "Break his binding to the Spire"], "boss": "boss_vael_corven", "rewards": ["corven_seal", "final_choice"]},
+        {"id": "ch08_q04", "title": "The Road After", "estimatedMinutes": 30, "objectives": ["Choose the network's future", "Resolve Corven's fate", "View faction, companion, town, and property epilogues"], "choices": ["open_network", "coalition_stewardship", "single_faction_charter", "local_waystones_only", "sleep_the_network"], "rewards": ["postgame_world_state", "starfall_route_seed"]}
+      ],
+      "completionState": "The main campaign ends, regional choices receive concrete epilogues, and Starfall Hollow opens as optional postgame rather than unresolved mandatory story."
+    }
+  ],
+  "sideQuests": [
+    {"id": "sq_deeds_of_hope", "title": "Deeds of Hope", "region": "greenwake", "chapterAvailable": "ch01", "giver": "fenra_quill", "estimatedHours": 0.6, "category": "economy", "objectives": ["Audit a disputed shop deed", "Choose restitution, co-ownership, or purchase", "Buy or decline the first property without penalty"], "rewards": ["property_ledger", "briarwatch_properties", "eastfield_listing"], "worldEffect": "Unlocks ordinary town properties and teaches automatic daily profit."},
+    {"id": "sq_lantern_left_burning", "title": "The Lantern She Left Burning", "region": "greenwake", "chapterAvailable": "ch01", "giver": "mira", "estimatedHours": 0.75, "category": "companion", "objectives": ["Return to the survey camp", "Find three trail signs in any order", "Decide how Mira memorializes the missing team"], "rewards": ["mira_bond_2", "surveyors_compass"], "worldEffect": "Mira begins calling out nearby secret paths."},
+    {"id": "sq_briar_king_hunt", "title": "A Crown of Thorns", "region": "greenwake", "chapterAvailable": "ch01", "giver": "warden_arven", "estimatedHours": 0.6, "category": "world_event", "event": "briar_king_walks", "objectives": ["Track the Briar King across two zones", "Clear or bypass empowered nests", "Defeat the roaming boss"], "rewards": ["briar_crown_shard", "rare_loot", "greenwake_trade_boost"]},
+    {"id": "sq_name_in_stone", "title": "A Name in the Stone", "region": "moonfall", "chapterAvailable": "ch02", "giver": "elya", "estimatedHours": 0.8, "category": "companion", "objectives": ["Recover three erased inscriptions", "Compare the names with Elya's memory", "Choose person, echo, or unanswered mystery as her working identity"], "rewards": ["elya_bond_2", "spell_echo_minor"]},
+    {"id": "sq_glasshorn_trail", "title": "The White Trail", "region": "moonfall", "chapterAvailable": "ch02", "giver": "mira", "estimatedHours": 0.75, "category": "optional_boss", "objectives": ["Follow refracted hoofprints", "Disable two mirror snares", "Defeat or calm the Glasshorn Stag"], "boss": "boss_glasshorn_stag", "rewards": ["glasshorn_loot_table", "moonrack_bow_chance"]},
+    {"id": "sq_moonfall_door", "title": "When the Silver Door Opens", "region": "moonfall", "chapterAvailable": "ch02", "giver": "curator_lio", "estimatedHours": 0.8, "category": "temporary_dungeon", "event": "moonfall_door", "objectives": ["Enter during the in-game eclipse window", "Find the optional secret chamber", "Defeat the Pale Castellan"], "rewards": ["moonfall_cache", "relic_loot", "aether_part_chance"]},
+    {"id": "sq_caravan_out_of_time", "title": "Yesterday's Caravan", "region": "skyreach", "chapterAvailable": "ch03", "giver": "bryn_coil", "estimatedHours": 0.65, "category": "story", "objectives": ["Interview travelers from different years", "Reconstruct the storm route", "Return them to families or offer a place at the Lodge"], "rewards": ["storm_route_discount", "highroad_population_state"]},
+    {"id": "sq_stormglass_tower", "title": "Stormglass Tower", "region": "skyreach", "chapterAvailable": "ch03", "giver": "elya", "estimatedHours": 0.75, "category": "secret_dungeon", "objectives": ["Reach the visible tower by mobility route", "Rotate three weather lenses", "Claim the tower without destroying its resident echo"], "rewards": ["stormglass_relic", "weather_forecast"]},
+    {"id": "sq_bryn_grounded_dream", "title": "A Pilot Afraid of Falling", "region": "skyreach", "chapterAvailable": "ch03", "giver": "bryn_coil", "estimatedHours": 0.55, "category": "crew", "objectives": ["Repair a tether glider", "Complete a no-fail assisted glide", "Let Bryn choose her airship role"], "rewards": ["bryn_crew_bonus", "vehicle_upgrade_discount"]},
+    {"id": "sq_mud_and_oaths", "title": "Mud and Oaths", "region": "cinderfen", "chapterAvailable": "ch04", "giver": "torren", "estimatedHours": 0.9, "category": "companion", "objectives": ["Find the buried causeway orders", "Confront the captain who abandoned Torren's crew", "Expose, forgive, or require restitution"], "rewards": ["torren_bond_2", "marshrunner", "guard_intercept_upgrade"]},
+    {"id": "sq_old_ember_mine", "title": "The Mine That Breathes", "region": "cinderfen", "chapterAvailable": "ch04", "giver": "daren_anvil", "estimatedHours": 0.85, "category": "economy", "objectives": ["Clear toxic vents", "Choose worker cooperative, personal purchase, or public lease", "Install one safety upgrade"], "rewards": ["ashbridge_mine_listing", "rare_ore_source"]},
+    {"id": "sq_red_banner_contract", "title": "No Banner Owns the Road", "region": "cinderfen", "chapterAvailable": "ch04", "giver": "warden_arven", "estimatedHours": 0.9, "category": "world_event", "event": "red_banner_muster", "objectives": ["Choose defense, sabotage, or evacuation plan", "Defeat two commanders", "Resolve the mercenary contract"], "rewards": ["faction_reputation", "epic_gear", "road_economy_modifier"]},
+    {"id": "sq_roadkeepers_oath", "title": "The Roadkeeper's Oath", "region": "cinderfen", "chapterAvailable": "ch04", "giver": "warden_arven", "estimatedHours": 0.7, "category": "faction", "prerequisites": ["faction_gate_ember_lens:ironbound"], "objectives": ["Complete a three-monster mastery hunt", "Defend travelers without losing the caravan", "Accept or reject the Warden capstone oath"], "rewards": ["warden_warhorse", "ironbound_capstone_rep"]},
+    {"id": "sq_beast_knows_scent", "title": "The Beast That Knows His Scent", "region": "sunmere", "chapterAvailable": "ch05", "giver": "rennic", "estimatedHours": 0.9, "category": "companion", "objectives": ["Follow the expedition beacon", "Discover the beast has been carrying survivors' keepsakes", "Hunt, release, or bond with it"], "rewards": ["rennic_bond_2", "weak_point_reveal"]},
+    {"id": "sq_price_of_a_favor", "title": "The Price of a Favor", "region": "sunmere", "chapterAvailable": "ch05", "giver": "ves", "estimatedHours": 0.9, "category": "companion", "objectives": ["Enter the Counting House through stealth, payment, exposure, or faction standing", "Erase, transfer, or honor Ves's debt", "Escape without harming clerks for the best trust result"], "rewards": ["ves_recruited", "night_market", "ves_bond_2"]},
+    {"id": "sq_saltglass_warehouse", "title": "Saltglass Accounts", "region": "sunmere", "chapterAvailable": "ch05", "giver": "broker_oren", "estimatedHours": 0.75, "category": "economy", "objectives": ["Investigate missing cargo", "Choose security, staffing, or contraband specialization", "Buy, publicly lease, or decline the warehouse"], "rewards": ["lumenport_warehouse_listing", "trade_event_bonus"]},
+    {"id": "sq_glass_tide", "title": "The Glass Tide", "region": "sunmere", "chapterAvailable": "ch05", "giver": "captain_iri", "estimatedHours": 0.75, "category": "world_event", "event": "glass_tide", "objectives": ["Navigate crystal reefs", "Seal two growth vents", "Defeat the mirror shoal"], "rewards": ["tideglass", "legendary_chance", "skiff_cosmetic"]},
+    {"id": "sq_crownstep_gardens", "title": "Gardens Without Ground", "region": "crownstep", "chapterAvailable": "ch06", "giver": "regent_solvi", "estimatedHours": 0.65, "category": "exploration", "objectives": ["Restore floating irrigation", "Choose food, medicine, or rare flowers", "Connect the garden to an owned business if available"], "rewards": ["crownstep_demand_bonus", "rare_ingredient_source"]},
+    {"id": "sq_sky_dock_deed", "title": "A Dock of One's Own", "region": "crownstep", "chapterAvailable": "ch06", "giver": "fenra_quill", "estimatedHours": 0.9, "category": "economy", "objectives": ["Trace the dock's three contradictory deeds", "Resolve claims under the chosen charter", "Purchase or establish public shares in the landmark"], "rewards": ["crownstep_shipyard_listing", "airship_upgrade_discount"]},
+    {"id": "sq_regents_letters", "title": "Letters to the Ground", "region": "crownstep", "chapterAvailable": "ch06", "giver": "mira", "estimatedHours": 0.55, "category": "story", "objectives": ["Deliver three never-sent letters", "Learn who paid for Crownstep's isolation", "Confront Solvi with the responses"], "rewards": ["regent_truth", "public_compact_support"]},
+    {"id": "sq_old_roads_new_sky", "title": "Old Roads, New Sky", "region": "skyexpanse", "chapterAvailable": "ch07", "giver": "captain_iri", "estimatedHours": 0.75, "category": "flight", "objectives": ["Revisit one secret in Greenwake, Moonfall, and Cinderfen by air", "Install three route markers", "Choose a public or private chart policy"], "rewards": ["relic_scanner", "fast_flight_routes"]},
+    {"id": "sq_starfall_signal", "title": "A Star That Fell Upward", "region": "skyexpanse", "chapterAvailable": "ch07", "giver": "nym", "estimatedHours": 0.8, "category": "postgame_seed", "objectives": ["Trace an impossible signal", "Survive a Mythic anomaly preview", "Record the route to Starfall Hollow"], "rewards": ["starfall_route_seed", "starsteel_fragment"]},
+    {"id": "sq_companion_council", "title": "The Table in the Map Room", "region": "skyexpanse", "chapterAvailable": "ch07", "giver": "mira", "estimatedHours": 0.75, "category": "companion", "objectives": ["Hear every recruited companion's plan", "Resolve one disagreement without a perfect answer", "Select active and support companion roles"], "rewards": ["second_support_slot", "finale_companion_assists"]},
+    {"id": "sq_ashen_crown", "title": "The Ashen Crown", "region": "skyexpanse", "chapterAvailable": "ch07", "giver": "magister_selka", "estimatedHours": 0.9, "category": "faction", "prerequisites": ["faction_gate_ember_lens:ashen"], "objectives": ["Contain a flying ember anomaly", "Choose a safe or powerful binding", "Accept or reject the Ashen capstone oath"], "rewards": ["cinderwing_drake", "ashen_capstone_rep"]}
+  ],
+  "postgame": {
+    "unlock": "Complete ch08_q04",
+    "region": "starfall",
+    "estimatedHours": [4, 7],
+    "questChain": [
+      {"id": "pg01", "title": "The Hollow Beyond the Map", "objectives": ["Follow the Starfall signal", "Land in Starfall Hollow", "Establish a temporary waystone"], "rewards": ["starfall_access"]},
+      {"id": "pg02", "title": "First Keeper of the Ways", "objectives": ["Recover three unmoored memories", "Reveal Aurelion's original purpose", "Choose challenge, reconciliation, or deferred confrontation"], "rewards": ["aurelion_truth"]},
+      {"id": "pg03", "title": "The Unmoored Star", "objectives": ["Prepare the airship for zero-gravity travel", "Defeat the optional superboss", "Claim a prestige reward that is not required story power"], "boss": "boss_unmoored_star", "rewards": ["mythic_star_core", "ultimate_airship_aura"]}
+    ]
+  },
+  "endingEvaluation": {
+    "inputs": ["prologue_way_choice", "faction_gate_results", "airship_charter", "companion_bonds", "grand_waystation_methods", "regional_public_trust", "property_policy_choices", "corven_fate"],
+    "endings": [
+      {"id": "open_network", "requirement": "High public trust and at least two Grand Waystations restored through public or neutral methods.", "result": "The Ways operate as a commons with regional councils and Skyfarer transit guarantees."},
+      {"id": "coalition_stewardship", "requirement": "Three or more allied factions or strong neutral coalition support.", "result": "A rotating coalition governs the lattice with explicit checks and companion oversight."},
+      {"id": "single_faction_charter", "requirement": "Primary faction capstone and chartered airship.", "result": "One faction leads restoration; benefits and costs reflect its ideology and the player's prior restraints."},
+      {"id": "local_waystones_only", "requirement": "Any campaign state.", "result": "The continental lattice is dismantled while local nodes remain, protecting autonomy at the cost of slower recovery."},
+      {"id": "sleep_the_network", "requirement": "Any campaign state; Nym or Aurelion truth adds a consent-aware variant.", "result": "The Ways sleep until communities are prepared, preserving the mystery and preventing immediate central control."}
+    ],
+    "noGoldenEndingRule": "Every ending preserves something and sacrifices something; preparation improves outcomes but never produces a consequence-free perfect state."
+  }
+}
