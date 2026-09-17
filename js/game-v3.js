@@ -1,12 +1,25 @@
 (() => {
   'use strict';
 
+  function syncViewport(){
+    const view=window.visualViewport;
+    const width=Math.round(view?.width||window.innerWidth);
+    const height=Math.round(view?.height||window.innerHeight);
+    document.documentElement.style.setProperty('--app-width',`${width}px`);
+    document.documentElement.style.setProperty('--app-height',`${height}px`);
+  }
+  syncViewport();
+  window.visualViewport?.addEventListener('resize',syncViewport);
+  window.visualViewport?.addEventListener('scroll',syncViewport);
+  addEventListener('resize',syncViewport);
+  addEventListener('orientationchange',()=>setTimeout(syncViewport,120));
+
   const $ = (id) => document.getElementById(id);
   const canvas = $('gameCanvas');
   const ctx = canvas.getContext('2d');
   const W = 960, H = 540, SAVE_KEY = 'everlight-save-v5';
   const el = Object.fromEntries([
-    'loading','titleScreen','pathScreen','gameScreen','continueBtn','newGameBtn','hpBar','manaBar','stamBar','hpProgress','manaProgress','stamProgress','hpText','manaText','levelText','goldText','objectiveBtn','objectiveTitle','objectiveText','bossHud','bossBar','tutorial','toast','subtitle','joystick','joyKnob','attackBtn','spellBtn','dodgeBtn','interactBtn','attackCooldown','spellCooldown','dodgeCooldown','pauseBtn','dialogue','speakerPortrait','speakerName','dialogueText','dialogueChoices','dialogueNext','journal','journalBody','closeJournal','chapterComplete','chapterSummary','keepExploringBtn','srUpdates'
+    'loading','titleScreen','pathScreen','gameScreen','continueBtn','newGameBtn','hpBar','manaBar','stamBar','hpProgress','manaProgress','stamProgress','hpText','manaText','levelText','goldText','objectiveBtn','objectiveTitle','objectiveText','bossHud','bossBar','tutorial','toast','subtitle','joystick','joyKnob','attackBtn','spellBtn','dodgeBtn','interactBtn','attackCooldown','spellCooldown','dodgeCooldown','fullscreenBtn','pauseBtn','dialogue','speakerPortrait','speakerName','dialogueText','dialogueChoices','dialogueNext','journal','journalBody','closeJournal','chapterComplete','chapterSummary','keepExploringBtn','srUpdates'
   ].map(id => [id, $(id)]));
 
   const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
@@ -41,10 +54,10 @@
   let enemies = [], particles = [], projectiles = [], damageTexts = [], ambient = [];
   let dialogueQueue = [], dialogueDone = null, dialogueChoiceHandler = null, restoreFocus = null;
 
-  const bg = new Image(); bg.src = 'assets/northford-twilight.jpg?v=18';
-  const hero = new Image(); hero.src = 'assets/hero-player.webp?v=18';
-  const miraArt = new Image(); miraArt.src = 'assets/mira-scout.png?v=18';
-  const wardenArt = new Image(); wardenArt.src = 'assets/hollow-warden.png?v=18';
+  const bg = new Image(); bg.src = 'assets/northford-twilight.jpg?v=20';
+  const hero = new Image(); hero.src = 'assets/hero-player-v2.png?v=20';
+  const miraArt = new Image(); miraArt.src = 'assets/mira-scout.png?v=20';
+  const wardenArt = new Image(); wardenArt.src = 'assets/hollow-warden.png?v=20';
   let bgReady = false, heroReady = false, miraReady = false, wardenReady = false;
   bg.onload = () => bgReady = true; hero.onload = () => heroReady = true;
   miraArt.onload = () => miraReady = true; wardenArt.onload = () => wardenReady = true;
@@ -384,7 +397,7 @@
   function drawHero(){
     const moving=Math.hypot(input.x,input.y)>.12||[...keys].some(k=>/Arrow|Key[WASD]/.test(k));const bob=moving?Math.sin(performance.now()/75)*2:Math.sin(performance.now()/280)*1;shadow(S.x,S.y+18,17);
     ctx.save();ctx.translate(S.x,S.y+bob);if(lastFacing.x<-.15)ctx.scale(-1,1);if(invuln>0&&Math.floor(invuln*20)%2===0)ctx.globalAlpha=.45;ctx.shadowColor='#68ffe1';ctx.shadowBlur=invuln>0?16:4;
-    if(heroReady)ctx.drawImage(hero,-24,-33,48,59);else{ctx.fillStyle='#2e7955';ctx.fillRect(-12,-18,24,34);ctx.fillStyle='#efb184';ctx.beginPath();ctx.arc(0,-20,9,0,7);ctx.fill();}
+    if(heroReady)ctx.drawImage(hero,-24,-52,48,64);else{ctx.fillStyle='#2e7955';ctx.fillRect(-12,-18,24,34);ctx.fillStyle='#efb184';ctx.beginPath();ctx.arc(0,-20,9,0,7);ctx.fill();}
     ctx.restore();
   }
 
@@ -423,6 +436,30 @@
   function openJournal(tab='quest'){if(el.gameScreen.classList.contains('is-hidden'))return;restoreFocus=document.activeElement;paused=true;el.gameScreen.inert=true;show(el.journal);renderJournal(tab);requestAnimationFrame(()=>el.closeJournal.focus());}
   function closeJournal(){show(el.journal,false);el.gameScreen.inert=false;paused=false;last=performance.now();restoreFocus?.focus?.();restoreFocus=null;}
 
+  function isStandalone(){return window.navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;}
+  function fullscreenActive(){return !!(document.fullscreenElement||document.webkitFullscreenElement);}
+  function updateFullscreenButton(){
+    const active=fullscreenActive();
+    el.fullscreenBtn.textContent=active?'×':'⛶';
+    el.fullscreenBtn.setAttribute('aria-label',active?'Exit fullscreen':'Enter fullscreen');
+    if(isStandalone())show(el.fullscreenBtn,false);
+  }
+  async function toggleFullscreen(){
+    wakeAudio();
+    try{
+      if(fullscreenActive()){
+        const exit=document.exitFullscreen||document.webkitExitFullscreen;
+        if(exit)await exit.call(document);
+      }else{
+        const request=document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen;
+        if(!request)throw new Error('unsupported');
+        await request.call(document.documentElement,{navigationUI:'hide'});
+      }
+      setTimeout(syncViewport,100);
+    }catch(_){toast('For fullscreen: tap Share, then Add to Home Screen');}
+    updateFullscreenButton();
+  }
+
   function joyMove(e){const r=el.joystick.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2),m=Math.hypot(dx,dy),lim=r.width*.31;input.x=m?dx/Math.max(m,lim):0;input.y=m?dy/Math.max(m,lim):0;const k=Math.min(lim,m);el.joyKnob.style.transform=`translate(${m?dx/m*k:0}px,${m?dy/m*k:0}px)`;}
   el.joystick.addEventListener('pointerdown',e=>{e.preventDefault();pointerId=e.pointerId;el.joystick.setPointerCapture?.(pointerId);joyMove(e);wakeAudio();});
   el.joystick.addEventListener('pointermove',e=>{if(e.pointerId===pointerId)joyMove(e)});
@@ -439,7 +476,7 @@
   el.newGameBtn.onclick=()=>{wakeAudio();if(S.style&&localStorage.getItem(SAVE_KEY)&&!confirm('Begin a new journey? Your current local journey will be replaced after you choose a new path.'))return;show(el.titleScreen,false);show(el.pathScreen,true)};
   el.continueBtn.onclick=()=>{wakeAudio();beginGame(false)};
   document.querySelectorAll('[data-path]').forEach(b=>b.onclick=()=>{wakeAudio();sfx('select');startNew(b.dataset.path)});
-  el.attackBtn.onclick=()=>{};el.dialogueNext.onclick=advanceDialogue;el.objectiveBtn.onclick=()=>openJournal('quest');el.pauseBtn.onclick=()=>openJournal('settings');el.closeJournal.onclick=closeJournal;
+  el.attackBtn.onclick=()=>{};el.dialogueNext.onclick=advanceDialogue;el.objectiveBtn.onclick=()=>openJournal('quest');el.fullscreenBtn.onclick=toggleFullscreen;el.pauseBtn.onclick=()=>openJournal('settings');el.closeJournal.onclick=closeJournal;
   document.querySelectorAll('.journal-tabs button').forEach(b=>b.onclick=()=>renderJournal(b.dataset.tab));
   el.keepExploringBtn.onclick=()=>{show(el.chapterComplete,false);el.gameScreen.inert=false;paused=false;toast('Northford is yours to explore');updateHUD();el.objectiveBtn.focus()};
 
@@ -449,6 +486,8 @@
     const first=focusable[0],lastItem=focusable[focusable.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();lastItem.focus()}else if(!e.shiftKey&&document.activeElement===lastItem){e.preventDefault();first.focus()}
   });
 
-  applySettings();
+  document.addEventListener('fullscreenchange',()=>{syncViewport();updateFullscreenButton()});
+  document.addEventListener('webkitfullscreenchange',()=>{syncViewport();updateFullscreenButton()});
+  applySettings();updateFullscreenButton();
   addEventListener('load',()=>setTimeout(()=>{show(el.loading,false);show(el.titleScreen,true);if(localStorage.getItem(SAVE_KEY)&&S.style)show(el.continueBtn,true);},520));
 })();
