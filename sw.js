@@ -1,7 +1,7 @@
-const CACHE = 'everlight-v18-prologue';
+const CACHE = 'everlight-v20-complete-hero';
 const CORE = [
   './','./index.html','./manifest.webmanifest','./styles/game-v3.css','./js/game-v3.js',
-  './assets/northford-twilight.jpg','./assets/hero-atlas-concept.png','./assets/hero-player.webp',
+  './assets/northford-twilight.jpg','./assets/hero-atlas-concept.png','./assets/hero-player-v2.png',
   './assets/mira-scout.png','./assets/hollow-warden.png',
   './icons/icon-192.svg','./icons/icon-512.svg','./icons/apple-touch-icon.png'
 ];
