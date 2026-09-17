@@ -9,8 +9,8 @@
   <meta name="description" content="Everlight: Vale of Echoes — a solo fantasy action RPG built for mobile.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles/game-v3.css?v=23">
-  <link rel="stylesheet" href="styles/visual-v22.css?v=23">
+  <link rel="stylesheet" href="styles/game-v3.css?v=24">
+  <link rel="stylesheet" href="styles/visual-v22.css?v=24">
   <title>Everlight: Vale of Echoes</title>
 </head>
 <body>
@@ -72,6 +72,9 @@
         <div id="lootFeed" class="loot-feed is-hidden" role="status" aria-live="polite"></div>
         <div id="controls" class="controls" aria-label="Touch controls">
           <div id="joystick" class="joystick" aria-label="Movement joystick"><div id="joyKnob"></div></div>
+          <button id="runBtn" class="travel-control run-control" aria-label="Toggle running" aria-pressed="false"><span>»</span><small>Run</small></button>
+          <button id="mapBtn" class="travel-control map-control" aria-label="Open area map and directory">⌘ <small>Map</small></button>
+          <div id="destinationHint" class="destination-hint is-hidden"></div>
           <div class="action-cluster">
             <button id="interactBtn" class="action action--interact is-hidden" aria-label="Interact"><span>◆</span><small>Talk</small></button>
             <button id="spellBtn" class="action action--spell" aria-label="Cast Everlight spell"><span>✦</span><small>Aether</small><i id="spellCooldown"></i></button>
@@ -107,10 +110,12 @@
     </section>
   </main>
   <div id="srUpdates" class="sr-only" aria-live="assertive"></div>
-  <script>window.__EVERLIGHT_EXPECTED_BUILD__='23';window.__EVERLIGHT_EXPECTED_VISUAL_BUILD__='22';</script>
-  <script src="js/visual-upgrade-v22.js?v=23"></script>
-  <script src="js/world-atlas-v22.js?v=23"></script>
-  <script src="js/game-v4.js?v=23"></script>
+  <script>window.__EVERLIGHT_EXPECTED_BUILD__='24';window.__EVERLIGHT_EXPECTED_VISUAL_BUILD__='22';</script>
+  <script src="js/visual-upgrade-v22.js?v=24"></script>
+  <script src="js/world-atlas-v22.js?v=24"></script>
+  <script src="js/exploration-v24.js?v=24"></script>
+  <script src="js/actors-v24.js?v=24"></script>
+  <script src="js/game-v4.js?v=24"></script>
   <script>
     (() => {
       const build = window.__EVERLIGHT_EXPECTED_BUILD__;
@@ -123,7 +128,7 @@
         return;
       }
       if ('serviceWorker' in navigator) addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=23', { updateViaCache: 'none' }).then(registration => registration.update());
+        navigator.serviceWorker.register('./sw.js?v=24', { updateViaCache: 'none' }).then(registration => registration.update());
       });
     })();
   </script>
