@@ -7,7 +7,7 @@
   const VIEW_H = 540;
   const SAVE_KEY = 'everlight-save-v6';
   const LEGACY_SAVE_KEY = 'everlight-save-v5';
-  const BUILD = '24';
+  const BUILD = '25';
   const EX = window.EVERLIGHT_EXPLORATION;
   const ATLAS = window.EVERLIGHT_ATLAS || null;
   window.__EVERLIGHT_BUILD__ = BUILD;
@@ -129,7 +129,7 @@
   }
 
   const defaultSave = () => ({
-    schema: 6, build: BUILD, style: null, zone: 'northford', x: 965, y: 625,
+    schema: 7, build: BUILD, style: null, zone: 'northford', x: 965, y: 625,
     hp: 100, maxHp: 100, mana: 60, maxMana: 60, stam: 100, maxStam: 100,
     gold: 140, xp: 0, level: 1, skillPoints: 1, day: 1, playTime: 0, lastPlayed: Date.now(),
     mainStep: 0, mainKills: 0, storyChoice: null, endingChoice: null, chapterComplete: false,
@@ -144,6 +144,7 @@
   });
 
   function normalizeItem(item, i = 0) {
+    item={...item,rank:clamp(Math.floor(Number(item?.rank)||0),0,5)};
     const template = ITEM_TEMPLATES[item?.id] || null;
     if (template) return { ...template, ...item, uid: item.uid || uid(`item${i}`) };
     if (item?.name === 'Roadworn Blade') return { ...ITEM_TEMPLATES.roadworn_blade, ...item, uid: item.uid || 'starter-weapon' };
@@ -153,7 +154,7 @@
     const base = defaultSave();
     if (!raw) return base;
     const oldQuestMap = [0, 2, 3, 6, 8];
-    const merged = { ...base, ...raw, schema: 6, build: BUILD };
+    const merged = { ...base, ...raw, schema: 7, build: BUILD };
     merged.settings = { ...base.settings, ...(raw.settings || {}) };
     merged.inventory = (raw.inventory?.length ? raw.inventory : base.inventory).map(normalizeItem);
     if (!raw.schema) {
@@ -162,7 +163,7 @@
       merged.gold = Math.max(140, raw.gold || 0);
     }
     merged.equipment = { ...base.equipment, ...(raw.equipment || {}) };
-    if (!merged.inventory.some(i => i.uid === merged.equipment.Weapon)) merged.equipment.Weapon = merged.inventory.find(i => i.type === 'Weapon')?.uid || null;
+    for(const type of ['Weapon','Armor','Charm'])if(merged.equipment[type]!==null&&!merged.inventory.some(i=>i.uid===merged.equipment[type]&&i.type===type))merged.equipment[type]=type==='Weapon'?merged.inventory.find(i=>i.type===type)?.uid||null:null;
     merged.factionRep = { ...base.factionRep, ...(raw.factionRep || {}) };
     merged.materials = { ...base.materials, ...(raw.materials || {}) };
     merged.sideQuests = { ...base.sideQuests, ...(raw.sideQuests || {}) };
@@ -175,7 +176,7 @@
     merged.profitHistory = Array.isArray(raw.profitHistory) ? raw.profitHistory.slice(-14) : [];
     merged.attunedWaystones = [...new Set(raw.attunedWaystones || [])];
     merged.activeEvents = { ...base.activeEvents, ...(raw.activeEvents || {}) };
-    if(raw.build!=='24'&&merged.zone==='northford'){merged.x=965;merged.y=625;}
+    if(Number(raw.build||0)<24&&merged.zone==='northford'){merged.x=965;merged.y=625;}
     return merged;
   }
   function loadSave() {
@@ -213,6 +214,7 @@
   let shake = 0, screenFlash = 0, toastTimer = 0, subtitleTimer = 0, zoneBannerTimer = 0, lootFeedTimer = 0, zoneGrace = 0;
   let enemies = [], loot = [], projectiles = [], particles = [], damageTexts = [], decor = [];
   let currentInteract = null, currentTab = 'quest', camera = { x: 0, y: 0 }, companion = { x: 0, y: 0, cooldown: .8 }, dialogueQueue = [], dialogueDone = null, dialogueChoiceHandler = null, restoreFocus = null;
+  const gearView={filter:'All',selectedUid:null,message:''};
   let audioCtx = null;
   let runEnabled=false, sprinting=false, sprintExhausted=false, doorCooldown=0, trackedDoor=null;
 
@@ -292,9 +294,7 @@
     canvas.setAttribute('aria-label', `${target.name} game world`);
     companion.x = S.x - 38; companion.y = S.y + 24; companion.cooldown = .7;
     enemies = []; loot = []; projectiles = []; particles = []; damageTexts = []; zoneGrace = 3.5; buildDecor(); spawnZoneEnemies();
-    const minCamX=Math.min(0,(target.width-VIEW_W)/2);
-    camera.x = clamp(S.x - VIEW_W / 2, minCamX, Math.max(minCamX, target.width - VIEW_W));
-    camera.y = clamp(S.y - VIEW_H * .62, -100, Math.max(0, target.height - VIEW_H+35));
+    updateCamera(0,true);
     if (!S.discoveries.includes(target.name)) S.discoveries.push(target.name);
     if (target.area) {
       if (!S.atlasDiscovered.includes(id)) { S.atlasDiscovered.push(id); gainXp(8 + target.area.danger * 2); }
@@ -346,22 +346,15 @@
   }
 
   function itemByUid(id) { return S.inventory.find(i => i.uid === id); }
-  function equipped(type) { return itemByUid(S.equipment[type]); }
+  function equipped(type) { return window.EVERLIGHT_EQUIPMENT.effective(itemByUid(S.equipment[type])); }
   function hasSkill(id) { return S.skills.includes(id); }
   function combatStats() {
-    const weapon = equipped('Weapon'), armor = equipped('Armor'), charm = equipped('Charm');
-    return {
-      power: (weapon?.power || 8) * (hasSkill('keen_edge') ? 1.2 : 1),
-      armor: (armor?.armor || 0) + (charm?.armor || 0) + (S.faction === 'ironbound' ? 8 : 0),
-      spell: (1 + (charm?.spell || 0)) * (hasSkill('aether_surge') ? 1.25 : 1) * (S.style === 'arcanist' ? 1.25 : 1),
-      speed: (S.activeMount ? 1.65 : 1) * (hasSkill('fleetstep') ? 1.12 : 1) * (S.style === 'ranger' ? 1.1 : 1),
-      crit: (S.crit || 0) + (S.faction === 'archive' ? .04 : 0)
-    };
+    return window.EVERLIGHT_EQUIPMENT.stats(S);
   }
   function gainXp(amount) {
     S.xp += amount;
     while (S.xp >= S.level * 80) {
-      S.xp -= S.level * 80; S.level++; S.skillPoints++; S.maxHp += 8; S.hp = S.maxHp; S.maxMana += 4; S.mana = S.maxMana;
+      S.xp -= S.level * 80; S.level++; S.skillPoints++; S.maxHp += 8; S.hp = combatStats().maxHp; S.maxMana += 4; S.mana = S.maxMana;
       toast(`Level ${S.level} · Skill point earned`); sfx('success');
     }
   }
@@ -379,7 +372,7 @@
   }
   function defeatPlayer() {
     paused = true; subtitle('The Way pulls you back from the dark…', 2.2); screenFlash = .65;
-    setTimeout(() => { S.hp=S.maxHp; S.mana=S.maxMana; S.stam=S.maxStam; S.gold=Math.max(0,S.gold-12); enterZone('northford', ZONES.northford.spawn); paused=false; toast('Returned to Northford · −12 gold'); save(); }, 1500);
+    setTimeout(() => { S.hp=combatStats().maxHp; S.mana=S.maxMana; S.stam=S.maxStam; S.gold=Math.max(0,S.gold-12); enterZone('northford', ZONES.northford.spawn); paused=false; toast('Returned to Northford · −12 gold'); save(); }, 1500);
   }
   function hitEnemy(e, damage, dx, dy, magic = false, canKill = true) {
     if (e.dead) return; if(!canKill)damage=Math.min(damage,Math.max(0,e.hp-1));e.hp -= damage; e.flash = .13; moveActor(e,dx*8,dy*8,e.r*.65);
@@ -498,10 +491,16 @@
     for(const d of loot){if(d.collected)continue;d.age+=dt;if(d.age<.55){d.x+=d.vx*dt;d.y+=d.vy*dt;d.vy+=180*dt;}else{d.vx*=.85;d.vy=0;}if(d.age>.45&&distance(d,S)<42)collectDrop(d);}
     loot=loot.filter(d=>!d.collected);
   }
-  function updateCamera(dt){
-    const z=zone();const safeL=VIEW_W*.30,safeR=VIEW_W*.70,safeT=162,safeB=378;let targetX=camera.x,targetY=camera.y;const sx=S.x-camera.x,sy=S.y-camera.y;
-    if(sx<safeL)targetX=S.x-safeL;if(sx>safeR)targetX=S.x-safeR;if(sy<safeT)targetY=S.y-safeT;if(sy>safeB)targetY=S.y-safeB;
-    const minCamX=Math.min(0,(z.width-VIEW_W)/2);targetX=clamp(targetX,minCamX,Math.max(minCamX,z.width-VIEW_W));targetY=clamp(targetY,-100,Math.max(0,z.height-VIEW_H+35));const speed=1-Math.pow(.0008,dt);camera.x=lerp(camera.x,targetX,speed);camera.y=lerp(camera.y,targetY,speed);
+  function updateCamera(dt,snap=false){
+    const width=window.visualViewport?.width||window.innerWidth,height=window.visualViewport?.height||window.innerHeight;
+    const viewport=canvas.getBoundingClientRect();let top=70;
+    for(const node of [el.objectiveBtn,el.bossHud,el.toast,el.zoneBanner,el.destinationHint,el.subtitle,el.tutorial]){
+      if(node.classList.contains('is-hidden'))continue;
+      const r=node.getBoundingClientRect();
+      if(r.width>0&&r.height>0&&r.left<width*.60&&r.right>width*.40)top=Math.max(top,r.bottom-viewport.top);
+    }
+    const z=zone(),frame=window.EVERLIGHT_CAMERA.frame({x:S.x,y:S.y,camera,worldWidth:z.width,worldHeight:z.height,viewWidth:VIEW_W,width,height,top,mounted:!!S.activeMount&&z.type!=='room'&&z.type!=='interior',dt,snap});
+    camera.x=frame.x;camera.y=frame.y;
   }
   function updateEffects(dt){particles.forEach(p=>{p.life-=dt;if(!p.kind){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=20*dt;}});particles=particles.filter(p=>p.life>0);damageTexts.forEach(t=>{t.life-=dt;t.y-=25*dt;});damageTexts=damageTexts.filter(t=>t.life>0);shake=Math.max(0,shake-30*dt);screenFlash=Math.max(0,screenFlash-dt);toastTimer-=dt;subtitleTimer-=dt;zoneBannerTimer-=dt;lootFeedTimer-=dt;if(toastTimer<=0)show(el.toast,false);if(subtitleTimer<=0)show(el.subtitle,false);if(zoneBannerTimer<=0)show(el.zoneBanner,false);if(lootFeedTimer<=0)show(el.lootFeed,false);}
 
@@ -633,7 +632,7 @@
     if(o.kind==='directory'){openJournal('world');return;}
     if(o.kind==='adventure'){interactAdventure(o);return;}
     if(o.kind==='shop'){if(o.id==='apothecary')talkApothecary();else openShop(o.shop,o.name);return;}
-    if(o.kind==='rest'){S.hp=S.maxHp;S.mana=S.maxMana;S.stam=S.maxStam;advanceDay();toast('Rested until dawn · Progress saved');save();return;}
+    if(o.kind==='rest'){S.hp=combatStats().maxHp;S.mana=S.maxMana;S.stam=S.maxStam;advanceDay();toast('Rested until dawn · Progress saved');save();return;}
     if(o.kind==='stable'){talkStable();return;}
     if(o.kind==='faction'){openFaction(o.id);return;}
     if(o.kind==='waystone'){openWaystone();return;}
@@ -830,13 +829,13 @@
   function promptTutorial(text){el.tutorial.textContent=text;show(el.tutorial);}
   function dismissTutorial(){show(el.tutorial,false);}
 
-  function renderJournal(tab=currentTab){currentTab=tab;document.querySelectorAll('.journal-tabs button').forEach(b=>{const active=b.dataset.tab===tab;b.classList.toggle('active',active);b.setAttribute('aria-selected',active)});const [title,text]=objective();
+  function renderJournal(tab=currentTab){currentTab=tab;el.journalBody.classList.toggle('journal-body--gear',tab==='gear');document.querySelectorAll('.journal-tabs button').forEach(b=>{const active=b.dataset.tab===tab;b.classList.toggle('active',active);b.setAttribute('aria-selected',active)});const [title,text]=objective();
     if(tab==='world'&&(S.zone==='northford'||EX.townDoors.some(d=>d.target===S.zone)||['sluice','vault'].includes(S.zone))){
       const marker=S.zone==='northford'?{x:S.x,y:S.y}:EX.townDoors.find(d=>d.target===S.zone)||EX.townDoors.find(d=>d.target==='cistern');
       el.journalBody.innerHTML=`<div class="town-map" role="img" aria-label="Northford map: blue marker is your position, gold markers are working doors"><img src="assets/northford-twilight.jpg" alt="Northford streets and buildings">${EX.townDoors.map(d=>`<button style="left:${d.x/1672*100}%;top:${d.y/941*100}%" data-track-door="${d.id}" aria-label="Track ${d.name}">${d.icon}</button>`).join('')}<span class="you-marker" style="left:${marker.x/1672*100}%;top:${marker.y/941*100}%">●</span></div><p>Gold signs are working doors. Walk onto the lit threshold or tap Enter. Tap a destination below to track it.</p>${EX.townDoors.map(d=>`<button class="travel-row" data-track-door="${d.id}">${d.icon} ${d.name} <span> · Track</span></button>`).join('')}<div class="journal-card"><h3>Roads beyond town</h3><p>Greenwake Vale: southeast gate. Moonfall: east through Greenwake. The wider Vale opens beyond the first Warden.</p><p>Hold Shift to run; R to dodge. On touch, toggle Run beside the movement stick.</p></div>`;return;
     }
     if(tab==='quest'){const sideNames={lensEchoes:['What the Lens Remembers',S.sideQuests.lensEchoes==='ready'?'Open the sealed Guildhall reliquary.':'Use the Lens to inspect the Moonleaf Press, Stable Trail Map and Sundering Mosaic.'],drownedBell:['The Drowned Bell',S.sideQuests.drownedBell==='ready'?'Claim the reliquary and return to Ada in the Bellkeeper’s House.':S.opened.includes('moonValve')&&S.opened.includes('sunValve')?'Both valves are open. Enter the northern vault.':'Find the southwest cistern. Open the Moon and Sun valves, then recover Ada’s bell.'],apothecary:['Moonleaf Remedy',`Moonleaf ${Math.min(3,S.materials.moonleaf)}/3`],stable:['Clear the Brambles',`Briars ${Math.min(4,S.sideProgress.briars)}/4`],lostScout:['The Lost Scout','Find the Rootbound Cache in southeast Greenwake.'],innRumor:['Beneath the Mooncup','Search the inn fireplace for the hollow brick.'],smithyLedger:['The First Smith','Inspect the old maker’s mark inside Ember & Anvil.']};const side=Object.entries(S.sideQuests).filter(([,v])=>v!=='available').map(([id,status])=>`<div class="journal-card"><div class="journal-row"><h3>${sideNames[id]?.[0]||pretty(id)}</h3><span class="choice-tag">${status}</span></div><p>${sideNames[id]?.[1]||'Follow the local clue.'}</p></div>`).join('');const contracts=Object.values(S.dynamicQuests).filter(q=>q.status!=='complete').map(q=>`<div class="journal-card"><div class="journal-row"><h3>${q.name}</h3><span class="choice-tag">${q.status}</span></div><p>${q.text} · ${q.progress}/${q.target}</p></div>`).join('');el.journalBody.innerHTML=`<div class="journal-card"><span class="choice-tag">Main story · Chapter I</span><h3>${title}</h3><p>${text}</p><div class="progress"><i style="width:${(S.mainStep/8)*100}%"></i></div></div>${side}${contracts||(!side?'<div class="journal-card"><h3>Side quests</h3><p>Talk to townsfolk and read Wayfarer Boards across the world.</p></div>':'')}`;}
-    if(tab==='gear'){const slots=['Weapon','Armor','Charm'].map(type=>{const item=equipped(type);return `<div class="equipment-slot"><small>${type}</small><strong>${item?.name||'Empty'}</strong><span>${item?item.rarity:''}</span></div>`}).join('');const items=S.inventory.map(i=>`<article class="inventory-row rarity-${i.rarity.toLowerCase()}"><div><strong>${i.name}</strong><small>${i.rarity} ${i.type} · ${i.description||''}</small></div>${['Weapon','Armor','Charm'].includes(i.type)?`<button data-equip="${i.uid}" ${S.equipment[i.type]===i.uid?'disabled':''}>${S.equipment[i.type]===i.uid?'Equipped':'Equip'}</button>`:i.type==='Consumable'?`<button data-use="${i.uid}">Use</button>`:''}</article>`).join('');el.journalBody.innerHTML=`<div class="equipment-grid">${slots}</div><div class="inventory-list">${items}</div>`;}
+    if(tab==='gear'){el.journalBody.innerHTML=window.EVERLIGHT_EQUIPMENT.render(S,gearView);window.EVERLIGHT_EQUIPMENT.paint(el.journalBody,S);}
     if(tab==='skills'){el.journalBody.innerHTML=`<div class="journal-card"><div class="journal-row"><h3>Ability Constellation</h3><strong>${S.skillPoints} point${S.skillPoints===1?'':'s'}</strong></div><p>Unlock abilities in any tree. Your opening path never locks you out.</p></div><div class="skill-grid">${SKILLS.map(s=>{const unlocked=hasSkill(s.id),ready=!s.requires||hasSkill(s.requires);return `<article class="skill-node ${unlocked?'unlocked':''}"><small>${s.tree}</small><h3>${s.name}</h3><p>${s.text}</p><button data-skill="${s.id}" ${unlocked||!ready||S.skillPoints<s.cost?'disabled':''}>${unlocked?'Unlocked':`${s.cost} point${s.cost>1?'s':''}`}</button></article>`}).join('')}</div>`;}
     if(tab==='factions'){el.journalBody.innerHTML=S.faction?`<div class="journal-card"><span class="choice-tag">Your faction</span><h3>${FACTIONS[S.faction].name}</h3><p>${FACTIONS[S.faction].description}</p><div class="progress"><i style="width:${Math.min(100,S.factionRep[S.faction]/7)}%"></i></div><p>${S.factionRep[S.faction]} reputation · Next rank at 100</p></div>`:`<div class="journal-card"><h3>No faction chosen</h3><p>Visit Northford Guildhall. Faction commitments unlock rank rewards, gear, abilities, and questlines.</p></div>`;}
     if(tab==='world'){const z=zone(),area=atlasArea(),event=area?S.activeEvents[area.id]:null,neighbors=area?Object.values(area.exits).map(id=>ATLAS.get(id)?.name).filter(Boolean):[];el.journalBody.innerHTML=`<div class="journal-card"><h3>${z.name} · Day ${S.day}</h3><p>${z.subtitle}${area?` · Recommended level ${area.recommendedLevel} · Danger ${area.danger}`:''}</p></div><div class="journal-card"><h3>World atlas · ${S.atlasDiscovered.length}/${ATLAS?.totalAreas||288}</h3><p>${area?`Roads: ${neighbors.join(' · ')}`:S.discoveries.join(' · ')}</p><div class="progress"><i style="width:${S.atlasDiscovered.length/(ATLAS?.totalAreas||288)*100}%"></i></div></div>${event?`<div class="journal-card"><span class="choice-tag">${event.tier} world event · ${event.status}</span><h3>${event.name}</h3><p>${event.progress}/${event.target} threats · Expires after day ${event.expires} · Reward ${event.reward}g</p></div>`:'<div class="journal-card"><h3>No local crisis</h3><p>Events rotate by adventure day and can change regional demand.</p></div>'}<div class="journal-card"><h3>Vehicles</h3><p>Windstrider: ${S.mounts.length?'Owned':'Not owned'} · Skiff: ${S.vehicles.skiff?'Built':'Plans missing'} · Airship parts: ${S.vehicles.airshipParts}/3</p></div>`;}
@@ -853,8 +852,12 @@
     const propertyBuy=target.closest('[data-property-buy]');if(propertyBuy){const area=ATLAS?.get(propertyBuy.dataset.propertyBuy);if(area&&!S.properties[area.id]){const p=propertyBlueprint(area);if(S.gold>=p.purchasePrice){S.gold-=p.purchasePrice;S.properties[area.id]=p;save();updateHUD();openProperty(area);toast(`${p.name} added to your portfolio`);}}return;}
     const propertyUpgrade=target.closest('[data-property-upgrade]');if(propertyUpgrade){const id=propertyUpgrade.dataset.propertyUpgrade,p=S.properties[id];if(p){const cost=Math.round((p.purchasePrice||350)*.55*(1+(p.level||0)*.65));if(S.gold>=cost){S.gold-=cost;p.level=(p.level||0)+1;p.value=(p.value||p.purchasePrice||350)+cost;p.revenueMin=Math.round((p.revenueMin||28)*1.2);p.revenueMax=Math.round((p.revenueMax||56)*1.2);p.operatingCost=Math.round((p.operatingCost||8)*1.1);save();updateHUD();toast(`${p.name||pretty(id)} upgraded to tier ${p.level+1}`);if(el.journal.classList.contains('is-hidden'))openProperty(ATLAS?.get(id));else renderJournal('economy');}}return;}
     const buy=target.closest('[data-buy]');if(buy){const item=ITEM_TEMPLATES[buy.dataset.buy],price=priceFor(item);if(S.gold>=price){S.gold-=price;const gained=addItem(item.id);lootMessage(`Purchased · ${gained.name}`,gained.rarity);save();openShop(currentInteract?.shop||'smithy',currentInteract?.name||'Merchant');}return;}
-    const equip=target.closest('[data-equip]');if(equip){const item=itemByUid(equip.dataset.equip);if(item){S.equipment[item.type]=item.uid;toast(`${item.name} equipped`);save();renderJournal('gear');}return;}
-    const use=target.closest('[data-use]');if(use){const index=S.inventory.findIndex(i=>i.uid===use.dataset.use),item=S.inventory[index];if(item){if(item.heal)S.hp=Math.min(S.maxHp+(equipped('Armor')?.maxHp||0),S.hp+item.heal);if(item.mana)S.mana=Math.min(S.maxMana,S.mana+item.mana);S.inventory.splice(index,1);toast(`${item.name} used`);save();renderJournal('gear');}return;}
+    const filter=target.closest('[data-gear-filter]');if(filter){gearView.filter=filter.dataset.gearFilter;gearView.selectedUid=null;gearView.message='';renderJournal('gear');return;}
+    const inspect=target.closest('[data-inspect]');if(inspect){gearView.selectedUid=inspect.dataset.inspect;gearView.message='';renderJournal('gear');return;}
+    const equip=target.closest('[data-equip]');if(equip){const item=itemByUid(equip.dataset.equip);if(item&&['Weapon','Armor','Charm'].includes(item.type)){S.equipment[item.type]=item.uid;S.hp=Math.min(S.hp,combatStats().maxHp);gearView.message=`${item.name} equipped. Character stats updated.`;save();renderJournal('gear');updateHUD();}return;}
+    const unequip=target.closest('[data-unequip]');if(unequip&&['Weapon','Armor','Charm'].includes(unequip.dataset.unequip)){S.equipment[unequip.dataset.unequip]=null;S.hp=Math.min(S.hp,combatStats().maxHp);gearView.message='Slot cleared. Item remains in your pack.';save();renderJournal('gear');updateHUD();return;}
+    const upgrade=target.closest('[data-upgrade]');if(upgrade){const item=itemByUid(upgrade.dataset.upgrade),cost=item&&window.EVERLIGHT_EQUIPMENT.upgradeCost(item);if(cost&&S.gold>=cost.gold&&(S.materials[cost.material]||0)>=cost.amount){S.gold-=cost.gold;S.materials[cost.material]-=cost.amount;item.rank=(item.rank||0)+1;gearView.message=`${item.name} upgraded to ${item.rank} of 5 stars. Stats updated.`;sfx('success');save();}else gearView.message=cost?'Not enough gold or crafting materials.':'This item cannot be upgraded further.';renderJournal('gear');updateHUD();return;}
+    const use=target.closest('[data-use]');if(use){const index=S.inventory.findIndex(i=>i.uid===use.dataset.use),item=S.inventory[index];if(item?.type==='Consumable'){if(!(item.heal&&S.hp<combatStats().maxHp)&&!(item.mana&&S.mana<S.maxMana)){gearView.message='Already restored. Item kept in your pack.';renderJournal('gear');return;}if(item.heal)S.hp=Math.min(combatStats().maxHp,S.hp+item.heal);if(item.mana)S.mana=Math.min(S.maxMana,S.mana+item.mana);S.inventory.splice(index,1);gearView.selectedUid=null;gearView.message=`${item.name} used.`;save();renderJournal('gear');updateHUD();}return;}
     const skill=target.closest('[data-skill]');if(skill){const node=SKILLS.find(s=>s.id===skill.dataset.skill);if(node&&S.skillPoints>=node.cost&&(!node.requires||hasSkill(node.requires))){S.skillPoints-=node.cost;S.skills.push(node.id);sfx('success');toast(`${node.name} unlocked`);save();renderJournal('skills');}return;}
     const consider=target.closest('[data-consider]');if(consider&&!S.faction){openFactionConfirm(consider.dataset.consider);return;}
     const factionCancel=target.closest('[data-faction-cancel]');if(factionCancel){openFaction(factionCancel.dataset.factionCancel);return;}
@@ -870,7 +873,32 @@
 
   function spawnBurst(x,y,color,count){for(let i=0;i<count;i++){const a=random(0,Math.PI*2),sp=random(20,105);particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:random(.25,.7),max:.7,color,size:random(2,5)});}}
   function floatText(x,y,text,color){damageTexts.push({x,y,text,color,life:.85});}
-  function drawWorld(){const z=zone();if(z.type==='room')EX.drawRoom(ctx,z,solidRects());else if(z.type==='atlas')drawAtlasWorld(z.area,z);else{const interior=INTERIOR_LAYOUTS[S.zone],art=interior&&imageReady.interiors[S.zone]?interiorArt[S.zone]:z.type==='town'&&imageReady.bg?bg:z.type==='wild'&&imageReady.greenwake?greenwakeBg:z.type==='ruins'&&imageReady.moonfall?moonfallBg:null;if(art){ctx.drawImage(art,0,0,z.width,z.height);ctx.fillStyle=z.type==='town'?'rgba(5,28,22,.08)':z.type==='interior'?'rgba(3,10,9,.03)':'rgba(2,18,15,.05)';ctx.fillRect(0,0,z.width,z.height);}else{const grad=ctx.createLinearGradient(0,0,0,z.height);grad.addColorStop(0,z.tint);grad.addColorStop(1,'#071713');ctx.fillStyle=grad;ctx.fillRect(0,0,z.width,z.height);drawGroundPattern(z);}}for(const d of decor)drawDecor(d);}
+  function drawWorldSurroundings(z,art){
+    // The safe camera may look beyond collision bounds. Continue the scenery into
+    // a dim, non-walkable backdrop rather than exposing the cleared canvas.
+    const left=camera.x-8,top=camera.y-8,w=VIEW_W+16,h=VIEW_H+16;
+    if(left>=0&&top>=0&&left+w<=z.width&&top+h<=z.height)return;
+    ctx.save();ctx.fillStyle=z.type==='room'||z.type==='interior'?'#252b27':z.tint||'#16372f';ctx.fillRect(left,top,w,h);
+    if(imageReady.bg&&z.type!=='interior'&&z.type!=='room'){
+      // A foliage-only patch has no roads, doors or buildings: overscan must not
+      // invent seemingly enterable destinations outside the actual world.
+      const tileW=230,tileH=110;
+      for(let y=Math.floor(top/tileH)*tileH;y<top+h;y+=tileH)for(let x=Math.floor(left/tileW)*tileW;x<left+w;x+=tileW){
+        if(x>=0&&x+tileW<=z.width&&y>=0&&y+tileH<=z.height)continue;
+        const flip=Math.abs(Math.round(x/tileW))%2;ctx.save();ctx.translate(x+(flip?tileW:0),y);ctx.scale(flip?-1:1,1);ctx.drawImage(bg,40,830,230,110,0,0,tileW,tileH);ctx.restore();
+      }
+      ctx.fillStyle='rgba(14,37,32,.28)';ctx.fillRect(left,top,w,h);
+    }else{
+      const indoors=z.type==='room'||z.type==='interior';
+      for(let y=Math.floor(top/48)*48;y<top+h;y+=48)for(let x=Math.floor(left/64)*64;x<left+w;x+=64){
+        if(x>0&&x<z.width-64&&y>0&&y<z.height-48)continue;
+        const seed=hashNumber(`${S.zone}:${x}:${y}`);ctx.fillStyle=indoors?(seed%2?'#394039':'#303a34'):(seed%2?'#24493b':'#1b4035');
+        if(indoors)ctx.fillRect(x+(Math.abs(y/48)%2)*16,y,60,44);else{ctx.beginPath();ctx.ellipse(x+(seed%20),y,40,27,0,0,7);ctx.fill();}
+      }
+    }
+    ctx.restore();
+  }
+  function drawWorld(){const z=zone(),interior=INTERIOR_LAYOUTS[S.zone],art=interior&&imageReady.interiors[S.zone]?interiorArt[S.zone]:z.type==='town'&&imageReady.bg?bg:z.type==='wild'&&imageReady.greenwake?greenwakeBg:z.type==='ruins'&&imageReady.moonfall?moonfallBg:null;drawWorldSurroundings(z,art);if(z.type==='room')EX.drawRoom(ctx,z,solidRects());else if(z.type==='atlas')drawAtlasWorld(z.area,z);else{if(art){ctx.drawImage(art,0,0,z.width,z.height);ctx.fillStyle=z.type==='town'?'rgba(5,28,22,.08)':z.type==='interior'?'rgba(3,10,9,.03)':'rgba(2,18,15,.05)';ctx.fillRect(0,0,z.width,z.height);}else{const grad=ctx.createLinearGradient(0,0,0,z.height);grad.addColorStop(0,z.tint);grad.addColorStop(1,'#071713');ctx.fillStyle=grad;ctx.fillRect(0,0,z.width,z.height);drawGroundPattern(z);}}for(const d of decor)drawDecor(d);}
   function drawAtlasWorld(area,z){
     const grad=ctx.createLinearGradient(0,0,z.width,z.height);grad.addColorStop(0,area.palette[0]);grad.addColorStop(.62,area.palette[1]);grad.addColorStop(1,'#071713');ctx.fillStyle=grad;ctx.fillRect(0,0,z.width,z.height);
     ctx.save();ctx.globalAlpha=.22;ctx.fillStyle=area.palette[2];for(let i=0;i<28;i++){const seed=hashNumber(`${area.id}:ground:${i}`),x=seed%z.width,y=(seed>>>9)%z.height,r=45+(seed%95);ctx.beginPath();ctx.ellipse(x,y,r,r*.55,(seed%30)/10,0,7);ctx.fill();}ctx.restore();
@@ -909,7 +937,7 @@
   function drawEffects(){for(const p of particles){ctx.save();ctx.globalAlpha=clamp(p.life/(p.max||1),0,1);if(p.kind==='slash'){ctx.translate(p.x,p.y);ctx.rotate(p.angle);ctx.strokeStyle=p.color;ctx.lineWidth=5+p.size;ctx.shadowColor=p.color;ctx.shadowBlur=12;ctx.beginPath();ctx.arc(0,0,28+p.size*4,-1.2,1.2);ctx.stroke();}else{ctx.fillStyle=p.color;ctx.fillRect(p.x-p.size/2,p.y-p.size/2,p.size,p.size);}ctx.restore();}for(const t of damageTexts){ctx.save();ctx.globalAlpha=t.life/.85;ctx.fillStyle=t.color;ctx.strokeStyle='#06100e';ctx.lineWidth=3;ctx.font='bold 14px system-ui';ctx.textAlign='center';ctx.strokeText(t.text,t.x,t.y);ctx.fillText(t.text,t.x,t.y);ctx.restore();}}
   function draw(){ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,VIEW_W,VIEW_H);const sx=S.settings.reducedMotion?0:random(-shake,shake),sy=S.settings.reducedMotion?0:random(-shake,shake);ctx.save();ctx.translate(-camera.x+sx,-camera.y+sy);drawWorld();const objects=objectsForZone(),isNpc=o=>['npc','shop','rest','stable','faction','localNpc','atlasNpc','atlasShop'].includes(o.kind);for(const o of objects.filter(o=>!isNpc(o)))drawObject(o);const actors=[...objects.filter(isNpc).map(o=>({y:o.y,type:'npc',o})),...enemies.filter(e=>!e.dead).map(e=>({y:e.y,type:'enemy',o:e})),...(companionActive()?[{y:companion.y,type:'companion'}]:[]),{y:S.y,type:'hero'}].sort((a,b)=>a.y-b.y);for(const a of actors){if(a.type==='hero')drawHero();else if(a.type==='companion')drawCompanion();else if(a.type==='npc')drawObject(a.o);else drawEnemy(a.o);}drawLoot();drawProjectiles();drawEffects();ctx.restore();if(hurtFlash>0){ctx.fillStyle=`rgba(255,55,40,${hurtFlash*.35})`;ctx.fillRect(0,0,VIEW_W,VIEW_H);}if(screenFlash>0){ctx.fillStyle=`rgba(170,255,235,${screenFlash*.42})`;ctx.fillRect(0,0,VIEW_W,VIEW_H);}}
 
-  function update(dt){if(paused)return;S.playTime+=dt;saveClock+=dt;zoneGrace=Math.max(0,zoneGrace-dt);updatePlayer(dt);updateEnemies(dt);updateCompanion(dt);updateProjectiles(dt);updateLoot(dt);updateCamera(dt);updateEffects(dt);updateInteraction();updateHUD();el.attackCooldown.style.height=`${attackCd/.42*100}%`;el.spellCooldown.style.height=`${spellCd/1.05*100}%`;el.dodgeCooldown.style.height=`${dodgeCd/.82*100}%`;if(saveClock>4){save();saveClock=0;}}
+  function update(dt){if(paused)return;S.playTime+=dt;saveClock+=dt;zoneGrace=Math.max(0,zoneGrace-dt);updatePlayer(dt);updateEnemies(dt);updateCompanion(dt);updateProjectiles(dt);updateLoot(dt);updateEffects(dt);updateInteraction();updateHUD();updateCamera(dt);el.attackCooldown.style.height=`${attackCd/.42*100}%`;el.spellCooldown.style.height=`${spellCd/1.05*100}%`;el.dodgeCooldown.style.height=`${dodgeCd/.82*100}%`;if(saveClock>4){save();saveClock=0;}}
   function loop(now){if(!running)return;const dt=Math.min(.034,(now-last)/1000);last=now;update(dt);draw();requestAnimationFrame(loop);}
 
   function isStandalone(){return navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;}
@@ -931,7 +959,7 @@
   el.runBtn.onclick=()=>{runEnabled=!runEnabled;updateHUD();toast(runEnabled?'Running on · Free outside combat':'Walking');};
   el.mapBtn.onclick=()=>openJournal('world');
   document.querySelectorAll('[data-path]').forEach(b=>b.onclick=()=>{wakeAudio();sfx('select');startNew(b.dataset.path);});
-  el.dialogueNext.onclick=advanceDialogue;el.objectiveBtn.onclick=()=>openJournal('quest');el.fullscreenBtn.onclick=toggleFullscreen;el.pauseBtn.onclick=()=>openJournal('quest');el.closeJournal.onclick=closeJournal;el.closeInteraction.onclick=closeInteraction;
+  el.dialogueNext.onclick=advanceDialogue;el.objectiveBtn.onclick=()=>openJournal('quest');el.fullscreenBtn.onclick=toggleFullscreen;el.pauseBtn.onclick=()=>openJournal('gear');el.closeJournal.onclick=closeJournal;el.closeInteraction.onclick=closeInteraction;
   document.querySelectorAll('.journal-tabs button').forEach(b=>b.onclick=()=>renderJournal(b.dataset.tab));
   el.journalBody.addEventListener('click',e=>handleUiAction(e.target));el.interactionBody.addEventListener('click',e=>handleUiAction(e.target));
   el.keepExploringBtn.onclick=()=>{show(el.chapterComplete,false);el.gameScreen.inert=false;paused=false;toast('Chapter II routes are recorded in your journal');updateHUD();};
@@ -980,6 +1008,12 @@
   }
   function startQaInterior(id){S=defaultSave();S.style='vanguard';S.storyChoice='mercy';S.mainStep=4;S.gold=500;beginGame(false);enterZone(id,null,false);const focusId=new URLSearchParams(location.search).get('focus'),focus=objectsForZone().find(o=>o.id===focusId);if(focus){S.x=focus.x;S.y=focus.y+72;}show(el.toast,false);paused=false;updateCamera(.5);updateHUD();}
 
+  function startQaEquipment(){
+    startQaInterior('northford');S.gold=1500;S.hp=70;S.materials.briarFiber=30;S.materials.wardenAlloy=10;
+    for(const id of ['briar_edge','wayfarer_bow','leather_coat','warden_plate','lantern_charm','tonic','aether_lens'])addItem(id);
+    S.equipment.Armor=S.inventory.find(i=>i.id==='leather_coat').uid;updateHUD();openJournal('gear');
+  }
+
   applySettings();updateFullscreenButton();
-  addEventListener('load',()=>setTimeout(()=>{show(el.loading,false);const local=['127.0.0.1','localhost'].includes(location.hostname),qa=new URLSearchParams(location.search).get('qa');if(local&&qa==='combat'){startQaCombatShowcase();return;}if(local&&['atlas','atlas-property','atlas-board','atlas-route'].includes(qa)){startQaAtlasShowcase(qa);return;}if(local&&qa?.startsWith('interior-')){const id=qa.replace('interior-','');if(INTERIOR_LAYOUTS[id]){startQaInterior(id);return;}}if(local&&qa==='town'){startQaInterior('northford');return;}if(local&&qa?.startsWith('room-')){const id=qa.slice(5);if(EX.roomDefs[id]){startQaInterior(id);return;}}show(el.titleScreen,true);if((localStorage.getItem(SAVE_KEY)||localStorage.getItem(LEGACY_SAVE_KEY))&&S.style)show(el.continueBtn,true);},520));
+  addEventListener('load',()=>setTimeout(()=>{show(el.loading,false);const local=['127.0.0.1','localhost'].includes(location.hostname),qa=new URLSearchParams(location.search).get('qa');if(local&&qa==='gear'){startQaEquipment();return;}if(local&&qa==='combat'){startQaCombatShowcase();return;}if(local&&['atlas','atlas-property','atlas-board','atlas-route'].includes(qa)){startQaAtlasShowcase(qa);return;}if(local&&qa?.startsWith('interior-')){const id=qa.replace('interior-','');if(INTERIOR_LAYOUTS[id]){startQaInterior(id);return;}}if(local&&qa==='town'){startQaInterior('northford');return;}if(local&&qa?.startsWith('room-')){const id=qa.slice(5);if(EX.roomDefs[id]){startQaInterior(id);return;}}show(el.titleScreen,true);if((localStorage.getItem(SAVE_KEY)||localStorage.getItem(LEGACY_SAVE_KEY))&&S.style)show(el.continueBtn,true);},520));
 })();
