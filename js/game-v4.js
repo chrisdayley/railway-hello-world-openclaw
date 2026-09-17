@@ -7,7 +7,8 @@
   const VIEW_H = 540;
   const SAVE_KEY = 'everlight-save-v6';
   const LEGACY_SAVE_KEY = 'everlight-save-v5';
-  const BUILD = '21';
+  const BUILD = '23';
+  const ATLAS = window.EVERLIGHT_ATLAS || null;
   window.__EVERLIGHT_BUILD__ = BUILD;
   const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   const lerp = (a, b, t) => a + (b - a) * t;
@@ -59,6 +60,13 @@
     echo_buckler: { id: 'echo_buckler', name: 'Echo Buckler', type: 'Charm', rarity: 'Legendary', armor: 7, dodge: 0.12, value: 720, description: 'A perfect dodge releases a protective echo.' },
     aether_lens: { id: 'aether_lens', name: 'Aether Lens', type: 'Quest', rarity: 'Legendary', value: 0, description: 'The first piece of a machine that can cross the upper sky.' }
   };
+  Object.assign(ITEM_TEMPLATES, {
+    wayfarer_bow: { id:'wayfarer_bow', name:'Wayfarer Bow', type:'Weapon', rarity:'Uncommon', power:21, value:88, description:'A recurved road bow strung with echo-silk.' },
+    emberbrand: { id:'emberbrand', name:'Emberbrand', type:'Weapon', rarity:'Epic', power:39, value:410, description:'A frontier blade that burns without consuming.' },
+    frostveil_mail: { id:'frostveil_mail', name:'Frostveil Mail', type:'Armor', rarity:'Rare', armor:12, maxHp:18, value:290, description:'Layered mail made for whiteout hunts.' },
+    saltglass_idol: { id:'saltglass_idol', name:'Saltglass Idol', type:'Charm', rarity:'Epic', spell:.35, value:480, description:'A desert relic that bends aether around its bearer.' },
+    starfall_relic: { id:'starfall_relic', name:'Starfall Reliquary', type:'Charm', rarity:'Mythic', spell:.55, armor:9, value:1250, description:'A fragment of the night that fell beyond the crownlands.' }
+  });
   const SKILLS = [
     { id: 'keen_edge', tree: 'Vanguard', name: 'Keen Edge', cost: 1, requires: null, text: '+20% melee damage.' },
     { id: 'counter_light', tree: 'Vanguard', name: 'Counterlight', cost: 1, requires: 'keen_edge', text: 'Dodging during a telegraph empowers your next strike.' },
@@ -76,19 +84,46 @@
   const SHOP_STOCK = {
     smithy: ['briar_edge','leather_coat','moonfall_saber'],
     apothecary: ['tonic','tonic','aether_draught'],
-    archive: ['lantern_charm','aether_draught']
+    archive: ['lantern_charm','aether_draught'],
+    road: ['tonic','aether_draught','wayfarer_bow','leather_coat']
   };
 
   const ZONES = {
     northford: { name: 'Northford', subtitle: 'Lantern Town', type: 'town', width: 1900, height: 1050, spawn: { x: 940, y: 760 }, tint: '#15382f' },
     greenwake: { name: 'Greenwake Vale', subtitle: 'The South Road', type: 'wild', width: 2200, height: 1300, spawn: { x: 1080, y: 165 }, tint: '#173c2b' },
     moonfall: { name: 'Moonfall Ruins', subtitle: 'Where the Ways Broke', type: 'ruins', width: 1900, height: 1180, spawn: { x: 170, y: 620 }, tint: '#1d2d38' },
-    smithy: { name: 'Ember & Anvil', subtitle: 'Smithy', type: 'interior', width: 1800, height: 680, spawn: { x: 900, y: 500 }, tint: '#3a2419' },
-    apothecary: { name: 'Greenbottle Apothecary', subtitle: 'Herbs & Remedies', type: 'interior', width: 1800, height: 680, spawn: { x: 900, y: 500 }, tint: '#183b31' },
-    inn: { name: 'The Mooncup', subtitle: 'Inn & Hearth', type: 'interior', width: 1800, height: 680, spawn: { x: 900, y: 500 }, tint: '#35291e' },
-    guildhall: { name: 'Northford Guildhall', subtitle: 'Choose Who You Become', type: 'interior', width: 1900, height: 720, spawn: { x: 950, y: 540 }, tint: '#202d31' },
-    stable: { name: 'Windstrider Stable', subtitle: 'Mounts & Tack', type: 'interior', width: 1800, height: 700, spawn: { x: 900, y: 520 }, tint: '#30351e' }
+    smithy: { name: 'Ember & Anvil', subtitle: 'Smithy', type: 'interior', width: 1536, height: 920, spawn: { x: 768, y: 810 }, tint: '#3a2419' },
+    apothecary: { name: 'Greenbottle Apothecary', subtitle: 'Herbs & Remedies', type: 'interior', width: 1536, height: 920, spawn: { x: 768, y: 820 }, tint: '#183b31' },
+    inn: { name: 'The Mooncup', subtitle: 'Inn & Hearth', type: 'interior', width: 1536, height: 920, spawn: { x: 768, y: 825 }, tint: '#35291e' },
+    guildhall: { name: 'Northford Guildhall', subtitle: 'Choose Who You Become', type: 'interior', width: 1536, height: 920, spawn: { x: 768, y: 835 }, tint: '#202d31' },
+    stable: { name: 'Windstrider Stable', subtitle: 'Mounts & Tack', type: 'interior', width: 1536, height: 920, spawn: { x: 768, y: 235 }, tint: '#30351e' }
   };
+
+  const INTERIOR_LAYOUTS = {
+    smithy:{art:'smithy',solids:[[0,0,410,420],[420,0,560,215],[990,0,546,390],[0,600,530,320],[1080,570,456,350]]},
+    apothecary:{art:'apothecary',solids:[[0,0,1536,215],[0,230,520,290],[535,220,505,240],[1260,230,276,690],[0,610,300,310],[390,600,555,250]]},
+    inn:{art:'inn',solids:[[0,0,500,300],[980,0,556,300],[610,340,470,190],[430,540,560,185],[1130,360,406,390],[0,650,350,270],[1080,760,456,160]]},
+    guildhall:{art:'guildhall',solids:[[0,0,1536,185],[0,185,380,250],[1156,185,380,250],[0,650,520,270],[1016,650,520,270]]},
+    stable:{art:'stable',solids:[[0,0,520,650],[1000,0,536,650],[0,710,620,210],[1090,680,446,240]]}
+  };
+
+  function hashNumber(text) {
+    let h = 2166136261;
+    for (let i=0;i<String(text).length;i++) { h ^= String(text).charCodeAt(i); h = Math.imul(h, 16777619); }
+    return h >>> 0;
+  }
+  const ATLAS_NAMES=['Alda','Bram','Cerys','Dain','Elowen','Faris','Greer','Hollis','Iria','Jory','Kest','Luma','Merek','Nessa','Oren','Pella','Quill','Rhea','Soren','Tamsin','Una','Vey','Wren','Yara'];
+  function atlasNpcName(area,salt='resident'){return ATLAS_NAMES[hashNumber(`${area.id}:${salt}`)%ATLAS_NAMES.length];}
+  function atlasArea(id = S?.zone) { return ATLAS?.get(id) || null; }
+  function zoneById(id) {
+    if (ZONES[id]) return ZONES[id];
+    const area = ATLAS?.get(id);
+    if (!area) return null;
+    return {
+      name:area.name, subtitle:`${area.regionName} · ${pretty(area.kind)}`, type:'atlas',
+      width:1800, height:1100, spawn:{x:260,y:550}, tint:area.palette[0], area
+    };
+  }
 
   const defaultSave = () => ({
     schema: 6, build: BUILD, style: null, zone: 'northford', x: 940, y: 760,
@@ -99,8 +134,9 @@
     skills: [], mounts: [], activeMount: null, vehicles: { skiff: false, airshipParts: 0, airship: false },
     inventory: [{ ...ITEM_TEMPLATES.roadworn_blade, uid: 'starter-weapon' }, { ...ITEM_TEMPLATES.tonic, uid: 'starter-tonic-1' }, { ...ITEM_TEMPLATES.tonic, uid: 'starter-tonic-2' }],
     equipment: { Weapon: 'starter-weapon', Armor: null, Charm: null }, materials: { moonleaf: 0, briarFiber: 0, wardenAlloy: 0 },
-    sideQuests: { apothecary: 'available', stable: 'available', lostScout: 'available' }, sideProgress: { briars: 0 },
-    discoveries: ['Northford'], opened: [], properties: {}, treasury: 0, defeated: 0,
+    sideQuests: { apothecary: 'available', stable: 'available', lostScout: 'available', innRumor:'available', smithyLedger:'available' }, sideProgress: { briars: 0 },
+    discoveries: ['Northford'], atlasDiscovered: [], opened: [], properties: {}, treasury: 0, defeated: 0,
+    dynamicQuests: {}, areaKills: {}, profitHistory: [], attunedWaystones: [], activeEvents: {},
     settings: { sound: true, haptics: true, reducedMotion: false, highContrast: false, leftHanded: false, assistMode: false }
   });
 
@@ -130,6 +166,12 @@
     merged.sideProgress = { ...base.sideProgress, ...(raw.sideProgress || {}) };
     merged.vehicles = { ...base.vehicles, ...(raw.vehicles || {}) };
     merged.properties = { ...base.properties, ...(raw.properties || {}) };
+    merged.atlasDiscovered = [...new Set(raw.atlasDiscovered || [])];
+    merged.dynamicQuests = { ...base.dynamicQuests, ...(raw.dynamicQuests || {}) };
+    merged.areaKills = { ...base.areaKills, ...(raw.areaKills || {}) };
+    merged.profitHistory = Array.isArray(raw.profitHistory) ? raw.profitHistory.slice(-14) : [];
+    merged.attunedWaystones = [...new Set(raw.attunedWaystones || [])];
+    merged.activeEvents = { ...base.activeEvents, ...(raw.activeEvents || {}) };
     return merged;
   }
   function loadSave() {
@@ -150,13 +192,16 @@
   const wardenArt = new Image(); wardenArt.src = `assets/hollow-warden.png?v=${BUILD}`;
   const greenwakeBg = new Image(); greenwakeBg.src = `assets/greenwake-vale-v1.jpg?v=${BUILD}`;
   const moonfallBg = new Image(); moonfallBg.src = `assets/moonfall-ruins-v1.jpg?v=${BUILD}`;
-  const imageReady = { bg: false, hero: false, mira: false, warden: false, greenwake: false, moonfall: false };
+  const interiorArt = {};
+  for (const id of Object.keys(INTERIOR_LAYOUTS)) { const art=new Image();art.src=`assets/interior-${id}-v1.jpg?v=${BUILD}`;interiorArt[id]=art; }
+  const imageReady = { bg: false, hero: false, mira: false, warden: false, greenwake: false, moonfall: false, interiors:{} };
   bg.onload = () => imageReady.bg = true;
   hero.onload = () => imageReady.hero = true;
   miraArt.onload = () => imageReady.mira = true;
   wardenArt.onload = () => imageReady.warden = true;
   greenwakeBg.onload = () => imageReady.greenwake = true;
   moonfallBg.onload = () => imageReady.moonfall = true;
+  for (const [id,art] of Object.entries(interiorArt)) art.onload=()=>imageReady.interiors[id]=true;
 
   let running = false, paused = true, last = performance.now(), saveClock = 0;
   let input = { x: 0, y: 0 }, keys = new Set(), pointerId = null, lastFacing = { x: 0, y: -1 };
@@ -212,29 +257,41 @@
     show(el.titleScreen, false); show(el.pathScreen, false); show(el.gameScreen, true);
     running = true; paused = false; last = performance.now(); enterZone(S.zone || 'northford', { x: S.x, y: S.y }, false); updateHUD();
     if (fresh) setTimeout(() => { subtitle('The stone beneath your feet whispers a name you have never heard.', 3.4); promptTutorial('Drag the left circle to move'); }, 420);
-    else toast(`Welcome back to ${ZONES[S.zone].name}`);
+    else toast(`Welcome back to ${zone().name}`);
     requestAnimationFrame(loop);
   }
 
-  function zone() { return ZONES[S.zone] || ZONES.northford; }
+  function zone() { return zoneById(S.zone) || ZONES.northford; }
   function buildDecor() {
-    const z = zone(); decor = [];
-    const count = ['town','wild','ruins'].includes(z.type) ? 0 : 18;
+    const z = zone(), area = atlasArea(); decor = [];
+    const count = area ? 42 : ['town','wild','ruins','interior'].includes(z.type) ? 0 : 18;
+    const atlasDecor = {
+      ruins:['pillar','crystal','rock'], verdant:['tree','flower','rock'], ancient_forest:['tree','tree','crystal'],
+      swamp:['tree','rock','flower'], coast:['rock','flower','lamp'], islands:['rock','flower','crystal'],
+      highland:['rock','tree','lamp'], alpine:['rock','tree','crystal'], frost:['rock','crystal','pillar'],
+      desert:['rock','pillar','crystal'], royal:['lamp','pillar','flower'], astral:['crystal','pillar','flower']
+    };
     for (let i = 0; i < count; i++) {
-      const seed = (i * 92821 + S.zone.length * 127) % 997;
+      const seed = (i * 92821 + hashNumber(S.zone) * 127) % 997;
       const x = 55 + (seed * 83 % Math.max(100, z.width - 110));
       const y = 70 + (seed * 151 % Math.max(100, z.height - 130));
-      decor.push({ x, y, kind: z.type === 'wild' ? (i % 4 ? 'tree' : 'rock') : z.type === 'ruins' ? (i % 3 ? 'pillar' : 'crystal') : z.type === 'interior' ? (i % 3 ? 'table' : 'lamp') : (i % 4 ? 'lamp' : 'flower'), s: .75 + (seed % 40) / 100 });
+      const kinds = area ? (atlasDecor[area.biome] || ['tree','rock','flower']) : null;
+      decor.push({ x, y, kind: area ? kinds[(seed+i)%kinds.length] : z.type === 'wild' ? (i % 4 ? 'tree' : 'rock') : z.type === 'ruins' ? (i % 3 ? 'pillar' : 'crystal') : z.type === 'interior' ? (i % 3 ? 'table' : 'lamp') : (i % 4 ? 'lamp' : 'flower'), s: .75 + (seed % 40) / 100 });
     }
   }
   function enterZone(id, spawn = null, announceZone = true) {
-    const target = ZONES[id]; if (!target) return;
+    const target = zoneById(id); if (!target) return;
     S.zone = id; const p = spawn || target.spawn; S.x = clamp(p.x, 35, target.width - 35); S.y = clamp(p.y, 70, target.height - 35);
+    canvas.setAttribute('aria-label', `${target.name} game world`);
     companion.x = S.x - 38; companion.y = S.y + 24; companion.cooldown = .7;
     enemies = []; loot = []; projectiles = []; particles = []; damageTexts = []; zoneGrace = 3.5; buildDecor(); spawnZoneEnemies();
     camera.x = clamp(S.x - VIEW_W / 2, 0, Math.max(0, target.width - VIEW_W));
     camera.y = clamp(S.y - VIEW_H * .62, 0, Math.max(0, target.height - VIEW_H));
     if (!S.discoveries.includes(target.name)) S.discoveries.push(target.name);
+    if (target.area) {
+      if (!S.atlasDiscovered.includes(id)) { S.atlasDiscovered.push(id); gainXp(8 + target.area.danger * 2); }
+      ensureAreaEvent(target.area);
+    }
     if (announceZone) { el.zoneBanner.innerHTML = `<strong>${target.name}</strong><span>${target.subtitle}</span>`; show(el.zoneBanner); zoneBannerTimer = 2.6; }
     if (id === 'greenwake' && S.mainStep === 1) { S.mainStep = 2; save(); subtitle('Corrupted echoes gather beyond the lantern road.', 3); }
     if (id === 'moonfall' && S.mainStep === 5) { S.mainStep = 6; save(); subtitle('The Hollow Warden rises between you and the Aether Lens.', 3); }
@@ -256,6 +313,21 @@
     if (S.zone === 'moonfall') {
       [[420,420,'construct'],[730,760,'construct'],[1040,380,'construct'],[1320,720,'wisp']].forEach((p,i) => enemies.push(makeEnemy(p[2],p[0],p[1],i)));
       if (S.mainStep >= 6 && !S.opened.includes('hollow-warden')) enemies.push(makeEnemy('warden', 1570, 560, 9));
+    }
+    const area = atlasArea();
+    if (area) {
+      const count = area.kind === 'settlement' ? 2 : area.kind === 'dungeon' ? 9 : 5 + area.danger;
+      for (let i=0;i<count;i++) {
+        const seed = hashNumber(`${area.id}:enemy:${i}`);
+        const kind = area.enemies[seed % area.enemies.length];
+        const x = 180 + (seed % 1440), y = 250 + ((seed >>> 9) % 680);
+        enemies.push(makeEnemy(kind,x,y,i));
+      }
+      if (area.hasElite && !S.opened.includes(`${area.id}:elite`)) {
+        const elite = makeEnemy('warden', 900, 480, 99);
+        elite.hp = elite.maxHp = 260 + area.danger * 70; elite.damage += area.danger * 2; elite.xp += area.danger * 20;
+        enemies.push(elite);
+      }
     }
   }
 
@@ -302,19 +374,29 @@
   }
   function makeDrop(kind, x, y, data = {}) { loot.push({ id: uid('drop'), kind, x: x + random(-22,22), y: y + random(-14,18), vx: random(-45,45), vy: random(-85,-35), age: 0, collected: false, ...data }); }
   function dropLoot(e) {
-    const boss = e.kind === 'warden'; const coins = boss ? 14 : e.kind === 'construct' ? 7 : 5;
+    const boss = e.kind === 'warden'; const storyBoss = boss && S.zone==='moonfall'; const coins = boss ? 14 : e.kind === 'construct' ? 7 : 5;
     for (let i=0;i<coins;i++) makeDrop('gold', e.x, e.y, { amount: boss ? Math.ceil(random(5,10)) : Math.ceil(random(1,4)) });
     const material = e.kind === 'briar' ? 'briarFiber' : e.kind === 'warden' ? 'wardenAlloy' : Math.random() < .5 ? 'moonleaf' : null;
     if (material) for (let i=0;i<(boss?3:1);i++) makeDrop('material',e.x,e.y,{ material, amount: 1, rarity: boss?'Rare':'Uncommon' });
     const rareBonus = S.faction === 'archive' ? .1 : 0;
-    if (boss) { makeDrop('item',e.x,e.y,{ itemId:'warden_plate',rarity:'Epic' }); makeDrop('item',e.x,e.y,{ itemId:'aether_lens',rarity:'Legendary' }); }
+    if (storyBoss) { makeDrop('item',e.x,e.y,{ itemId:'warden_plate',rarity:'Epic' }); makeDrop('item',e.x,e.y,{ itemId:'aether_lens',rarity:'Legendary' }); }
+    else if (boss) { const tier=atlasArea()?.treasureTier||'Epic';makeDrop('item',e.x,e.y,{itemId:choose(tier==='Mythic'?['starfall_relic','emberbrand']:['emberbrand','frostveil_mail','saltglass_idol']),rarity:tier}); }
     else if (Math.random() < .2 + rareBonus) makeDrop('item',e.x,e.y,{ itemId: choose(e.kind==='construct'?['moonfall_saber','lantern_charm','aether_draught']:['briar_edge','leather_coat','tonic']), rarity: null });
   }
   function killEnemy(e) {
     e.dead=true; spawnBurst(e.x,e.y,e.kind==='warden'?'#ffe08a':'#7efbe7',e.kind==='warden'?42:18); shake=e.kind==='warden'?14:5; dropLoot(e); gainXp(e.xp); S.defeated++;
     if (S.zone==='greenwake' && S.mainStep===2 && (e.kind==='wisp'||e.kind==='briar')) { S.mainKills++; if(S.mainKills>=3){S.mainStep=3;sfx('success');subtitle('The echo storm breaks. Mira will want to hear what you found.',3);save();} }
     if (e.kind==='briar' && S.sideQuests.stable==='active') { S.sideProgress.briars++; if(S.sideProgress.briars>=4){S.sideQuests.stable='ready';toast('Stable quest complete · Return to Rowan');} }
-    if (e.kind==='warden') { if(!S.opened.includes('hollow-warden'))S.opened.push('hollow-warden'); S.mainStep=7; sfx('success'); subtitle('The Warden falls. Claim the Aether Lens from its hoard.',3); }
+    if (e.kind==='warden' && S.zone==='moonfall') { if(!S.opened.includes('hollow-warden'))S.opened.push('hollow-warden'); S.mainStep=7; sfx('success'); subtitle('The Warden falls. Claim the Aether Lens from its hoard.',3); }
+    const area=atlasArea();
+    if(area){
+      S.areaKills[area.id]=(S.areaKills[area.id]||0)+1;
+      const q=S.dynamicQuests[`quest:${area.id}`];
+      if(q?.status==='active'){q.progress=Math.min(q.target,q.progress+1);if(q.progress>=q.target){q.status='ready';toast('Contract complete · Return to the Wayfarer Board');}}
+      if(e.kind==='warden'){const eliteId=`${area.id}:elite`;if(!S.opened.includes(eliteId))S.opened.push(eliteId);}
+      const event=S.activeEvents[area.id];if(event?.status==='active'){event.progress++;if(event.progress>=event.target){event.status='complete';S.gold+=event.reward;gainXp(event.xp);toast(`${event.name} resolved · +${event.reward}g`);}}
+      save();
+    }
   }
   function collectDrop(d) {
     d.collected=true; sfx('loot');
@@ -344,7 +426,7 @@
     for(let i=0;i<12;i++)particles.push({x:S.x-d.x*i*5,y:S.y-d.y*i*5,vx:random(-12,12),vy:random(-12,12),life:.4,max:.4,color:'#78e8d3',size:random(2,5)});
   }
 
-  function collides(x,y,r){const z=zone();return x-r<18||y-r<160||x+r>z.width-18||y+r>z.height-150;}
+  function collides(x,y,r){const z=zone();if(x-r<18||y-r<160||x+r>z.width-18||y+r>z.height-35)return true;const layout=INTERIOR_LAYOUTS[S.zone];return !!layout?.solids.some(([rx,ry,rw,rh])=>x+r>rx&&x-r<rx+rw&&y+r>ry&&y-r<ry+rh);}
   function moveActor(actor,dx,dy,r){const steps=Math.max(1,Math.ceil(Math.hypot(dx,dy)/9)),sx=dx/steps,sy=dy/steps;for(let i=0;i<steps;i++){if(!collides(actor.x+sx,actor.y,r))actor.x+=sx;if(!collides(actor.x,actor.y+sy,r))actor.y+=sy;}}
   function updatePlayer(dt){
     let ix=input.x+(keys.has('ArrowRight')||keys.has('KeyD')?1:0)-(keys.has('ArrowLeft')||keys.has('KeyA')?1:0);let iy=input.y+(keys.has('ArrowDown')||keys.has('KeyS')?1:0)-(keys.has('ArrowUp')||keys.has('KeyW')?1:0);
@@ -416,13 +498,67 @@
     ];
     if(S.zone==='moonfall')return [
       {id:'valeRoad',kind:'portal',name:'Greenwake Road',x:90,y:620,label:'Return',target:'greenwake',spawn:{x:2020,y:650}},
-      {id:'moonfallWaystone',kind:'waystone',name:'Moonfall Waystone',x:1060,y:560,label:'Travel'}
+      {id:'moonfallWaystone',kind:'waystone',name:'Moonfall Waystone',x:1060,y:560,label:'Travel'},
+      ...(ATLAS&&S.mainStep>=8?[{id:'worldRoad',kind:'portal',name:'The Wider Vale',x:1810,y:620,label:'Journey',target:ATLAS.firstArea,spawn:{x:150,y:550}}]:[])
     ];
-    if(S.zone==='smithy')return [{id:'exit',kind:'portal',name:'Northford',x:900,y:565,label:'Exit',target:'northford',spawn:{x:1260,y:530}},{id:'smith',kind:'shop',name:'Brann',x:900,y:250,label:'Trade',shop:'smithy'}];
-    if(S.zone==='apothecary')return [{id:'exit',kind:'portal',name:'Northford',x:900,y:565,label:'Exit',target:'northford',spawn:{x:1450,y:670}},{id:'apothecary',kind:'shop',name:'Sela',x:900,y:250,label:'Talk',shop:'apothecary'}];
-    if(S.zone==='inn')return [{id:'exit',kind:'portal',name:'Northford',x:900,y:565,label:'Exit',target:'northford',spawn:{x:470,y:490}},{id:'innkeeper',kind:'rest',name:'Nella',x:900,y:250,label:'Rest'}];
-    if(S.zone==='stable')return [{id:'exit',kind:'portal',name:'Northford',x:900,y:585,label:'Exit',target:'northford',spawn:{x:1590,y:870}},{id:'stablemaster',kind:'stable',name:'Rowan',x:900,y:260,label:'Talk'}];
-    if(S.zone==='guildhall')return [{id:'exit',kind:'portal',name:'Northford',x:950,y:605,label:'Exit',target:'northford',spawn:{x:315,y:710}},{id:'ironbound',kind:'faction',name:'Captain Vey',x:350,y:290,label:'Ironbound'},{id:'archive',kind:'faction',name:'Curator Elya',x:750,y:220,label:'Archive'},{id:'gilded',kind:'faction',name:'Broker Ves',x:1150,y:220,label:'Gilded'},{id:'ashen',kind:'faction',name:'Magister Sol',x:1550,y:290,label:'Ashen'}];
+    if(S.zone==='smithy')return [
+      {id:'exit',kind:'portal',name:'Northford',x:768,y:860,label:'Exit',target:'northford',spawn:{x:1260,y:530}},
+      {id:'smith',kind:'shop',name:'Brann',x:770,y:310,label:'Trade',shop:'smithy'},
+      {id:'orin',kind:'localNpc',name:'Orin',x:470,y:520,label:'Talk'},
+      {id:'forgeMark',kind:'lore',name:'Old Forge Mark',x:1080,y:455,label:'Inspect'},
+      {id:'smithyCache',kind:'chest',secret:true,name:'Cracked-Wall Cache',x:1180,y:455,label:S.opened.includes('smithyCache')?'Empty':'Open',tier:'Rare'}
+    ];
+    if(S.zone==='apothecary')return [
+      {id:'exit',kind:'portal',name:'Northford',x:768,y:865,label:'Exit',target:'northford',spawn:{x:1450,y:670}},
+      {id:'apothecary',kind:'shop',name:'Sela',x:790,y:475,label:'Talk',shop:'apothecary'},
+      {id:'lio',kind:'localNpc',name:'Lio',x:335,y:555,label:'Talk'},
+      {id:'moonleafPress',kind:'lore',name:'Moonleaf Press',x:1080,y:520,label:'Inspect'},
+      {id:'apothecaryCache',kind:'chest',secret:true,name:'Loose-Floor Cache',x:1120,y:755,label:S.opened.includes('apothecaryCache')?'Empty':'Open',tier:'Rare'}
+    ];
+    if(S.zone==='inn')return [
+      {id:'exit',kind:'portal',name:'Northford',x:768,y:865,label:'Exit',target:'northford',spawn:{x:470,y:490}},
+      {id:'innkeeper',kind:'rest',name:'Nella',x:1090,y:325,label:'Rest'},
+      {id:'oldFen',kind:'localNpc',name:'Old Fen',x:350,y:525,label:'Talk'},
+      {id:'innBoard',kind:'lore',name:'Rumor Board',x:255,y:565,label:'Read'},
+      {id:'innHearthCache',kind:'chest',secret:true,name:'Hearthbrick Cache',x:480,y:330,label:S.opened.includes('innHearthCache')?'Empty':'Open',tier:'Rare'}
+    ];
+    if(S.zone==='stable')return [
+      {id:'exit',kind:'portal',name:'Northford',x:768,y:185,label:'Exit',target:'northford',spawn:{x:1590,y:870}},
+      {id:'stablemaster',kind:'stable',name:'Rowan',x:1000,y:680,label:'Talk'},
+      {id:'mara',kind:'localNpc',name:'Mara',x:640,y:540,label:'Talk'},
+      {id:'tackMap',kind:'lore',name:'Trail Map',x:900,y:520,label:'Inspect'},
+      {id:'stableCache',kind:'chest',secret:true,name:'Hayloft Cache',x:650,y:700,label:S.opened.includes('stableCache')?'Empty':'Open',tier:'Rare'}
+    ];
+    if(S.zone==='guildhall')return [
+      {id:'exit',kind:'portal',name:'Northford',x:768,y:865,label:'Exit',target:'northford',spawn:{x:315,y:710}},
+      {id:'ironbound',kind:'faction',name:'Captain Vey',x:430,y:355,label:'Ironbound'},
+      {id:'archive',kind:'faction',name:'Curator Elya',x:650,y:300,label:'Archive'},
+      {id:'gilded',kind:'faction',name:'Broker Ves',x:885,y:300,label:'Gilded'},
+      {id:'ashen',kind:'faction',name:'Magister Sol',x:1100,y:355,label:'Ashen'},
+      {id:'sunderingMosaic',kind:'lore',name:'Sundering Mosaic',x:768,y:500,label:'Study'},
+      {id:'guildCache',kind:'chest',secret:true,name:'Veiled Reliquary',x:1260,y:520,label:S.opened.includes('guildCache')?'Empty':'Open',tier:'Epic'}
+    ];
+    const area = atlasArea();
+    if (area) {
+      const out = [];
+      const positions = { west:{x:70,y:550,spawn:{x:1710,y:550}}, east:{x:1730,y:550,spawn:{x:90,y:550}}, north:{x:900,y:175,spawn:{x:900,y:900}}, south:{x:900,y:940,spawn:{x:900,y:210}} };
+      for (const [direction,target] of Object.entries(area.exits)) {
+        const p=positions[direction];out.push({id:`route:${direction}`,kind:'portal',name:ATLAS.get(target)?.name||'Old Road',x:p.x,y:p.y,label:'Travel',target,spawn:p.spawn});
+      }
+      for (let i=0;i<area.secretCount;i++) {
+        const seed=hashNumber(`${area.id}:secret:${i}`);
+        out.push({id:`${area.id}:secret:${i}`,kind:'chest',secret:true,name:'Hidden Cache',x:210+(seed%1380),y:270+((seed>>>9)%570),label:'Open',tier:area.treasureTier});
+      }
+      if(area.kind==='settlement')out.push(
+        {id:`${area.id}:board`,kind:'notice',name:'Wayfarer Board',x:760,y:480,label:'Read'},
+        {id:`${area.id}:merchant`,kind:'atlasShop',name:atlasNpcName(area,'merchant'),x:540,y:570,label:'Trade',shop:'road'},
+        {id:`${area.id}:resident`,kind:'atlasNpc',name:atlasNpcName(area),x:1180,y:610,label:'Talk'}
+      );
+      if(area.kind==='landmark'||area.kind==='dungeon')out.push({id:`${area.id}:lore`,kind:'atlasLore',name:area.kind==='dungeon'?'Echo Inscription':'Weathered Marker',x:900,y:760,label:'Inspect'});
+      if(area.propertyAvailable)out.push({id:`${area.id}:deed`,kind:'property',name:`${pretty(area.propertyType)} Deed`,x:1060,y:470,label:S.properties[area.id]?'Manage':'Inspect'});
+      if(area.hasWaystone)out.push({id:`${area.id}:waystone`,kind:'waystone',name:`${area.name} Waystone`,x:900,y:390,label:'Attune'});
+      return out;
+    }
     return [];
   }
   function nearestInteractable(){return objectsForZone().filter(o=>distance(S,o)<108).sort((a,b)=>distance(S,a)-distance(S,b))[0]||null;}
@@ -436,6 +572,13 @@
     if(o.kind==='faction'){openFaction(o.id);return;}
     if(o.kind==='waystone'){openWaystone();return;}
     if(o.kind==='chest'){openChest(o);return;}
+    if(o.kind==='localNpc'){talkLocal(o.id);return;}
+    if(o.kind==='lore'){inspectLore(o.id);return;}
+    if(o.kind==='atlasShop'){openShop(o.shop,o.name);return;}
+    if(o.kind==='atlasNpc'){talkAtlasNpc(atlasArea(),o);return;}
+    if(o.kind==='atlasLore'){inspectAtlasLore(atlasArea(),o);return;}
+    if(o.kind==='notice'){openAreaQuest(atlasArea());return;}
+    if(o.kind==='property'){openProperty(atlasArea());return;}
     if(o.id==='mira'){talkMira();return;}
     if(o.id==='lostScout'){talkScout();return;}
   }
@@ -460,7 +603,83 @@
     if(S.sideQuests.lostScout==='available'){S.sideQuests.lostScout='active';save();openDialogue([{speaker:'Tarin',portrait:'T',text:'I found a Rootbound Cache, then the briars found me. It is hidden near the southeast ridge. Keep what is inside—just make the road safe.'}]);}
     else openDialogue([{speaker:'Tarin',portrait:'T',text:S.opened.includes('greenwakeCache')?'You found it. Maybe the Vale has not given up on us yet.':'Southeast ridge. Look for roots wrapped around old gold.'}]);
   }
-  function openChest(o){if(S.opened.includes(o.id)){toast('The cache is empty');return;}S.opened.push(o.id);S.gold+=65;const item=addItem('moonfall_saber');S.sideQuests.lostScout='complete';gainXp(60);spawnBurst(o.x,o.y,'#ffd86f',28);lootMessage(`${item.rarity} · ${item.name}`,item.rarity);save();}
+  function talkLocal(id){
+    if(id==='orin'){
+      if(S.sideQuests.smithyLedger==='available')openDialogue([{speaker:'Orin',portrait:'O',text:'Brann rebuilt this forge over older stone. I heard something shift behind the maker’s mark, but he says apprentices should mind their hammers.'},{speaker:'Orin',portrait:'O',text:'If you inspect the old forge mark near the weapon racks, bring me anything that explains who worked here before us.'}],()=>{S.sideQuests.smithyLedger='active';save();toast('Side quest started · The First Smith');});
+      else openDialogue([{speaker:'Orin',portrait:'O',text:S.sideQuests.smithyLedger==='complete'?'That ledger names every keeper of the Northford flame. Brann finally believes me.':'The maker’s mark is beyond the anvil, near the weapon racks.'}]);
+      return;
+    }
+    if(id==='oldFen'){
+      if(S.sideQuests.innRumor==='available')openDialogue([{speaker:'Old Fen',portrait:'F',text:'This inn survived the Sundering because Nella’s grandmother hid a wayfarer beneath the hearth.'},{speaker:'Old Fen',portrait:'F',text:'One brick still rings hollow. Find the Hearthbrick Cache and we will know whether the old tale was mercy—or treason.'}],()=>{S.sideQuests.innRumor='active';save();toast('Side quest started · Beneath the Mooncup');});
+      else openDialogue([{speaker:'Old Fen',portrait:'F',text:S.sideQuests.innRumor==='complete'?'So the wayfarer left a lantern token. Some debts wait a generation to be repaid.':'Listen beside the fireplace. Stone lies differently when it guards a secret.'}]);
+      return;
+    }
+    if(id==='lio'){openDialogue([{speaker:'Lio',portrait:'L',text:S.sideQuests.apothecary==='active'?'Moonleaf keeps a silver underside even after an echo storm. The press preserves it if you need a sample.':'Sela says every bottle is a promise: label it, test it, and never pretend you know more than the plant.'}]);return;}
+    if(id==='mara'){openDialogue([{speaker:'Mara',portrait:'M',text:S.sideQuests.stable==='active'?`I marked the briar nests on the trail map. You have cleared ${Math.min(4,S.sideProgress.briars)}/4.`:'Windstriders choose calm riders. Speed comes after trust.'}]);}
+  }
+  function inspectLore(id){
+    if(id==='forgeMark'){
+      if(S.sideQuests.smithyLedger==='active'){S.sideQuests.smithyLedger='complete';S.gold+=45;gainXp(35);addItem('briar_edge');save();openDialogue([{speaker:'Forge Ledger',portrait:'◆',text:'A soot-black ledger slides from behind the maker’s mark. The first entry is signed by a smith who vanished during the Sundering. You recover an unfinished Briar Edge and 45 gold.'}]);}
+      else openDialogue([{speaker:'Old Forge Mark',portrait:'◆',text:'Seven hammers surround an empty eighth place. The stone is newer than the wall around it.'}]);
+      return;
+    }
+    if(id==='moonleafPress'){
+      if(!S.opened.includes(id)){S.opened.push(id);S.materials.moonleaf=(S.materials.moonleaf||0)+1;if(S.sideQuests.apothecary==='active'&&S.materials.moonleaf>=3)S.sideQuests.apothecary='ready';gainXp(12);save();toast('Hidden drawer · +1 Moonleaf');}
+      openDialogue([{speaker:'Moonleaf Press',portrait:'✤',text:'A brass press engraved with the phases of the moon. A narrow drawer underneath holds one carefully preserved leaf.'}]);return;
+    }
+    if(id==='innBoard'){openDialogue([{speaker:'Rumor Board',portrait:'◆',text:'Caravan missing near Glass Watch. Blue fire seen under Moonfall. Someone has pinned a child’s drawing of a crowned briar over both notices.'}]);return;}
+    if(id==='tackMap'){openDialogue([{speaker:'Trail Map',portrait:'◇',text:'Rowan’s map marks shallow river crossings, waystone shelters, and a high trail labeled only: “Sky road—when the old engine wakes.”'}]);return;}
+    if(id==='sunderingMosaic'){
+      if(!S.opened.includes(id)){S.opened.push(id);gainXp(20);save();}
+      openDialogue([{speaker:'Sundering Mosaic',portrait:'✦',text:'Four paths meet around a broken star. Each faction restored its own quarter, but none repaired the fracture at the center.'}]);
+    }
+  }
+  function talkAtlasNpc(area,npc){
+    if(!area)return;
+    const event=S.activeEvents[area.id],unopened=objectsForZone().filter(o=>o.kind==='chest'&&!S.opened.includes(o.id)).length;
+    const regionLines={verdant:'The moss grows toward buried Waystones, not toward the sun.',ruins:'At dusk, the broken arches repeat words no living person spoke.',highland:'Caravans pay well for a clear ridge road.',swamp:'Follow the white moths if you want dry ground.',coast:'The tide leaves old coins where the moon touches the rocks.',alpine:'Storm bells carry farther than voices up here.',frost:'Blue ice means empty water beneath. Pale ice means something is watching.',desert:'Glass sings before a storm. If it stops, find cover.',ancient_forest:'Some trees remember doors better than roads.',islands:'Every wreck has two stories—the one sailors tell and the one the sea kept.',royal:'The crown roads look safe because someone is always paying the danger elsewhere.',astral:'Do not count the falling stars. Sometimes one counts back.'};
+    openDialogue([{speaker:npc.name,portrait:npc.name[0],text:event?.status==='active'?`${event.name} has everyone indoors. The Wayfarer Board lists what we know—and what the guild will pay.`:regionLines[area.biome]||'Every old road hides something from travelers who hurry.'},{speaker:npc.name,portrait:npc.name[0],text:unopened?`I have seen ${unopened===1?'a strange glimmer':`${unopened} strange glimmers`} beyond the main path. Look where the scenery seems too quiet.`:'You have sharper eyes than most. I have no hidden cache left to hint at.'}]);
+  }
+  function inspectAtlasLore(area,o){
+    if(!area)return;const id=o.id,first=!S.opened.includes(id);if(first){S.opened.push(id);gainXp(12+area.danger*3);if(Math.random()<.5)S.materials.moonleaf=(S.materials.moonleaf||0)+1;save();}
+    const lines={dungeon:`The inscription names a keeper who sealed this place from the inside. One final line has been scratched away by metal claws.`,landmark:`The marker records three roads, but only ${Object.keys(area.exits).length} remain. A faded arrow points toward one of this area's hidden caches.`};
+    openDialogue([{speaker:o.name,portrait:'◆',text:lines[area.kind]||'The old stone hums faintly beneath your hand.'}]);
+  }
+  function openChest(o){
+    if(S.opened.includes(o.id)){toast('The cache is empty');return;}
+    S.opened.push(o.id);
+    if(o.id==='greenwakeCache'){
+      S.gold+=65;const item=addItem('moonfall_saber');S.sideQuests.lostScout='complete';gainXp(60);spawnBurst(o.x,o.y,'#ffd86f',28);lootMessage(`${item.rarity} · ${item.name}`,item.rarity);save();return;
+    }
+    const area=atlasArea(), tier=o.tier||area?.treasureTier||'Rare';
+    const table={Rare:['moonfall_saber','frostveil_mail'],Epic:['emberbrand','saltglass_idol'],Legendary:['echo_buckler','saltglass_idol'],Mythic:['starfall_relic','emberbrand']};
+    const item=addItem(choose(table[tier]||table.Rare),tier);const gold=30+(area?.danger||1)*18;
+    S.gold+=gold;gainXp(20+(area?.danger||1)*8);if(o.id==='innHearthCache'&&S.sideQuests.innRumor==='active'){S.sideQuests.innRumor='complete';S.gold+=40;gainXp(35);}spawnBurst(o.x,o.y,RARITY[tier]||'#ffd86f',34);lootMessage(`${tier} · ${item.name} · +${gold}g`,tier);save();
+  }
+
+  function areaQuest(area){
+    if(!area)return null;
+    const id=`quest:${area.id}`, target=3+Math.min(5,area.danger), existing=S.dynamicQuests[id];
+    if(existing)return existing;
+    const verbs={bounty:'Cull',rescue:'Rescue patrols from',relic:'Recover relics guarded by',delivery:'Clear a route through',survey:'Survey territory held by',defense:'Defend the road from',mystery:'Investigate',hunt:'Hunt'};
+    return {id,areaId:area.id,name:`${pretty(area.questType)}: ${area.name}`,text:`${verbs[area.questType]||'Defeat'} ${target} threats in ${area.name}.`,target,progress:0,status:'available',reward:70+area.danger*30,xp:35+area.danger*15};
+  }
+  function openAreaQuest(area){
+    const q=areaQuest(area);if(!q)return;
+    if(q.status==='ready'){
+      S.gold+=q.reward;gainXp(q.xp);q.status='complete';S.dynamicQuests[q.id]=q;
+      if(S.faction)S.factionRep[S.faction]+=8+area.danger;save();openDialogue([{speaker:'Wayfarer Board',portrait:'◆',text:`Contract fulfilled. ${q.reward} gold has been released from escrow.`}]);return;
+    }
+    openInteraction(q.name,`<div class="feature-card"><span class="choice-tag">${area.regionName} contract</span><h3>${q.text}</h3><p>Reward: ${q.reward} gold · ${q.xp} XP${S.faction?' · faction reputation':''}</p><button data-accept-quest="${q.id}" ${q.status!=='available'?'disabled':''}>${q.status==='active'?`${q.progress}/${q.target} complete`:q.status==='complete'?'Completed':'Accept contract'}</button></div>`);
+  }
+  function propertyBlueprint(area){
+    const price=180+area.danger*95+(area.kind==='settlement'?120:0), operating=8+area.danger*4;
+    return {id:area.id,name:`${area.name} ${pretty(area.propertyType)}`,type:area.propertyType,regionId:area.regionId,purchasePrice:price,value:price,level:0,operatingCost:operating,revenueMin:operating+12+area.danger*4,revenueMax:operating+34+area.danger*9,lastProfit:0,total:0};
+  }
+  function openProperty(area){
+    const owned=S.properties[area.id], p=owned||propertyBlueprint(area), upgrade=Math.round(p.purchasePrice*.55*(1+(p.level||0)*.65));
+    openInteraction(p.name,`<div class="feature-card"><span class="choice-tag">${pretty(p.type)} · ${area.regionName}</span><h3>${owned?`Tier ${p.level+1} property`:'Deed available'}</h3><p>${owned?`Value ${p.value}g · Operating cost ${p.operatingCost}g · Yesterday ${p.lastProfit>=0?'+':''}${p.lastProfit}g`:`Purchase ${p.purchasePrice}g · Daily revenue ${p.revenueMin}–${p.revenueMax}g before ${p.operatingCost}g costs.`}</p>${owned?`<button data-property-upgrade="${area.id}" ${S.gold<upgrade?'disabled':''}>Upgrade · ${upgrade}g</button>`:`<button data-property-buy="${area.id}" ${S.gold<p.purchasePrice?'disabled':''}>Purchase deed · ${p.purchasePrice}g</button>`}</div>`);
+  }
 
   function openDialogue(lines,onDone=null,onChoice=null){restoreFocus=document.activeElement;dialogueQueue=[...lines];dialogueDone=onDone;dialogueChoiceHandler=onChoice||onDone;paused=true;el.gameScreen.inert=true;show(el.dialogue);renderDialogueLine();}
   function renderDialogueLine(){const line=dialogueQueue[0];if(!line){const done=dialogueDone;closeDialogue();if(done)done();return;}el.speakerName.textContent=line.speaker;const usesPortrait=line.speaker==='Mira';el.speakerPortrait.classList.toggle('portrait--image',usesPortrait);el.speakerPortrait.style.backgroundImage=usesPortrait?`url("assets/mira-scout.png?v=${BUILD}")`:'';el.speakerPortrait.textContent=usesPortrait?'':line.portrait||line.speaker[0];el.dialogueText.textContent=line.text;el.dialogueChoices.innerHTML='';show(el.dialogueNext,!line.choices);if(line.choices)for(const c of line.choices){const b=document.createElement('button');b.textContent=c.label;b.onclick=()=>dialogueChoiceHandler?.(c.value);el.dialogueChoices.appendChild(b);}requestAnimationFrame(()=>line.choices?el.dialogueChoices.querySelector('button')?.focus():el.dialogueNext.focus());}
@@ -474,23 +693,44 @@
   function openStable(){const owned=S.mounts.includes('windstrider'),price=S.sideQuests.stable==='complete'?120:180,shortfall=Math.max(0,price-S.gold);openInteraction('Windstrider Stable',owned?`<div class="feature-card"><h3>Chestnut Windstrider</h3><p>65% faster travel. Your mount waits outside every building.</p><button data-mount="toggle">${S.activeMount?'Dismount':'Ride Windstrider'}</button></div>`:`<div class="feature-card"><h3>Chestnut Windstrider</h3><p>Road-bred, sure-footed, and fast enough to outrun a briar storm.</p><button data-mount="buy" ${shortfall?'disabled':''}>${shortfall?`Need ${shortfall}g more`:`Purchase · ${price}g`}</button></div>`);}
   function openFaction(id){const f=FACTIONS[id],joined=S.faction===id,locked=S.faction&&S.faction!==id;openInteraction(f.name,`<div class="feature-card" style="--accent:${f.color}"><h3>${f.description}</h3><p>${f.gift}</p><p>Ranks: Initiate → Adept → Captain → Paragon</p><button data-consider="${id}" ${joined||locked?'disabled':''}>${joined?'Already joined':locked?`Committed to ${FACTIONS[S.faction].name}`:'Consider pledge'}</button></div>`);}
   function openFactionConfirm(id){const f=FACTIONS[id];openInteraction(`Pledge to ${f.name}?`,`<div class="feature-card faction-confirm" style="--accent:${f.color}"><span class="choice-tag">Permanent commitment</span><h3>${f.gift}</h3><p>This closes the other three faction paths for this journey. Their shops remain open, but their rank abilities and faction questlines will be unavailable.</p><div class="confirm-actions"><button data-faction-cancel="${id}">Not yet</button><button data-join="${id}">Make the pledge</button></div></div>`);}
-  function openWaystone(){const destinations=[['northford','Northford'],S.discoveries.includes('Greenwake Vale')?['greenwake','Greenwake Vale']:null,S.discoveries.includes('Moonfall Ruins')?['moonfall','Moonfall Ruins']:null].filter(Boolean);openInteraction('Waystone Network',destinations.map(([id,name])=>`<button class="travel-row" data-travel="${id}" ${S.zone===id?'disabled':''}>✦ ${name}</button>`).join('')+`<p class="panel-note">Fast travel unlocked early. More Ways awaken through the story.</p>`);}
-  function advanceDay(){S.day++;for(const [id,p]of Object.entries(S.properties)){const base=id==='smithy'?38:id==='inn'?52:34;const swing=Math.round(random(-10,18));const profit=Math.max(-8,base+swing+(p.level||0)*12);p.lastProfit=profit;p.total=(p.total||0)+profit;S.treasury+=profit;}if(S.day%3===0)toast('A new world event rumor appears on the notice board');}
+  function openWaystone(){
+    const area=atlasArea();if(area?.hasWaystone&&!S.attunedWaystones.includes(area.id)){S.attunedWaystones.push(area.id);toast(`${area.name} Waystone attuned`);save();}
+    const destinations=[['northford','Northford'],S.discoveries.includes('Greenwake Vale')?['greenwake','Greenwake Vale']:null,S.discoveries.includes('Moonfall Ruins')?['moonfall','Moonfall Ruins']:null,...S.attunedWaystones.map(id=>[id,ATLAS?.get(id)?.name]).filter(x=>x[1])].filter(Boolean);
+    openInteraction('Waystone Network',destinations.map(([id,name])=>`<button class="travel-row" data-travel="${id}" ${S.zone===id?'disabled':''}>✦ ${name}</button>`).join('')+`<p class="panel-note">Attune Waystones while exploring to expand the network.</p>`);
+  }
+  function eventForArea(area){
+    const tiers=['Local','Major','Crisis','Mythic'],tier=tiers[Math.min(3,Math.floor(area.danger/3))],target=4+area.danger;
+    return {id:`event:${area.id}:${S.day}`,areaId:area.id,name:pretty(area.eventFamily),tier,status:'active',progress:0,target,expires:S.day+2+Math.min(2,area.danger),reward:90+area.danger*45,xp:45+area.danger*20};
+  }
+  function ensureAreaEvent(area){if(!area)return;const current=S.activeEvents[area.id];if(current&&current.status!=='expired')return;if((hashNumber(`${area.id}:${S.day}`)%5)===0||area.hasElite)S.activeEvents[area.id]=eventForArea(area);}
+  function advanceDay(){
+    S.day++;let dailyTotal=0;
+    for(const [id,p]of Object.entries(S.properties)){
+      if(p.revenueMin==null){const legacyBase=id==='smithy'?38:id==='inn'?52:34;p.purchasePrice=p.purchasePrice||350;p.value=p.value||p.purchasePrice;p.operatingCost=p.operatingCost||8;p.revenueMin=legacyBase-10;p.revenueMax=legacyBase+18;p.name=p.name||pretty(id);}
+      const area=ATLAS?.get(id),event=area?S.activeEvents[id]:null,demand=event?.status==='active'?1.18:event?.status==='complete'?1.1:1;
+      const revenue=Math.round(random(p.revenueMin,p.revenueMax)*demand*(1+(p.level||0)*.24));
+      const cost=Math.round(p.operatingCost*(1+(p.level||0)*.18));const profit=revenue-cost;
+      p.lastProfit=profit;p.total=(p.total||0)+profit;p.value=Math.round((p.value||p.purchasePrice)*(1+Math.max(-.01,Math.min(.015,profit/10000))));dailyTotal+=profit;
+    }
+    S.treasury+=dailyTotal;S.profitHistory.push({day:S.day,profit:dailyTotal});S.profitHistory=S.profitHistory.slice(-14);
+    for(const event of Object.values(S.activeEvents))if(event.status==='active'&&S.day>event.expires)event.status='expired';
+    if(S.day%3===0)toast('New world event rumors have reached the Wayfarer Boards');
+  }
   function showChapterComplete(){el.chapterSummary.textContent='You recovered the Aether Lens, chose an ally, and opened the route toward the wider Vale. The next chapter begins at the Moonfall Waystone.';show(el.chapterComplete);el.gameScreen.inert=true;paused=true;el.keepExploringBtn.focus();}
 
   function pretty(text){return String(text).replace(/([A-Z])/g,' $1').replace(/_/g,' ').replace(/^./,c=>c.toUpperCase());}
   function objective(){const objectives=[['A Voice in the Vale','Find Mira near the lantern plaza'],['The South Road','Leave Northford through the south gate'],['Echoes in Greenwake',`Defeat corrupted echoes · ${Math.min(3,S.mainKills)}/3`],['A Mark in the Briars','Return to Mira in Northford'],['Choose an Ally','Visit the Guildhall and join a faction'],['Road to Moonfall','Take the east road through Greenwake'],['Keeper of the Seal','Defeat the Hollow Warden'],['The Fallen Warden','Collect the Aether Lens'],['The Road Remembers','Explore, grow stronger, and prepare for Chapter II']];return objectives[clamp(S.mainStep,0,objectives.length-1)];}
-  function updateHUD(){const stats=combatStats(),hpMax=S.maxHp+(equipped('Armor')?.maxHp||0);el.hpBar.style.width=`${clamp(S.hp/hpMax*100,0,100)}%`;el.manaBar.style.width=`${clamp(S.mana/S.maxMana*100,0,100)}%`;el.stamBar.style.width=`${clamp(S.stam/S.maxStam*100,0,100)}%`;el.hpText.textContent=Math.ceil(S.hp);el.manaText.textContent=Math.ceil(S.mana);el.hpProgress.setAttribute('aria-valuemax',hpMax);el.hpProgress.setAttribute('aria-valuenow',Math.ceil(S.hp));el.manaProgress.setAttribute('aria-valuemax',S.maxMana);el.manaProgress.setAttribute('aria-valuenow',Math.ceil(S.mana));el.stamProgress.setAttribute('aria-valuemax',S.maxStam);el.stamProgress.setAttribute('aria-valuenow',Math.ceil(S.stam));el.levelText.textContent=S.level;el.goldText.textContent=S.gold;const[t,x]=objective();el.objectiveTitle.textContent=t;el.objectiveText.textContent=x;const boss=enemies.find(e=>e.kind==='warden'&&!e.dead);show(el.bossHud,!!boss);if(boss)el.bossBar.style.width=`${Math.max(0,boss.hp/boss.maxHp*100)}%`;el.attackBtn.querySelector('small').textContent=counterBuff>0?'Counter':'Strike';void stats;}
+  function updateHUD(){const stats=combatStats(),hpMax=S.maxHp+(equipped('Armor')?.maxHp||0);el.hpBar.style.width=`${clamp(S.hp/hpMax*100,0,100)}%`;el.manaBar.style.width=`${clamp(S.mana/S.maxMana*100,0,100)}%`;el.stamBar.style.width=`${clamp(S.stam/S.maxStam*100,0,100)}%`;el.hpText.textContent=Math.ceil(S.hp);el.manaText.textContent=Math.ceil(S.mana);el.hpProgress.setAttribute('aria-valuemax',hpMax);el.hpProgress.setAttribute('aria-valuenow',Math.ceil(S.hp));el.manaProgress.setAttribute('aria-valuemax',S.maxMana);el.manaProgress.setAttribute('aria-valuenow',Math.ceil(S.mana));el.stamProgress.setAttribute('aria-valuemax',S.maxStam);el.stamProgress.setAttribute('aria-valuenow',Math.ceil(S.stam));el.levelText.textContent=S.level;el.goldText.textContent=S.gold;const[t,x]=objective();el.objectiveTitle.textContent=t;el.objectiveText.textContent=x;const boss=enemies.find(e=>e.kind==='warden'&&!e.dead);show(el.bossHud,!!boss);if(boss){el.bossBar.style.width=`${Math.max(0,boss.hp/boss.maxHp*100)}%`;el.bossHud.querySelector('span').textContent=atlasArea()?`${pretty(atlasArea().eventFamily)} elite`:'Hollow Warden';}el.attackBtn.querySelector('small').textContent=counterBuff>0?'Counter':'Strike';void stats;}
   function promptTutorial(text){el.tutorial.textContent=text;show(el.tutorial);}
   function dismissTutorial(){show(el.tutorial,false);}
 
   function renderJournal(tab=currentTab){currentTab=tab;document.querySelectorAll('.journal-tabs button').forEach(b=>{const active=b.dataset.tab===tab;b.classList.toggle('active',active);b.setAttribute('aria-selected',active)});const [title,text]=objective();
-    if(tab==='quest'){const side=Object.entries(S.sideQuests).filter(([,v])=>v!=='available').map(([id,status])=>`<div class="journal-card"><div class="journal-row"><h3>${id==='apothecary'?'Moonleaf Remedy':id==='stable'?'Clear the Brambles':'The Lost Scout'}</h3><span class="choice-tag">${status}</span></div><p>${id==='apothecary'?`Moonleaf ${Math.min(3,S.materials.moonleaf)}/3`:id==='stable'?`Briars ${Math.min(4,S.sideProgress.briars)}/4`:'Find the Rootbound Cache in southeast Greenwake.'}</p></div>`).join('');el.journalBody.innerHTML=`<div class="journal-card"><span class="choice-tag">Main story · Chapter I</span><h3>${title}</h3><p>${text}</p><div class="progress"><i style="width:${(S.mainStep/8)*100}%"></i></div></div>${side||'<div class="journal-card"><h3>Side quests</h3><p>Talk to townsfolk and explore interiors to find local stories.</p></div>'}`;}
+    if(tab==='quest'){const sideNames={apothecary:['Moonleaf Remedy',`Moonleaf ${Math.min(3,S.materials.moonleaf)}/3`],stable:['Clear the Brambles',`Briars ${Math.min(4,S.sideProgress.briars)}/4`],lostScout:['The Lost Scout','Find the Rootbound Cache in southeast Greenwake.'],innRumor:['Beneath the Mooncup','Search the inn fireplace for the hollow brick.'],smithyLedger:['The First Smith','Inspect the old maker’s mark inside Ember & Anvil.']};const side=Object.entries(S.sideQuests).filter(([,v])=>v!=='available').map(([id,status])=>`<div class="journal-card"><div class="journal-row"><h3>${sideNames[id]?.[0]||pretty(id)}</h3><span class="choice-tag">${status}</span></div><p>${sideNames[id]?.[1]||'Follow the local clue.'}</p></div>`).join('');const contracts=Object.values(S.dynamicQuests).filter(q=>q.status!=='complete').map(q=>`<div class="journal-card"><div class="journal-row"><h3>${q.name}</h3><span class="choice-tag">${q.status}</span></div><p>${q.text} · ${q.progress}/${q.target}</p></div>`).join('');el.journalBody.innerHTML=`<div class="journal-card"><span class="choice-tag">Main story · Chapter I</span><h3>${title}</h3><p>${text}</p><div class="progress"><i style="width:${(S.mainStep/8)*100}%"></i></div></div>${side}${contracts||(!side?'<div class="journal-card"><h3>Side quests</h3><p>Talk to townsfolk and read Wayfarer Boards across the world.</p></div>':'')}`;}
     if(tab==='gear'){const slots=['Weapon','Armor','Charm'].map(type=>{const item=equipped(type);return `<div class="equipment-slot"><small>${type}</small><strong>${item?.name||'Empty'}</strong><span>${item?item.rarity:''}</span></div>`}).join('');const items=S.inventory.map(i=>`<article class="inventory-row rarity-${i.rarity.toLowerCase()}"><div><strong>${i.name}</strong><small>${i.rarity} ${i.type} · ${i.description||''}</small></div>${['Weapon','Armor','Charm'].includes(i.type)?`<button data-equip="${i.uid}" ${S.equipment[i.type]===i.uid?'disabled':''}>${S.equipment[i.type]===i.uid?'Equipped':'Equip'}</button>`:i.type==='Consumable'?`<button data-use="${i.uid}">Use</button>`:''}</article>`).join('');el.journalBody.innerHTML=`<div class="equipment-grid">${slots}</div><div class="inventory-list">${items}</div>`;}
     if(tab==='skills'){el.journalBody.innerHTML=`<div class="journal-card"><div class="journal-row"><h3>Ability Constellation</h3><strong>${S.skillPoints} point${S.skillPoints===1?'':'s'}</strong></div><p>Unlock abilities in any tree. Your opening path never locks you out.</p></div><div class="skill-grid">${SKILLS.map(s=>{const unlocked=hasSkill(s.id),ready=!s.requires||hasSkill(s.requires);return `<article class="skill-node ${unlocked?'unlocked':''}"><small>${s.tree}</small><h3>${s.name}</h3><p>${s.text}</p><button data-skill="${s.id}" ${unlocked||!ready||S.skillPoints<s.cost?'disabled':''}>${unlocked?'Unlocked':`${s.cost} point${s.cost>1?'s':''}`}</button></article>`}).join('')}</div>`;}
     if(tab==='factions'){el.journalBody.innerHTML=S.faction?`<div class="journal-card"><span class="choice-tag">Your faction</span><h3>${FACTIONS[S.faction].name}</h3><p>${FACTIONS[S.faction].description}</p><div class="progress"><i style="width:${Math.min(100,S.factionRep[S.faction]/7)}%"></i></div><p>${S.factionRep[S.faction]} reputation · Next rank at 100</p></div>`:`<div class="journal-card"><h3>No faction chosen</h3><p>Visit Northford Guildhall. Faction commitments unlock rank rewards, gear, abilities, and questlines.</p></div>`;}
-    if(tab==='world'){el.journalBody.innerHTML=`<div class="journal-card"><h3>${ZONES[S.zone].name} · Day ${S.day}</h3><p>${ZONES[S.zone].subtitle}</p></div><div class="journal-card"><h3>Discovered</h3><p>${S.discoveries.join(' · ')}</p></div><div class="journal-card"><span class="choice-tag">World event rumor</span><h3>${S.day%3===0?'Broken Caravan':'The Briar King Walks'}</h3><p>${S.day%3===0?'A trade caravan is overdue on the Greenwake road.':'Hunters report crown-shaped tracks beyond the Vale. Recommended level 5.'}</p></div><div class="journal-card"><h3>Vehicles</h3><p>Windstrider: ${S.mounts.length?'Owned':'Not owned'} · Skiff: ${S.vehicles.skiff?'Built':'Plans missing'} · Airship parts: ${S.vehicles.airshipParts}/3</p></div>`;}
-    if(tab==='economy'){const owned=Object.entries(S.properties).map(([id,p])=>`<div class="journal-card"><div class="journal-row"><h3>${pretty(id)}</h3><strong>${p.lastProfit>=0?'+':''}${p.lastProfit||0}g yesterday</strong></div><p>Tier ${(p.level||0)+1} · Lifetime ${p.total||0}g</p></div>`).join('');el.journalBody.innerHTML=`<div class="journal-card"><div class="journal-row"><div><h3>Portfolio ledger</h3><p>Income resolves by adventure day, never real-world timers.</p></div><strong>${S.treasury}g treasury</strong></div><button data-economy="collect" ${S.treasury<=0?'disabled':''}>Transfer treasury</button> <button data-economy="day">Rest to next day</button></div>${owned||'<div class="journal-card"><h3>No properties yet</h3><p>Complete Chapter I to unlock deeds for the Smithy, Mooncup Inn, Greenbottle Apothecary, and Eastfield land.</p></div>'}${S.chapterComplete&&!S.properties.smithy?'<div class="journal-card"><h3>Ember & Anvil share</h3><p>Purchase 25% of the smithy. Variable daily profit and an 8% gear discount.</p><button data-property="smithy" '+(S.gold<350?'disabled':'')+'>Purchase · 350g</button></div>':''}`;}
+    if(tab==='world'){const z=zone(),area=atlasArea(),event=area?S.activeEvents[area.id]:null,neighbors=area?Object.values(area.exits).map(id=>ATLAS.get(id)?.name).filter(Boolean):[];el.journalBody.innerHTML=`<div class="journal-card"><h3>${z.name} · Day ${S.day}</h3><p>${z.subtitle}${area?` · Recommended level ${area.recommendedLevel} · Danger ${area.danger}`:''}</p></div><div class="journal-card"><h3>World atlas · ${S.atlasDiscovered.length}/${ATLAS?.totalAreas||288}</h3><p>${area?`Roads: ${neighbors.join(' · ')}`:S.discoveries.join(' · ')}</p><div class="progress"><i style="width:${S.atlasDiscovered.length/(ATLAS?.totalAreas||288)*100}%"></i></div></div>${event?`<div class="journal-card"><span class="choice-tag">${event.tier} world event · ${event.status}</span><h3>${event.name}</h3><p>${event.progress}/${event.target} threats · Expires after day ${event.expires} · Reward ${event.reward}g</p></div>`:'<div class="journal-card"><h3>No local crisis</h3><p>Events rotate by adventure day and can change regional demand.</p></div>'}<div class="journal-card"><h3>Vehicles</h3><p>Windstrider: ${S.mounts.length?'Owned':'Not owned'} · Skiff: ${S.vehicles.skiff?'Built':'Plans missing'} · Airship parts: ${S.vehicles.airshipParts}/3</p></div>`;}
+    if(tab==='economy'){const values=Object.values(S.properties),portfolio=values.reduce((n,p)=>n+(p.value||p.purchasePrice||0),0),average=S.profitHistory.length?Math.round(S.profitHistory.reduce((n,d)=>n+d.profit,0)/S.profitHistory.length):0;const owned=Object.entries(S.properties).map(([id,p])=>{const cost=Math.round((p.purchasePrice||350)*.55*(1+(p.level||0)*.65));return `<div class="journal-card"><div class="journal-row"><h3>${p.name||pretty(id)}</h3><strong>${p.lastProfit>=0?'+':''}${p.lastProfit||0}g yesterday</strong></div><p>${pretty(p.type||'business')} · Tier ${(p.level||0)+1} · Value ${p.value||p.purchasePrice||350}g · Lifetime ${p.total||0}g</p><button data-property-upgrade="${id}" ${S.gold<cost?'disabled':''}>Upgrade · ${cost}g</button></div>`}).join('');el.journalBody.innerHTML=`<div class="journal-card"><div class="journal-row"><div><h3>Portfolio ledger</h3><p>${values.length} properties · Value ${portfolio}g · 14-day average ${average>=0?'+':''}${average}g</p></div><strong>${S.treasury}g treasury</strong></div><button data-economy="collect" ${S.treasury<=0?'disabled':''}>Transfer treasury</button> <button data-economy="day">Advance adventure day</button></div>${owned||'<div class="journal-card"><h3>No properties yet</h3><p>Property deeds appear throughout settlements and landmarks in the wider Vale.</p></div>'}${S.chapterComplete&&!S.properties.smithy?'<div class="journal-card"><h3>Ember & Anvil share</h3><p>Purchase 25% of the smithy. Variable daily profit and an 8% gear discount.</p><button data-property="smithy" '+(S.gold<350?'disabled':'')+'>Purchase · 350g</button></div>':''}`;}
     if(tab==='settings'){el.journalBody.innerHTML=`${settingRow('Sound effects','sound')}${settingRow('Haptics','haptics')}${settingRow('Reduced motion','reducedMotion')}${settingRow('High contrast','highContrast')}${settingRow('Left-handed controls','leftHanded')}${settingRow('Story assist · less damage, stronger attacks','assistMode')}<div class="setting"><strong>Save progress</strong><button data-save>Save now</button></div><div class="setting"><strong>Start over</strong><button data-reset class="danger-btn">Reset save</button></div>`;}
   }
   function settingRow(label,key){return `<div class="setting"><strong>${label}</strong><button role="switch" aria-checked="${S.settings[key]}" class="${S.settings[key]?'on':''}" data-setting="${key}">${S.settings[key]?'On':'Off'}</button></div>`;}
@@ -498,6 +738,9 @@
   function closeJournal(){show(el.journal,false);el.gameScreen.inert=false;paused=false;last=performance.now();restoreFocus?.focus?.();restoreFocus=null;}
 
   function handleUiAction(target){
+    const acceptQuest=target.closest('[data-accept-quest]');if(acceptQuest){const id=acceptQuest.dataset.acceptQuest,area=atlasArea(),q=areaQuest(area);if(q&&q.id===id){q.status='active';q.progress=S.areaKills[area.id]||0;q.progress=Math.min(q.target,q.progress);if(q.progress>=q.target)q.status='ready';S.dynamicQuests[id]=q;save();closeInteraction();toast('Contract accepted · Track it in Quests');}return;}
+    const propertyBuy=target.closest('[data-property-buy]');if(propertyBuy){const area=ATLAS?.get(propertyBuy.dataset.propertyBuy);if(area&&!S.properties[area.id]){const p=propertyBlueprint(area);if(S.gold>=p.purchasePrice){S.gold-=p.purchasePrice;S.properties[area.id]=p;save();updateHUD();openProperty(area);toast(`${p.name} added to your portfolio`);}}return;}
+    const propertyUpgrade=target.closest('[data-property-upgrade]');if(propertyUpgrade){const id=propertyUpgrade.dataset.propertyUpgrade,p=S.properties[id];if(p){const cost=Math.round((p.purchasePrice||350)*.55*(1+(p.level||0)*.65));if(S.gold>=cost){S.gold-=cost;p.level=(p.level||0)+1;p.value=(p.value||p.purchasePrice||350)+cost;p.revenueMin=Math.round((p.revenueMin||28)*1.2);p.revenueMax=Math.round((p.revenueMax||56)*1.2);p.operatingCost=Math.round((p.operatingCost||8)*1.1);save();updateHUD();toast(`${p.name||pretty(id)} upgraded to tier ${p.level+1}`);if(el.journal.classList.contains('is-hidden'))openProperty(ATLAS?.get(id));else renderJournal('economy');}}return;}
     const buy=target.closest('[data-buy]');if(buy){const item=ITEM_TEMPLATES[buy.dataset.buy],price=priceFor(item);if(S.gold>=price){S.gold-=price;const gained=addItem(item.id);lootMessage(`Purchased · ${gained.name}`,gained.rarity);save();openShop(currentInteract?.shop||'smithy',currentInteract?.name||'Merchant');}return;}
     const equip=target.closest('[data-equip]');if(equip){const item=itemByUid(equip.dataset.equip);if(item){S.equipment[item.type]=item.uid;toast(`${item.name} equipped`);save();renderJournal('gear');}return;}
     const use=target.closest('[data-use]');if(use){const index=S.inventory.findIndex(i=>i.uid===use.dataset.use),item=S.inventory[index];if(item){if(item.heal)S.hp=Math.min(S.maxHp+(equipped('Armor')?.maxHp||0),S.hp+item.heal);if(item.mana)S.mana=Math.min(S.maxMana,S.mana+item.mana);S.inventory.splice(index,1);toast(`${item.name} used`);save();renderJournal('gear');}return;}
@@ -511,19 +754,26 @@
     if(target.closest('[data-save]')){save();toast('Journey saved');return;}
     if(target.closest('[data-reset]')){if(confirm('Erase this journey and begin again?')){localStorage.removeItem(SAVE_KEY);localStorage.removeItem(LEGACY_SAVE_KEY);location.reload();}return;}
     const econ=target.closest('[data-economy]');if(econ){if(econ.dataset.economy==='collect'){S.gold+=S.treasury;S.treasury=0;toast('Treasury transferred');}else advanceDay();save();renderJournal('economy');return;}
-    const prop=target.closest('[data-property]');if(prop&&S.gold>=350){S.gold-=350;S.properties.smithy={level:0,lastProfit:0,total:0};toast('Ember & Anvil added to portfolio');save();renderJournal('economy');}
+    const prop=target.closest('[data-property]');if(prop&&S.gold>=350){S.gold-=350;S.properties.smithy={name:'Ember & Anvil share',type:'smithy',purchasePrice:350,value:350,operatingCost:8,revenueMin:28,revenueMax:56,level:0,lastProfit:0,total:0};toast('Ember & Anvil added to portfolio');save();renderJournal('economy');}
   }
 
   function spawnBurst(x,y,color,count){for(let i=0;i<count;i++){const a=random(0,Math.PI*2),sp=random(20,105);particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:random(.25,.7),max:.7,color,size:random(2,5)});}}
   function floatText(x,y,text,color){damageTexts.push({x,y,text,color,life:.85});}
-  function drawWorld(){const z=zone();const art=z.type==='town'&&imageReady.bg?bg:z.type==='wild'&&imageReady.greenwake?greenwakeBg:z.type==='ruins'&&imageReady.moonfall?moonfallBg:null;if(art){ctx.drawImage(art,0,0,z.width,z.height);ctx.fillStyle=z.type==='town'?'rgba(5,28,22,.08)':'rgba(2,18,15,.05)';ctx.fillRect(0,0,z.width,z.height);}else{const grad=ctx.createLinearGradient(0,0,0,z.height);grad.addColorStop(0,z.tint);grad.addColorStop(1,'#071713');ctx.fillStyle=grad;ctx.fillRect(0,0,z.width,z.height);drawGroundPattern(z);}for(const d of decor)drawDecor(d);}
+  function drawWorld(){const z=zone();if(z.type==='atlas')drawAtlasWorld(z.area,z);else{const interior=INTERIOR_LAYOUTS[S.zone],art=interior&&imageReady.interiors[S.zone]?interiorArt[S.zone]:z.type==='town'&&imageReady.bg?bg:z.type==='wild'&&imageReady.greenwake?greenwakeBg:z.type==='ruins'&&imageReady.moonfall?moonfallBg:null;if(art){ctx.drawImage(art,0,0,z.width,z.height);ctx.fillStyle=z.type==='town'?'rgba(5,28,22,.08)':z.type==='interior'?'rgba(3,10,9,.03)':'rgba(2,18,15,.05)';ctx.fillRect(0,0,z.width,z.height);}else{const grad=ctx.createLinearGradient(0,0,0,z.height);grad.addColorStop(0,z.tint);grad.addColorStop(1,'#071713');ctx.fillStyle=grad;ctx.fillRect(0,0,z.width,z.height);drawGroundPattern(z);}}for(const d of decor)drawDecor(d);}
+  function drawAtlasWorld(area,z){
+    const grad=ctx.createLinearGradient(0,0,z.width,z.height);grad.addColorStop(0,area.palette[0]);grad.addColorStop(.62,area.palette[1]);grad.addColorStop(1,'#071713');ctx.fillStyle=grad;ctx.fillRect(0,0,z.width,z.height);
+    ctx.save();ctx.globalAlpha=.22;ctx.fillStyle=area.palette[2];for(let i=0;i<28;i++){const seed=hashNumber(`${area.id}:ground:${i}`),x=seed%z.width,y=(seed>>>9)%z.height,r=45+(seed%95);ctx.beginPath();ctx.ellipse(x,y,r,r*.55,(seed%30)/10,0,7);ctx.fill();}ctx.restore();
+    ctx.save();ctx.strokeStyle='rgba(236,215,157,.26)';ctx.lineWidth=54;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(70,550);ctx.bezierCurveTo(520,470,1180,650,1730,550);ctx.stroke();ctx.strokeStyle='rgba(44,30,20,.28)';ctx.lineWidth=3;ctx.setLineDash([10,16]);ctx.stroke();ctx.restore();
+    if(area.kind==='settlement'){ctx.save();ctx.fillStyle='rgba(20,16,13,.72)';for(let i=0;i<7;i++){const x=570+i*110,y=400+(i%2)*145;ctx.fillRect(x-34,y-28,68,56);ctx.fillStyle='#d59450';ctx.beginPath();ctx.moveTo(x-44,y-28);ctx.lineTo(x,y-63);ctx.lineTo(x+44,y-28);ctx.fill();ctx.fillStyle='rgba(20,16,13,.72)';}ctx.restore();}
+    if(area.kind==='dungeon'){ctx.save();ctx.translate(900,390);ctx.fillStyle='rgba(4,10,12,.78)';ctx.fillRect(-105,-70,210,140);ctx.fillStyle=area.palette[2];ctx.fillRect(-42,-50,84,120);ctx.strokeStyle='rgba(180,255,238,.42)';ctx.lineWidth=5;ctx.strokeRect(-42,-50,84,120);ctx.restore();}
+  }
   function drawGroundPattern(z){ctx.save();ctx.globalAlpha=.22;ctx.strokeStyle=z.type==='ruins'?'#86aab4':'#8ebc8c';ctx.lineWidth=2;for(let y=80;y<z.height;y+=90){ctx.beginPath();for(let x=0;x<z.width;x+=48){ctx.lineTo(x,y+Math.sin(x*.02+y)*12);}ctx.stroke();}ctx.restore();}
   function drawDecor(d){ctx.save();ctx.translate(d.x,d.y);ctx.scale(d.s,d.s);if(d.kind==='tree'){ctx.fillStyle='#0d2419';ctx.fillRect(-5,-12,10,30);ctx.fillStyle='#173f28';for(let i=0;i<3;i++){ctx.beginPath();ctx.arc((i-1)*11,-18-i*10,24-i*3,0,7);ctx.fill();}}else if(d.kind==='rock'||d.kind==='pillar'){ctx.fillStyle=d.kind==='pillar'?'#57696b':'#394d43';ctx.beginPath();ctx.moveTo(-15,12);ctx.lineTo(-10,-18);ctx.lineTo(9,-24);ctx.lineTo(17,10);ctx.closePath();ctx.fill();}else if(d.kind==='crystal'){ctx.fillStyle='#68dccc88';ctx.shadowColor='#6affea';ctx.shadowBlur=12;ctx.beginPath();ctx.moveTo(0,-20);ctx.lineTo(10,4);ctx.lineTo(0,15);ctx.lineTo(-10,4);ctx.closePath();ctx.fill();}else if(d.kind==='lamp'){ctx.strokeStyle='#9b7948';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(0,14);ctx.lineTo(0,-14);ctx.stroke();ctx.fillStyle='#ffe491';ctx.shadowColor='#ffc85c';ctx.shadowBlur=15;ctx.fillRect(-4,-18,8,9);}else if(d.kind==='table'){ctx.fillStyle='#5a3c26';ctx.fillRect(-18,-10,36,20);}else{ctx.fillStyle='#84b875';ctx.fillRect(-2,-8,4,14);ctx.fillStyle='#d8a8dc';ctx.fillRect(-6,-11,12,5);}ctx.restore();}
   function shadow(x,y,r){ctx.save();ctx.globalAlpha=.42;ctx.fillStyle='#00100e';ctx.beginPath();ctx.ellipse(x,y,r,r*.34,0,0,7);ctx.fill();ctx.restore();}
   function drawHero(){const moving=Math.hypot(input.x,input.y)>.12||[...keys].some(k=>/Arrow|Key[WASD]/.test(k));const bob=moving?Math.sin(performance.now()/70)*2:Math.sin(performance.now()/280);shadow(S.x,S.y+18,S.activeMount?25:17);ctx.save();ctx.translate(S.x,S.y+bob);if(lastFacing.x<-.15)ctx.scale(-1,1);if(invuln>0&&Math.floor(invuln*20)%2===0)ctx.globalAlpha=.45;if(S.activeMount){ctx.fillStyle='#9a683f';ctx.beginPath();ctx.ellipse(0,8,29,18,0,0,7);ctx.fill();ctx.fillStyle='#d2a171';ctx.beginPath();ctx.arc(20,-1,11,0,7);ctx.fill();ctx.translate(0,-13);}ctx.shadowColor='#68ffe1';ctx.shadowBlur=invuln>0?16:4;if(imageReady.hero)ctx.drawImage(hero,-24,-52,48,64);else{ctx.fillStyle='#2e7955';ctx.fillRect(-12,-18,24,34);ctx.fillStyle='#efb184';ctx.beginPath();ctx.arc(0,-20,9,0,7);ctx.fill();}ctx.restore();}
   function drawNpc(o){shadow(o.x,o.y+14,15);ctx.save();ctx.translate(o.x,o.y);if(o.id==='mira'&&imageReady.mira)ctx.drawImage(miraArt,-31,-51,62,66);else{const hue=(o.id.charCodeAt(0)*37)%360;ctx.fillStyle=`hsl(${hue} 38% 42%)`;ctx.beginPath();ctx.moveTo(0,-24);ctx.lineTo(-15,18);ctx.lineTo(15,18);ctx.closePath();ctx.fill();ctx.fillStyle='#e3b38a';ctx.beginPath();ctx.arc(0,-23,8,0,7);ctx.fill();}ctx.restore();}
   function drawCompanion(){if(!companionActive())return;shadow(companion.x,companion.y+14,14);ctx.save();ctx.translate(companion.x,companion.y);ctx.shadowColor='#ffe58a';ctx.shadowBlur=8;if(imageReady.mira)ctx.drawImage(miraArt,-28,-47,56,60);else{ctx.fillStyle='#6f3d76';ctx.beginPath();ctx.moveTo(0,-25);ctx.lineTo(-14,17);ctx.lineTo(14,17);ctx.closePath();ctx.fill();}ctx.restore();}
-  function drawObject(o){if(o.kind==='npc'||o.kind==='shop'||o.kind==='rest'||o.kind==='stable'||o.kind==='faction')drawNpc(o);else if(o.kind==='portal'){ctx.save();ctx.translate(o.x,o.y);const pulse=1+Math.sin(performance.now()/260+o.x)*.12;ctx.scale(pulse,pulse);ctx.fillStyle='#ffe086';ctx.shadowColor='#ffd15b';ctx.shadowBlur=18;ctx.beginPath();ctx.moveTo(0,-10);ctx.lineTo(8,0);ctx.lineTo(0,10);ctx.lineTo(-8,0);ctx.closePath();ctx.fill();ctx.strokeStyle='#fff4ba';ctx.lineWidth=2;ctx.stroke();ctx.restore();}else if(o.kind==='waystone'){ctx.save();ctx.translate(o.x,o.y);ctx.fillStyle='#62e4d0';ctx.shadowColor='#69ffea';ctx.shadowBlur=22;ctx.beginPath();ctx.moveTo(0,-30);ctx.lineTo(14,0);ctx.lineTo(0,28);ctx.lineTo(-14,0);ctx.closePath();ctx.fill();ctx.restore();}else if(o.kind==='chest'){ctx.fillStyle=S.opened.includes(o.id)?'#3b3429':'#b68536';ctx.fillRect(o.x-18,o.y-10,36,24);ctx.strokeStyle='#f0cf76';ctx.strokeRect(o.x-18,o.y-10,36,24);}if(distance(S,o)<150){ctx.save();ctx.font='700 12px system-ui';ctx.textAlign='center';ctx.fillStyle='#fff3c5';ctx.strokeStyle='#04110e';ctx.lineWidth=4;ctx.strokeText(o.name,o.x,o.y-42);ctx.fillText(o.name,o.x,o.y-42);ctx.restore();}}
+  function drawObject(o){if(o.secret&&distance(S,o)>210&&!S.opened.includes(o.id))return;if(o.kind==='npc'||o.kind==='shop'||o.kind==='rest'||o.kind==='stable'||o.kind==='faction'||o.kind==='localNpc'||o.kind==='atlasNpc'||o.kind==='atlasShop')drawNpc(o);else if(o.kind==='portal'){ctx.save();ctx.translate(o.x,o.y);const pulse=1+Math.sin(performance.now()/260+o.x)*.12;ctx.scale(pulse,pulse);ctx.fillStyle='#ffe086';ctx.shadowColor='#ffd15b';ctx.shadowBlur=18;ctx.beginPath();ctx.moveTo(0,-10);ctx.lineTo(8,0);ctx.lineTo(0,10);ctx.lineTo(-8,0);ctx.closePath();ctx.fill();ctx.strokeStyle='#fff4ba';ctx.lineWidth=2;ctx.stroke();ctx.restore();}else if(o.kind==='waystone'){ctx.save();ctx.translate(o.x,o.y);ctx.fillStyle='#62e4d0';ctx.shadowColor='#69ffea';ctx.shadowBlur=22;ctx.beginPath();ctx.moveTo(0,-30);ctx.lineTo(14,0);ctx.lineTo(0,28);ctx.lineTo(-14,0);ctx.closePath();ctx.fill();ctx.restore();}else if(o.kind==='chest'){ctx.fillStyle=S.opened.includes(o.id)?'#3b3429':'#b68536';ctx.fillRect(o.x-18,o.y-10,36,24);ctx.strokeStyle='#f0cf76';ctx.strokeRect(o.x-18,o.y-10,36,24);}else if(o.kind==='lore'||o.kind==='atlasLore'){ctx.save();ctx.translate(o.x,o.y);ctx.fillStyle='#77e6d2';ctx.shadowColor='#68ffe7';ctx.shadowBlur=10;ctx.rotate(Math.PI/4);ctx.fillRect(-8,-8,16,16);ctx.restore();}else if(o.kind==='notice'){ctx.fillStyle='#583b25';ctx.fillRect(o.x-26,o.y-32,52,48);ctx.fillStyle='#d5c590';ctx.fillRect(o.x-19,o.y-26,38,31);ctx.fillStyle='#2f2118';ctx.fillRect(o.x-3,o.y+14,6,28);}else if(o.kind==='property'){ctx.save();ctx.translate(o.x,o.y);ctx.fillStyle=S.properties[atlasArea()?.id]?'#64d69b':'#d8b65e';ctx.shadowColor=ctx.fillStyle;ctx.shadowBlur=12;ctx.beginPath();ctx.moveTo(0,-20);ctx.lineTo(20,-3);ctx.lineTo(13,22);ctx.lineTo(-13,22);ctx.lineTo(-20,-3);ctx.closePath();ctx.fill();ctx.fillStyle='#19352b';ctx.fillRect(-5,4,10,18);ctx.restore();}if(distance(S,o)<150){ctx.save();ctx.font='700 12px system-ui';ctx.textAlign='center';ctx.fillStyle='#fff3c5';ctx.strokeStyle='#04110e';ctx.lineWidth=4;ctx.strokeText(o.name,o.x,o.y-42);ctx.fillText(o.name,o.x,o.y-42);ctx.restore();}}
   function drawEnemyTelegraph(e){const pulse=.5+.5*Math.sin(performance.now()/45);ctx.save();ctx.translate(e.x,e.y);ctx.strokeStyle=`rgba(255,73,56,${.68+.25*pulse})`;ctx.fillStyle=`rgba(255,45,34,${.09+.07*pulse})`;ctx.lineWidth=4;if(e.attackKind==='radial'){ctx.beginPath();ctx.arc(0,0,e.r+72*(1-e.stateTimer/e.telegraphDuration),0,7);ctx.fill();ctx.stroke();}else if(e.attackKind==='bolt'){ctx.rotate(Math.atan2(e.attackDir.y,e.attackDir.x));ctx.beginPath();ctx.moveTo(e.r,0);ctx.lineTo(230,-18);ctx.lineTo(230,18);ctx.closePath();ctx.fill();ctx.stroke();}else{ctx.rotate(Math.atan2(e.attackDir.y,e.attackDir.x));ctx.beginPath();ctx.moveTo(2,-e.r*.8);ctx.lineTo(e.r+76,-34);ctx.lineTo(e.r+76,34);ctx.lineTo(2,e.r*.8);ctx.closePath();ctx.fill();ctx.stroke();}ctx.restore();}
   function drawEnemy(e){if(e.state==='windup')drawEnemyTelegraph(e);shadow(e.x,e.y+e.r*.72,e.r*.9);ctx.save();ctx.translate(e.x,e.y);if(e.flash>0)ctx.filter='brightness(3)';let rot=0,scaleX=1,scaleY=1,offset=0;if(e.state==='windup'){const p=1-e.stateTimer/e.telegraphDuration;scaleX=1-.12*p;scaleY=1+.16*p;rot=Math.sin(p*Math.PI)*-.12;}if(e.state==='attack'){offset=10;scaleX=1.2;scaleY=.84;}if(e.state==='recover'){scaleX=1.08;scaleY=.92;}ctx.rotate(rot);ctx.translate(e.attackDir.x*offset,e.attackDir.y*offset);ctx.scale(scaleX,scaleY);if(e.kind==='wisp'){ctx.shadowColor='#69ffe8';ctx.shadowBlur=18;ctx.fillStyle='#74f4dd55';ctx.beginPath();ctx.arc(0,0,22,0,7);ctx.fill();ctx.fillStyle='#cafff3';ctx.beginPath();ctx.moveTo(0,-17);ctx.quadraticCurveTo(21,0,0,21);ctx.quadraticCurveTo(-21,0,0,-17);ctx.fill();ctx.fillStyle='#153b39';ctx.fillRect(-7,-4,4,4);ctx.fillRect(3,-4,4,4);}else if(e.kind==='warden'&&imageReady.warden){ctx.shadowColor='#69ffe8';ctx.shadowBlur=12;ctx.drawImage(wardenArt,-66,-94,132,122);}else{ctx.shadowColor=e.kind==='briar'?'#8ecf63':'#69ffe8';ctx.shadowBlur=10;ctx.fillStyle=e.kind==='briar'?'#45662f':'#536b65';ctx.beginPath();ctx.moveTo(0,-e.r*1.25);ctx.lineTo(e.r,-e.r*.55);ctx.lineTo(e.r*1.05,e.r*.75);ctx.lineTo(0,e.r);ctx.lineTo(-e.r*1.05,e.r*.75);ctx.lineTo(-e.r,-e.r*.55);ctx.closePath();ctx.fill();ctx.strokeStyle=e.kind==='briar'?'#9cbb62':'#9cb3a8';ctx.lineWidth=4;ctx.stroke();ctx.fillStyle='#ff685e';ctx.fillRect(-e.r*.45,-e.r*.55,e.r*.3,5);ctx.fillRect(e.r*.15,-e.r*.55,e.r*.3,5);}ctx.restore();if(e.hp<e.maxHp){ctx.fillStyle='#07100e';ctx.fillRect(e.x-e.r,e.y-e.r-19,e.r*2,6);ctx.fillStyle='#ed6d5b';ctx.fillRect(e.x-e.r+1,e.y-e.r-18,(e.r*2-2)*e.hp/e.maxHp,4);}}
   function drawLoot(){for(const d of loot){const bob=Math.sin(performance.now()/140+d.x)*3;ctx.save();ctx.translate(d.x,d.y+bob);if(d.kind==='gold'){ctx.fillStyle='#ffd963';ctx.shadowColor='#ffcb4f';ctx.shadowBlur=8;ctx.beginPath();ctx.ellipse(0,0,6,3,0,0,7);ctx.fill();ctx.strokeStyle='#8d5e1d';ctx.stroke();}else{const color=RARITY[d.rarity||ITEM_TEMPLATES[d.itemId]?.rarity||'Uncommon'];ctx.fillStyle=color;ctx.shadowColor=color;ctx.shadowBlur=14;ctx.fillRect(-7,-7,14,14);ctx.globalAlpha=.25;ctx.fillRect(-2,-Math.min(120,d.age*35+28),4,Math.min(120,d.age*35+28));}ctx.restore();}}
@@ -585,7 +835,12 @@
     makeDrop('item', S.x - 92, S.y + 18, { itemId: 'briar_edge', rarity: 'Rare' });
     paused = true; updateHUD();
   }
+  function startQaAtlasShowcase(mode='atlas') {
+    S=defaultSave();S.style='ranger';S.storyChoice='mercy';S.mainStep=8;S.chapterComplete=true;S.level=10;S.gold=2400;S.mounts=['windstrider'];S.activeMount='windstrider';
+    beginGame(false);enterZone(ATLAS?.firstArea||'northford',null,false);if(mode==='atlas-property'){S.x=1060;S.y=470;}if(mode==='atlas-board'){S.x=760;S.y=480;}if(mode==='atlas-route'){S.x=1718;S.y=550;}const focusId=new URLSearchParams(location.search).get('focus'),focus=objectsForZone().find(o=>o.id===focusId||o.id.endsWith(`:${focusId}`));if(focus){S.x=focus.x;S.y=focus.y+72;}show(el.toast,false);paused=false;updateCamera(.5);updateHUD();
+  }
+  function startQaInterior(id){S=defaultSave();S.style='vanguard';S.storyChoice='mercy';S.mainStep=4;S.gold=500;beginGame(false);enterZone(id,null,false);const focusId=new URLSearchParams(location.search).get('focus'),focus=objectsForZone().find(o=>o.id===focusId);if(focus){S.x=focus.x;S.y=focus.y+72;}show(el.toast,false);paused=false;updateCamera(.5);updateHUD();}
 
   applySettings();updateFullscreenButton();
-  addEventListener('load',()=>setTimeout(()=>{show(el.loading,false);const qaCombat=['127.0.0.1','localhost'].includes(location.hostname)&&new URLSearchParams(location.search).get('qa')==='combat';if(qaCombat){startQaCombatShowcase();return;}show(el.titleScreen,true);if((localStorage.getItem(SAVE_KEY)||localStorage.getItem(LEGACY_SAVE_KEY))&&S.style)show(el.continueBtn,true);},520));
+  addEventListener('load',()=>setTimeout(()=>{show(el.loading,false);const local=['127.0.0.1','localhost'].includes(location.hostname),qa=new URLSearchParams(location.search).get('qa');if(local&&qa==='combat'){startQaCombatShowcase();return;}if(local&&['atlas','atlas-property','atlas-board','atlas-route'].includes(qa)){startQaAtlasShowcase(qa);return;}if(local&&qa?.startsWith('interior-')){const id=qa.replace('interior-','');if(INTERIOR_LAYOUTS[id]){startQaInterior(id);return;}}show(el.titleScreen,true);if((localStorage.getItem(SAVE_KEY)||localStorage.getItem(LEGACY_SAVE_KEY))&&S.style)show(el.continueBtn,true);},520));
 })();
