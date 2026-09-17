@@ -10,6 +10,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
   <link rel="stylesheet" href="styles/game-v3.css?v=21.2">
+  <link rel="stylesheet" href="styles/visual-v22.css?v=22">
   <title>Everlight: Vale of Echoes</title>
 </head>
 <body>
@@ -106,17 +107,22 @@
     </section>
   </main>
   <div id="srUpdates" class="sr-only" aria-live="assertive"></div>
-  <script>window.__EVERLIGHT_EXPECTED_BUILD__='21';</script>
+  <script>window.__EVERLIGHT_EXPECTED_BUILD__='21';window.__EVERLIGHT_EXPECTED_VISUAL_BUILD__='22';</script>
+  <script src="js/visual-upgrade-v22.js?v=22"></script>
   <script src="js/game-v4.js?v=21.2"></script>
   <script>
     (() => {
       const build = window.__EVERLIGHT_EXPECTED_BUILD__;
       if (window.__EVERLIGHT_BUILD__ !== build) {
-        location.replace(`./index.html?v=${build}&refresh=${Date.now()}`);
+        location.replace(`./index.html?v=${build}&visual=22&refresh=${Date.now()}`);
+        return;
+      }
+      if (window.__EVERLIGHT_VISUAL_BUILD__ !== window.__EVERLIGHT_EXPECTED_VISUAL_BUILD__) {
+        location.replace(`./index.html?v=${build}&visual=22&refresh=${Date.now()}`);
         return;
       }
       if ('serviceWorker' in navigator) addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=21.2', { updateViaCache: 'none' }).then(registration => registration.update());
+        navigator.serviceWorker.register('./sw.js?v=22', { updateViaCache: 'none' }).then(registration => registration.update());
       });
     })();
   </script>
