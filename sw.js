@@ -1,7 +1,7 @@
-const CACHE = 'everlight-v23-living-interiors-r1';
-const CURRENT_BUILD_URL = './index.html?v=23';
+const CACHE = 'everlight-v24-roads-and-doors-r1';
+const CURRENT_BUILD_URL = './index.html?v=24';
 const CORE = [
-  './','./index.html','./manifest.webmanifest','./styles/game-v3.css','./styles/visual-v22.css','./js/visual-upgrade-v22.js','./js/world-atlas-v22.js','./js/game-v4.js',
+  './','./index.html','./manifest.webmanifest','./styles/game-v3.css','./styles/visual-v22.css','./js/visual-upgrade-v22.js','./js/world-atlas-v22.js','./js/game-v4.js','./js/exploration-v24.js','./js/actors-v24.js',
   './assets/northford-twilight.jpg','./assets/hero-atlas-concept.png','./assets/hero-player-v2.png','./assets/hero-walk-v22.png','./assets/hero-attack-v22.png','./assets/enemies-v22.png',
   './assets/mira-scout.png','./assets/hollow-warden.png',
   './assets/greenwake-vale-v1.jpg','./assets/moonfall-ruins-v1.jpg',
@@ -24,7 +24,7 @@ self.addEventListener('activate', event => {
       .then(() => self.clients.matchAll({ type: 'window' }))
       .then(clients => Promise.all(clients.map(client => {
         const url = new URL(client.url);
-        return url.searchParams.get('v') === '23' ? null : client.navigate(CURRENT_BUILD_URL).catch(() => null);
+        return url.searchParams.get('v') === '24' ? null : client.navigate(CURRENT_BUILD_URL).catch(() => null);
       })))
   );
 });

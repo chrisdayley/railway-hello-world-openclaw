@@ -1,8 +1,17 @@
 # Everlight Build
 
-Current mobile build marker: **v23-living-interiors**
+Current mobile build marker: **v24-roads-and-doors**
 
-Version: **0.9.0**
+Version: **0.10.0**
+
+- Animated original pixel actors replace every triangular resident placeholder and the old player fallback.
+- Seven aligned Northford entrances, exterior building collision, automatic walk-in doors and safe return positions.
+- Town directory map, destination tracking, touch Run toggle, Shift running and R dodge.
+- Bellkeeper's House and a three-room optional dungeon with valves, keeper, named loot, persistent quest reward and shortcut.
+- Aether Lens revisit quest across the apothecary, stable and Guildhall, unlocking a travel destination.
+- Seven enterable solid houses per atlas settlement, safe settlement streets, functioning ranged bow, wall-blocked projectiles.
+- v23 saves migrate without losing equipment, quests, gold, property or discovery history. Town positions move to the new safe spawn.
+- Campaign hour counts remain design targets, not a claim of a completed campaign.
 
 - Rebuilt mobile shell, HUD, controls, journal and accessibility settings.
 - New Northford twilight art direction and production title screen.

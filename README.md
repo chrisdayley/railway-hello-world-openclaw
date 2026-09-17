@@ -3,7 +3,9 @@
 This repository hosts **Everlight**, a mobile-first 2D fantasy action RPG designed to run as an offline-capable PWA on iPhone without the App Store.
 
 ## Current playable build
-**Living Interiors (v23)** keeps the authored Chapter I and systemic world atlas, while rebuilding Northford's enterable buildings as explorable places. It includes:
+**Roads & Doors (v24)** adds solid buildings aligned to Northford's painted architecture, seven signed walk-in entrances, a town map with destination tracking, animated pixel characters throughout, and running. It expands the authored game with the Bellkeeper's House and a three-chamber optional cistern dungeon: two valves, a keeper battle, a unique reward and a shortcut home. The Aether Lens also reveals a three-clue revisit quest with a Guildhall travel reward.
+
+Every visible house in atlas settlements now has a collision footprint and a working door to an interior, merchant, innkeeper or resident. The bow now fires ranged arrows. Existing systems include:
 
 - three gameplay backgrounds with meaningful opening bonuses;
 - a HUD-safe tracking camera across Northford, Greenwake Vale, Moonfall Ruins, four shop/service interiors, the Guildhall, and Windstrider Stable;
@@ -20,7 +22,13 @@ This repository hosts **Everlight**, a mobile-first 2D fantasy action RPG design
 - five distinct illustrated, collision-aware interiors with resident NPCs, readable environmental storytelling, inspectable lore, concealed caches, unique treasure and two additional local side quests.
 - generated settlements now include regional merchants and named residents with biome-specific rumors, while landmarks and dungeons contain persistent lore discoveries and cache clues.
 
-The authored campaign pack in `data/campaign.json` and `docs/CAMPAIGN_30_40_HOURS.md` defines the 32.5-hour main route, while v22 supplies the large connected exploration and economy substrate needed to build those chapters out in play.
+The campaign pack in `data/campaign.json` and `docs/CAMPAIGN_30_40_HOURS.md` is a **design plan**, not a completed 32.5-hour campaign. The large atlas is systemic content; it is not hundreds of individually authored adventures. The playable main story currently ends after the first Hollow Warden, with optional quests and exploration continuing afterward.
+
+## Controls
+
+Touch: left stick to move, **Run** to toggle a faster pace, **Map** for destinations, right-side combat and interaction controls. Walk directly onto a door threshold to enter, or tap **Enter** nearby. Running is free outside danger; it consumes stamina near enemies.
+
+Keyboard: WASD/arrows move, Shift runs, R dodges, Space attacks, Q casts, E interacts, M opens the map, I opens equipment.
 
 ## Play / install on iPhone
 Once GitHub Pages is enabled for this repository and the deployment succeeds, open the Pages URL in Safari, let the game load once, then use **Share → Add to Home Screen**. The service worker caches the game for offline play after that first successful load.
@@ -31,4 +39,4 @@ Once GitHub Pages is enabled for this repository and the deployment succeeds, op
 ## Local test
 Run `npm start` and open `http://localhost:3000`.
 
-Run `npm test` for UI shell/data smoke checks, `npm run test:gameplay` for deterministic gameplay contracts, and `npm run balance` for the economy Monte Carlo report.
+Run `npm test` for shell/data/atlas checks, `npm run test:exploration` for real-runtime navigation and quest regression tests, `npm run test:gameplay` for legacy gameplay contracts, and `npm run balance` for the economy report. Local-only QA views use `?v=24&qa=town`, `qa=interior-stable`, or `qa=room-cistern`. Debug controls are unavailable on public hosts.
