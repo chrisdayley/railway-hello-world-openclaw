@@ -1,11 +1,12 @@
 {
   "name": "everlight-vale-of-echoes",
-  "version": "0.6.2",
+  "version": "0.7.0",
   "private": true,
   "type": "module",
   "scripts": {
     "start": "node server.js",
     "test": "node scripts/smoke-test.mjs && node scripts/validate-data.mjs",
+    "test:gameplay": "node scripts/gameplay-v21-test.mjs",
     "validate": "node scripts/validate-data.mjs",
     "balance": "node scripts/sim-balance.mjs"
   }

@@ -9,7 +9,7 @@
   <meta name="description" content="Everlight: Vale of Echoes — a solo fantasy action RPG built for mobile.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles/game-v3.css?v=20">
+  <link rel="stylesheet" href="styles/game-v3.css?v=21.2">
   <title>Everlight: Vale of Echoes</title>
 </head>
 <body>
@@ -67,6 +67,8 @@
         <div id="tutorial" class="tutorial is-hidden" aria-live="polite"></div>
         <div id="toast" class="toast is-hidden" role="status" aria-live="polite"></div>
         <div id="subtitle" class="subtitle is-hidden" role="status" aria-live="polite"></div>
+        <div id="zoneBanner" class="zone-banner is-hidden" role="status" aria-live="polite"></div>
+        <div id="lootFeed" class="loot-feed is-hidden" role="status" aria-live="polite"></div>
         <div id="controls" class="controls" aria-label="Touch controls">
           <div id="joystick" class="joystick" aria-label="Movement joystick"><div id="joyKnob"></div></div>
           <div class="action-cluster">
@@ -87,8 +89,15 @@
     <section id="journal" class="modal-layer is-hidden" role="dialog" aria-modal="true" aria-labelledby="journalTitle">
       <div class="journal glass-heavy">
         <header><div><span class="eyebrow">Adventurer's journal</span><h2 id="journalTitle">Northford Chronicle</h2></div><button id="closeJournal" class="icon-btn" aria-label="Close journal">×</button></header>
-        <nav class="journal-tabs" role="tablist" aria-label="Journal sections"><button class="active" role="tab" aria-selected="true" data-tab="quest">Quest</button><button role="tab" aria-selected="false" data-tab="gear">Gear</button><button role="tab" aria-selected="false" data-tab="world">World</button><button role="tab" aria-selected="false" data-tab="settings">Settings</button></nav>
+        <nav class="journal-tabs" role="tablist" aria-label="Journal sections"><button class="active" role="tab" aria-selected="true" data-tab="quest">Quests</button><button role="tab" aria-selected="false" data-tab="gear">Gear</button><button role="tab" aria-selected="false" data-tab="skills">Skills</button><button role="tab" aria-selected="false" data-tab="factions">Factions</button><button role="tab" aria-selected="false" data-tab="world">World</button><button role="tab" aria-selected="false" data-tab="economy">Ledger</button><button role="tab" aria-selected="false" data-tab="settings">Settings</button></nav>
         <div id="journalBody" class="journal-body" role="tabpanel"></div>
+      </div>
+    </section>
+
+    <section id="interactionPanel" class="modal-layer is-hidden" role="dialog" aria-modal="true" aria-labelledby="interactionTitle">
+      <div class="interaction-card glass-heavy">
+        <header><div><span class="eyebrow">Northford services</span><h2 id="interactionTitle">Merchant</h2></div><button id="closeInteraction" class="icon-btn" aria-label="Close">×</button></header>
+        <div id="interactionBody" class="interaction-body"></div>
       </div>
     </section>
 
@@ -97,7 +106,19 @@
     </section>
   </main>
   <div id="srUpdates" class="sr-only" aria-live="assertive"></div>
-  <script src="js/game-v3.js?v=20"></script>
-  <script>if ('serviceWorker' in navigator) addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=20'));</script>
+  <script>window.__EVERLIGHT_EXPECTED_BUILD__='21';</script>
+  <script src="js/game-v4.js?v=21.2"></script>
+  <script>
+    (() => {
+      const build = window.__EVERLIGHT_EXPECTED_BUILD__;
+      if (window.__EVERLIGHT_BUILD__ !== build) {
+        location.replace(`./index.html?v=${build}&refresh=${Date.now()}`);
+        return;
+      }
+      if ('serviceWorker' in navigator) addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js?v=21.2', { updateViaCache: 'none' }).then(registration => registration.update());
+      });
+    })();
+  </script>
 </body>
 </html>
