@@ -1,26 +1,10 @@
-Everlight build milestone 0.5-controller
+# Everlight Build
 
-Systems foundation:
-- Main and side quest progression data
-- Five faction rank ladders and high-level rewards
-- Five recruitable companions with distinct combat/bond roles
-- Property economy and land development
-- Dynamic limited-time world events
-- Loot tables and rarity progression
-- Crafting, gear upgrades, mounts, vehicles, and airship recipes
-- Eight-region world progression through postgame
-- Offline PWA cache coverage for all core runtime/data files
+Current mobile build marker: **v18-the-road-remembers**
 
-Controller milestone:
-- Browser Gamepad API support
-- Analog movement and gameplay D-pad movement
-- Controller combat/interact/dodge/menu actions
-- D-pad controller-only menu navigation
-- LB/RB menu-tab cycling
-- Controller focus highlighting
-- Automatic touch-control fade while controller is active
-- Persistent Standard, Action-first, and Alternate controller presets
-- Select/Share controller settings overlay
-- Keyboard fallback for desktop testing
+Version: **0.6.0**
 
-Next focus: on-device controller tuning, right-stick/targeting decisions, quick-slot UX, haptics where supported, and controller-first inventory/property/ledger refinement.
+- Rebuilt mobile shell, HUD, controls, journal and accessibility settings.
+- New Northford twilight art direction and production title screen.
+- Playable narrative prologue with Mira, remembered choices and Hollow Warden boss.
+- Enemy AI, player damage, melee combo, spell damage, dodge i-frames, feedback, autosave and offline caching.

@@ -1,1 +1,103 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#08110e"><link rel="manifest" href="manifest.webmanifest"><title>Everlight</title><style>*{box-sizing:border-box;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07100d;touch-action:none;overscroll-behavior:none}body{position:fixed;inset:0;font-family:Georgia,system-ui,sans-serif}#stage{position:absolute;inset:0;display:grid;place-items:center;background:radial-gradient(circle at 50% 50%,#172921,#07100d 78%)}canvas{display:block;width:min(100vw,177.777vh);height:min(56.25vw,100vh);image-rendering:pixelated;touch-action:none;box-shadow:0 0 50px #0009}.hud{position:fixed;inset:0;pointer-events:none}.panel{position:absolute;background:#081813e8;border:2px solid #d7b45f;border-radius:8px;padding:8px 11px;color:#fff7e8;font-size:12px;box-shadow:0 3px 0 #281d12}.stats{left:max(8px,env(safe-area-inset-left));top:max(8px,env(safe-area-inset-top))}.quest{right:max(8px,env(safe-area-inset-right));top:max(8px,env(safe-area-inset-top));text-align:right}.joy{position:absolute;left:max(16px,env(safe-area-inset-left));bottom:max(16px,env(safe-area-inset-bottom));width:104px;height:104px;border:3px solid #ffffff55;border-radius:50%;background:#ffffff12;pointer-events:auto;touch-action:none}.knob{position:absolute;left:32px;top:32px;width:40px;height:40px;border-radius:50%;background:#f4ead4aa}.b{position:absolute;width:64px;height:64px;border-radius:16px;border:2px solid #d7b45f;background:#102a23ed;color:white;font-weight:800;pointer-events:auto;touch-action:manipulation;box-shadow:0 4px 0 #091710}.atk{right:max(18px,env(safe-area-inset-right));bottom:max(22px,env(safe-area-inset-bottom))}.use{right:max(91px,calc(env(safe-area-inset-right) + 73px));bottom:max(14px,env(safe-area-inset-bottom))}.dash{right:max(91px,calc(env(safe-area-inset-right) + 73px));bottom:max(89px,calc(env(safe-area-inset-bottom) + 70px))}.spell{right:max(164px,calc(env(safe-area-inset-right) + 146px));bottom:max(56px,calc(env(safe-area-inset-bottom) + 38px));background:#384b78ed;font-size:9px}.menu{right:max(16px,env(safe-area-inset-right));top:max(80px,calc(env(safe-area-inset-top) + 62px));width:48px;height:48px;font-size:9px}.toast{position:absolute;left:50%;top:15%;transform:translateX(-50%);color:#fff;background:#07110edd;border:1px solid #d7b45f;border-radius:6px;padding:6px 10px}.overlay{position:fixed;inset:0;z-index:10;background:#07110ef5;display:none;padding:20px;color:#fff}.overlay.open{display:block}.card{max-width:700px;margin:auto;background:#10231d;border:2px solid #c7a45b;border-radius:10px;padding:18px}.choice,.smallbtn{padding:12px;background:#173b31;color:white;border:1px solid #d4b15e;border-radius:8px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.start{position:fixed;inset:0;z-index:20;background:radial-gradient(circle at 50% 30%,#1e3d35,#07110d 70%);display:grid;place-items:center;color:white}.startbox{text-align:center;padding:24px;max-width:580px}.start h1{font-size:clamp(42px,8vw,82px);color:#efd27c;letter-spacing:5px;margin:0}.sub{max-width:520px;line-height:1.5;color:#eee4cc}</style></head><body><div class="start" id="start"><div class="startbox"><h1>EVERLIGHT</h1><p class="sub">The old waystones are waking. Beyond Northford, forgotten roads and ruins are stirring with them.</p><button class="choice" id="startBtn">ENTER THE VALE</button></div></div><div id="stage"><canvas id="g" width="960" height="540"></canvas></div><div class="hud"><div class="panel stats" id="stats"></div><div class="panel quest" id="quest"></div><div class="toast" id="toast"></div><div class="joy" id="joy"><div class="knob" id="knob"></div></div><button class="b atk" id="atk">ATTACK</button><button class="b use" id="use">USE</button><button class="b dash" id="dash">DODGE</button><button class="b spell" id="spellBtn">SPELL</button><button class="b menu" id="menu">MENU</button></div><div class="overlay" id="charOverlay"><div class="card"><h2>Choose your path</h2><div class="grid"><button class="choice" data-style="vanguard">Vanguard</button><button class="choice" data-style="ranger">Ranger</button><button class="choice" data-style="arcanist">Arcanist</button><button class="choice" data-style="wanderer">Wanderer</button></div></div></div><div class="overlay" id="menuOverlay"><div class="card"><h2>Adventurer's Journal</h2><div id="menuBody"></div><button class="smallbtn" id="closeMenu">Return</button></div></div><script>document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});document.addEventListener('dblclick',e=>e.preventDefault(),{passive:false});</script><script src="js/data.js?v=16"></script><script src="js/systems.js?v=16"></script><script src="js/spells.js?v=16"></script><script src="js/world-art-v2.js?v=16"></script><script src="js/sprites.js?v=16"></script><script src="js/combat-visuals.js?v=16"></script><script src="js/game-v2.js?v=16"></script><script>if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=16')</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="theme-color" content="#061412">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="Everlight: Vale of Echoes — a solo fantasy action RPG built for mobile.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="styles/game-v3.css?v=18">
+  <title>Everlight: Vale of Echoes</title>
+</head>
+<body>
+  <main id="app" aria-label="Everlight game">
+    <section id="loading" class="screen loading-screen" aria-live="polite">
+      <div class="sigil" aria-hidden="true"><i></i><i></i><i></i></div>
+      <p>Waking the old roads…</p>
+    </section>
+
+    <section id="titleScreen" class="screen title-screen is-hidden" aria-labelledby="gameTitle">
+      <div class="title-vignette"></div>
+      <div class="title-card">
+        <div class="eyebrow">A solo action RPG</div>
+        <h1 id="gameTitle">EVERLIGHT</h1>
+        <p class="title-sub">Vale of Echoes</p>
+        <p class="title-hook">The old roads remember your name.</p>
+        <div class="title-actions">
+          <button id="continueBtn" class="ui-btn ui-btn--primary is-hidden">Continue journey</button>
+          <button id="newGameBtn" class="ui-btn ui-btn--ghost">Begin a new journey</button>
+        </div>
+        <p class="title-foot">Best played in landscape · Autosaves locally</p>
+      </div>
+    </section>
+
+    <section id="pathScreen" class="screen path-screen is-hidden" aria-labelledby="pathTitle">
+      <div class="path-panel">
+        <div class="eyebrow">Before the road opens</div>
+        <h2 id="pathTitle">How did you survive the Sundering?</h2>
+        <p>Choose a background. It shapes your opening gift—not your destiny.</p>
+        <div class="path-grid">
+          <button class="path-card" data-path="vanguard"><span class="path-icon">⚔</span><strong>Vanguard</strong><small>Stand your ground. +20 vitality, stronger blade.</small></button>
+          <button class="path-card" data-path="ranger"><span class="path-icon">➹</span><strong>Wayfinder</strong><small>Move like wind. Faster stride and sharper criticals.</small></button>
+          <button class="path-card" data-path="arcanist"><span class="path-icon">✦</span><strong>Lightweaver</strong><small>Shape the Ways. +30 aether, empowered magic.</small></button>
+        </div>
+      </div>
+    </section>
+
+    <section id="gameScreen" class="screen game-screen is-hidden" aria-label="Game world">
+      <div id="viewport">
+        <canvas id="gameCanvas" width="960" height="540" aria-label="Northford village game world"></canvas>
+        <div class="atmosphere" aria-hidden="true"></div>
+        <header class="hud-top" aria-label="Player status">
+          <div class="player-chip glass">
+            <div class="level-medallion"><span id="levelText">1</span></div>
+            <div class="bars">
+              <div class="bar-row"><span>HP</span><div id="hpProgress" class="bar" role="progressbar" aria-label="Health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><i id="hpBar"></i></div><b id="hpText">100</b></div>
+              <div class="bar-row"><span>AE</span><div id="manaProgress" class="bar bar--mana" role="progressbar" aria-label="Aether" aria-valuemin="0" aria-valuemax="60" aria-valuenow="60"><i id="manaBar"></i></div><b id="manaText">60</b></div>
+              <div class="bar-row bar-row--stam"><span>ST</span><div id="stamProgress" class="bar bar--stam" role="progressbar" aria-label="Stamina" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><i id="stamBar"></i></div></div>
+            </div>
+          </div>
+          <button id="objectiveBtn" class="objective glass" aria-label="Current objective and journal"><span class="objective-kicker">Current thread</span><strong id="objectiveTitle">A Voice in the Vale</strong><span id="objectiveText">Find the source of the call</span></button>
+          <div class="top-actions"><div id="goldChip" class="currency glass" aria-label="Gold"><span>✦</span><b id="goldText">35</b></div><button id="pauseBtn" class="icon-btn glass" aria-label="Pause and settings">Ⅱ</button></div>
+        </header>
+        <div id="bossHud" class="boss-hud is-hidden" aria-live="polite"><span>HOLLOW WARDEN</span><div><i id="bossBar"></i></div></div>
+        <div id="tutorial" class="tutorial is-hidden" aria-live="polite"></div>
+        <div id="toast" class="toast is-hidden" role="status" aria-live="polite"></div>
+        <div id="subtitle" class="subtitle is-hidden" role="status" aria-live="polite"></div>
+        <div id="controls" class="controls" aria-label="Touch controls">
+          <div id="joystick" class="joystick" aria-label="Movement joystick"><div id="joyKnob"></div></div>
+          <div class="action-cluster">
+            <button id="interactBtn" class="action action--interact is-hidden" aria-label="Interact"><span>◆</span><small>Talk</small></button>
+            <button id="spellBtn" class="action action--spell" aria-label="Cast Everlight spell"><span>✦</span><small>Aether</small><i id="spellCooldown"></i></button>
+            <button id="dodgeBtn" class="action action--dodge" aria-label="Dodge"><span>↗</span><small>Dodge</small><i id="dodgeCooldown"></i></button>
+            <button id="attackBtn" class="action action--attack" aria-label="Attack"><span>⚔</span><small>Strike</small><i id="attackCooldown"></i></button>
+          </div>
+        </div>
+        <div id="rotateNotice" class="rotate-notice"><div>↻</div><strong>Turn your phone sideways</strong><span>Everlight is designed for landscape play.</span></div>
+      </div>
+    </section>
+
+    <section id="dialogue" class="modal-layer is-hidden" role="dialog" aria-modal="true" aria-labelledby="speakerName">
+      <div class="dialogue-card glass-heavy"><div id="speakerPortrait" class="portrait">M</div><div class="dialogue-copy"><span id="speakerName">Mira</span><p id="dialogueText"></p><div id="dialogueChoices" class="dialogue-choices"></div></div><button id="dialogueNext" class="dialogue-next" aria-label="Continue dialogue">›</button></div>
+    </section>
+
+    <section id="journal" class="modal-layer is-hidden" role="dialog" aria-modal="true" aria-labelledby="journalTitle">
+      <div class="journal glass-heavy">
+        <header><div><span class="eyebrow">Adventurer's journal</span><h2 id="journalTitle">Northford Chronicle</h2></div><button id="closeJournal" class="icon-btn" aria-label="Close journal">×</button></header>
+        <nav class="journal-tabs" role="tablist" aria-label="Journal sections"><button class="active" role="tab" aria-selected="true" data-tab="quest">Quest</button><button role="tab" aria-selected="false" data-tab="gear">Gear</button><button role="tab" aria-selected="false" data-tab="world">World</button><button role="tab" aria-selected="false" data-tab="settings">Settings</button></nav>
+        <div id="journalBody" class="journal-body" role="tabpanel"></div>
+      </div>
+    </section>
+
+    <section id="chapterComplete" class="modal-layer is-hidden" role="dialog" aria-modal="true" aria-labelledby="chapterTitle">
+      <div class="chapter-card glass-heavy"><div class="sigil sigil--small"><i></i><i></i><i></i></div><span class="eyebrow">Prologue complete</span><h2 id="chapterTitle">The Road Remembers</h2><p id="chapterSummary">Northford's waystone burns again—and something beyond the mountains has answered.</p><div class="reward-row"><span>✦ <b>250</b> gold</span><span>◆ <b>Waystone attuned</b></span><span>↑ <b>New path opened</b></span></div><button id="keepExploringBtn" class="ui-btn ui-btn--primary">Keep exploring Northford</button></div>
+    </section>
+  </main>
+  <div id="srUpdates" class="sr-only" aria-live="assertive"></div>
+  <script src="js/game-v3.js?v=18"></script>
+  <script>if ('serviceWorker' in navigator) addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=18'));</script>
+</body>
+</html>

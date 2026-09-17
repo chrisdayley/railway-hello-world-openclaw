@@ -4,7 +4,7 @@ import path from 'path';
 import {fileURLToPath} from 'url';
 const root=path.dirname(fileURLToPath(import.meta.url));
 const port=process.env.PORT||3000;
-const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.webmanifest':'application/manifest+json; charset=utf-8','.svg':'image/svg+xml','.css':'text/css; charset=utf-8'};
+const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.webmanifest':'application/manifest+json; charset=utf-8','.svg':'image/svg+xml','.css':'text/css; charset=utf-8','.jpg':'image/jpeg','.jpeg':'image/jpeg','.png':'image/png','.webp':'image/webp'};
 http.createServer((req,res)=>{
   let url=decodeURIComponent((req.url||'/').split('?')[0]);
   if(url==='/')url='/index.html';
