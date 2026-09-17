@@ -149,6 +149,8 @@ function loadRuntime() {
     'js/world-atlas-v22.js',
     'js/exploration-v24.js',
     'js/actors-v24.js',
+    'js/camera-v25.js',
+    'js/equipment-v25.js',
     'js/game-v4.js'
   ]) {
     const source = fs.readFileSync(path.join(root, relativePath), 'utf8');
@@ -363,8 +365,8 @@ test('schema migration preserves exploration and economy progress', () => {
     properties: { smithy: { level: 2, value: 900 } },
     settings: { reducedMotion: true }
   });
-  assert.equal(migrated.schema, 6);
-  assert.equal(migrated.build, '24');
+  assert.equal(migrated.schema, 7);
+  assert.equal(migrated.build, '25');
   assert.equal(migrated.style, 'ranger');
   assert.equal(migrated.zone, 'sluice');
   assert.equal(migrated.x, 777);
