@@ -1,0 +1,7 @@
+/* The minimap occupies the old Map button footprint, never a combat action. */
+.map-control{padding:3px 5px;display:flex;flex-direction:column;gap:1px;width:122px;height:91px;border-color:#b8ab7199;overflow:hidden;bottom:144px}
+.map-control canvas{display:block;width:110px;height:62px;pointer-events:none;image-rendering:pixelated;border-radius:5px}
+.map-control small{font-size:8px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff0b1}
+.map-control .minimap-key{font:7px system-ui;color:#c0d2c4;letter-spacing:.04em}
+@media(max-height:360px){.map-control{height:76px;width:105px;bottom:131px}.map-control canvas{width:94px;height:51px}.map-control small{max-width:94px}.map-control .minimap-key{display:none}}
+.boss-hud span{letter-spacing:.04em;font-size:11px}.boss-hud:has(i){pointer-events:none}

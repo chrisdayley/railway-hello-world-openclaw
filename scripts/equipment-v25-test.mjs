@@ -153,6 +153,9 @@ function loadRuntime() {
     'js/camera-v25.js',
     'js/equipment-v25.js',
     'js/economy-v26.js',
+    'js/progression-v27.js',
+    'js/interiors-v27.js',
+    'js/minimap-v27.js',
     'js/game-v4.js'
   ]) {
     const source = fs.readFileSync(path.join(root, relativePath), 'utf8');
@@ -168,7 +171,7 @@ function loadRuntime() {
 
 const { context, debug, nav, dispatchWindow } = loadRuntime();
 const equipment = context.EVERLIGHT_EQUIPMENT;
-assert.equal(equipment.version, 25, 'v25 equipment module must be loaded');
+assert.equal(equipment.version, 27, 'v27 seven-slot equipment module must be loaded');
 
 const tests = [];
 function test(name, fn) { tests.push({ name, fn }); }
@@ -230,7 +233,7 @@ test('build stats preserve combat formulas and accept safe item-object compariso
   assert.equal(stats.maxHp, 120 + 25 + 3 * 4);
   assert(Math.abs(stats.spell - expectedSpell) < 1e-9);
   assert.equal(stats.spellDamage, Math.round(25 * expectedSpell));
-  assert(Math.abs(stats.damageReduction - (1 - 100 / (100 + expectedArmor * 6))) < 1e-12);
+  assert(Math.abs(stats.damageReduction - Math.min(.7, 1 - 100 / (100 + expectedArmor * 3))) < 1e-12);
   assert.equal(stats.speed, 1.65 * 1.12);
   assert.equal(stats.crit, 0.1);
 
@@ -438,5 +441,5 @@ for (const { name, fn } of tests) {
   }
 }
 
-if (failures) throw new Error(`${failures} equipment v25 runtime test${failures === 1 ? '' : 's'} failed`);
-console.log(`\u2713 ${tests.length} equipment v25 deterministic/runtime tests passed`);
+if (failures) throw new Error(`${failures} equipment v27 runtime test${failures === 1 ? '' : 's'} failed`);
+console.log(`\u2713 ${tests.length} equipment v27 deterministic/runtime tests passed`);

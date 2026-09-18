@@ -151,6 +151,9 @@ function loadRuntime() {
     'js/camera-v25.js',
     'js/equipment-v25.js',
     'js/economy-v26.js',
+    'js/progression-v27.js',
+    'js/interiors-v27.js',
+    'js/minimap-v27.js',
     'js/game-v4.js'
   ]) {
     const source = fs.readFileSync(path.join(root, relativePath), 'utf8');
@@ -170,12 +173,13 @@ const atlas = context.EVERLIGHT_ATLAS;
 const exploration = context.EVERLIGHT_EXPLORATION;
 const catalog = economy.catalog(atlas, exploration);
 assert.equal(economy.version, 26);
+assert.equal(economy.pricingVersion, 27);
 
 const tests = [];
 function test(name, fn) { tests.push({ name, fn }); }
 function clone(value) { return structuredClone(value); }
 function state() { return nav.get().state; }
-function setState(patch) { nav.setState({ style: 'vanguard', build: '26', ...patch }); return state(); }
+function setState(patch) { nav.setState({ style: 'vanguard', build: '27', ...patch }); return state(); }
 function byId(id) {
   const object = nav.objects().find(candidate => candidate.id === id);
   assert(object, `missing runtime object ${id} in ${state().zone}`);
@@ -457,7 +461,7 @@ test('runtime estate handlers preserve saves and developed business doors work i
   assert.equal(state().dynamicQuests.sentinel.progress, 2);
 });
 
-test('every enterable ordinary building exposes a reachable deed and runtime day settlement is safe', () => {
+test('every enterable ordinary building exposes a reachable deed and business days require active adventure effort', () => {
   const progress = state();
   for (const zone of ['inn','apothecary','smithy','bellkeeper','stable']) {
     setState({ ...progress, zone });
@@ -472,23 +476,52 @@ test('every enterable ordinary building exposes a reachable deed and runtime day
     assert.equal(nav.collides(deed.x, deed.y, 13), false, `${def.id} deed must be reachable`);
   }
 
-  setState({ ...progress, zone:'northford', day:10, economyClock:299.9, treasury:0, profitHistory:[] });
+  setState({ ...progress, zone:'northford', x:965, y:625, day:10, economyClock:299.9, treasury:0, profitHistory:[] });
+  const beforeIdle = state();
+  nav.tick(1);
+  assert.equal(state().day, beforeIdle.day, 'standing idle must not complete a business day');
+  assert.equal(state().economyClock, beforeIdle.economyClock, 'idle time must not count as adventuring');
+
   const beforeAutomatic = state();
+  nav.input(1, 0);
   nav.tick(0.2);
+  nav.input(0, 0);
   assert.equal(state().day, beforeAutomatic.day + 1, '300 seconds of active play must advance one day');
   assert.equal(state().lastEconomyDay, state().day, 'automatic day must settle exactly once');
+  assert.equal(state().economyClock, 0, 'successful settlement resets the active-adventure clock');
 
   const dayAfterAutomatic = state().day;
   const marketDeed = byId('market-deed');
   placeAt(marketDeed);
   nav.interact();
+  const pausedClock = state().economyClock;
   nav.tick(300);
   assert.equal(state().day, dayAfterAutomatic, 'paused economy journal must not advance active-play time');
+  assert.equal(state().economyClock, pausedClock, 'paused menus must not accrue business time');
 
-  const beforeManual = state();
+  const beforeManualBypass = state();
   clickJournal('economy', 'day');
-  assert.equal(state().day, beforeManual.day + 1);
+  assert.equal(state().day, beforeManualBypass.day, 'Ledger settlement cannot bypass the five-minute effort gate');
+  assert.equal(state().lastEconomyDay, beforeManualBypass.lastEconomyDay);
+  assert.match(context.document.getElementById('journalBody').innerHTML, /Keep adventuring to complete this business day/);
+
+  setState({ ...state(), zone:'inn', x:1090, y:325, hp:1, mana:1, stam:1, economyClock:0 });
+  const innkeeper = byId('innkeeper');
+  placeAt(innkeeper);
+  const beforeRest = state();
+  nav.interact();
+  assert.equal(state().day, beforeRest.day, 'repeated inn rests must not generate rent');
+  assert.equal(state().lastEconomyDay, beforeRest.lastEconomyDay);
+  assert.equal(state().economyClock, 0);
+  assert(state().hp > beforeRest.hp && state().mana > beforeRest.mana && state().stam > beforeRest.stam,
+    'rest should still restore resources when it cannot settle a business day');
+
+  setState({ ...state(), zone:'northford', x:965, y:625, economyClock:300 });
+  const beforeEligibleManual = state();
+  clickJournal('economy', 'day');
+  assert.equal(state().day, beforeEligibleManual.day + 1, 'eligible manual settlement should consume the completed active business day');
   assert.equal(state().lastEconomyDay, state().day);
+  assert.equal(state().economyClock, 0);
   const beforeCollect = state();
   clickJournal('economy', 'collect');
   const transferable = Math.max(0, beforeCollect.treasury);
