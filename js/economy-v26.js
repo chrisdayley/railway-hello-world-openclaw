@@ -158,7 +158,7 @@
     const property = normalizedProperty(id, {...def,invested:def.purchasePrice}, def);
     state.properties = {...(state.properties || {}), [id]:property};
     state.gold = gold - def.purchasePrice;
-    return {ok:true,message:`Purchased ${def.name}. Income begins on the next adventure day.`,property,cost:def.purchasePrice};
+    return {ok:true,message:`Purchased ${def.name}. ${def.type==='land'?'Choose a development to begin earning income.':'Income begins on the next adventure day.'}`,property,cost:def.purchasePrice};
   }
 
   function developmentCost(property, type) {
