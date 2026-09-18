@@ -9,9 +9,10 @@
   <meta name="description" content="Everlight: Vale of Echoes — a solo fantasy action RPG built for mobile.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles/game-v3.css?v=25">
-  <link rel="stylesheet" href="styles/visual-v22.css?v=25">
-  <link rel="stylesheet" href="styles/equipment-v25.css?v=25">
+  <link rel="stylesheet" href="styles/game-v3.css?v=26">
+  <link rel="stylesheet" href="styles/visual-v22.css?v=26">
+  <link rel="stylesheet" href="styles/equipment-v25.css?v=26">
+  <link rel="stylesheet" href="styles/economy-v26.css?v=26">
   <title>Everlight: Vale of Echoes</title>
 </head>
 <body>
@@ -111,14 +112,15 @@
     </section>
   </main>
   <div id="srUpdates" class="sr-only" aria-live="assertive"></div>
-  <script>window.__EVERLIGHT_EXPECTED_BUILD__='25';window.__EVERLIGHT_EXPECTED_VISUAL_BUILD__='22';</script>
-  <script src="js/visual-upgrade-v22.js?v=25"></script>
-  <script src="js/world-atlas-v22.js?v=25"></script>
-  <script src="js/exploration-v24.js?v=25"></script>
-  <script src="js/actors-v24.js?v=25"></script>
-  <script src="js/camera-v25.js?v=25"></script>
-  <script src="js/equipment-v25.js?v=25"></script>
-  <script src="js/game-v4.js?v=25"></script>
+  <script>window.__EVERLIGHT_EXPECTED_BUILD__='26';window.__EVERLIGHT_EXPECTED_VISUAL_BUILD__='22';</script>
+  <script src="js/visual-upgrade-v22.js?v=26"></script>
+  <script src="js/world-atlas-v22.js?v=26"></script>
+  <script src="js/exploration-v24.js?v=26"></script>
+  <script src="js/actors-v24.js?v=26"></script>
+  <script src="js/camera-v25.js?v=26"></script>
+  <script src="js/equipment-v25.js?v=26"></script>
+  <script src="js/economy-v26.js?v=26"></script>
+  <script src="js/game-v4.js?v=26"></script>
   <script>
     (() => {
       const build = window.__EVERLIGHT_EXPECTED_BUILD__;
@@ -131,7 +133,7 @@
         return;
       }
       if ('serviceWorker' in navigator) addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=25', { updateViaCache: 'none' }).then(registration => registration.update());
+        navigator.serviceWorker.register('./sw.js?v=26', { updateViaCache: 'none' }).then(registration => registration.update());
       });
     })();
   </script>
