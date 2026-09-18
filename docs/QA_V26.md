@@ -12,7 +12,7 @@
 
 An independent playtester bought Mooncup Inn, upgraded quality/capacity/security, bought Lantern Road Parcel, developed an inn, advanced a day, reviewed variable per-property results and transferred the central treasury. The tested two-property day yielded 163 gold; this is a test observation, not a guaranteed payout.
 
-The ledger uses independently scrolling property lists and details, 44px action targets, portfolio/market views, clear cost/revenue forecasts and persistent transaction feedback. The 844x390 landscape layout was visually inspected. Release files are staged together on a release branch before publishing, avoiding an incomplete mixed-version live build.
+The ledger uses independently scrolling property lists and details, 44px action targets, portfolio/market views, clear cost/revenue forecasts and persistent transaction feedback. The 844x390 and 667x320 landscape layouts were independently inspected: all cards and actions remain scroll-reachable without overlap. The playtester entered the developed Northford Inn with the touch joystick, exited south and continued moving without portal bounce-back. Tracking, close/reopen persistence and World/Ledger tab switching passed; browser warning/error logs were empty. The only copy finding was corrected: undeveloped land now explains that development is required before earning income. Release files are staged together on a release branch before publishing, avoiding an incomplete mixed-version live build.
 
 ## Limits
 
