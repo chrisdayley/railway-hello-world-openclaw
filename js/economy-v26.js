@@ -1,4 +1,4 @@
-/* Everlight v26 deterministic property economy and mobile ledger UI.
+/* Everlight v27 property-pricing pass on the v26 deterministic economy API.
  * Public API: window.EVERLIGHT_ECONOMY
  */
 (() => {
@@ -6,22 +6,29 @@
 
   const TRACKS = Object.freeze(['quality', 'capacity', 'security']);
   const LAND_CHOICES = Object.freeze(['orchard', 'inn', 'smithy', 'apothecary', 'workshop', 'stable', 'warehouse']);
+  const ACTIVE_DAY_SECONDS = 300;
+  const ASSET_TIERS = Object.freeze([
+    Object.freeze({ id:'humble', label:'Humble', rank:0 }),
+    Object.freeze({ id:'established', label:'Established', rank:1 }),
+    Object.freeze({ id:'premium', label:'Premium', rank:2 }),
+    Object.freeze({ id:'prestige', label:'Prestige', rank:3 })
+  ]);
   const BUSINESS = Object.freeze({
-    home:       { label:'Residence', price:230, cost:7, min:18, max:36, risk:'Low', synergy:['inn','market'], favored:['commerce'] },
-    market:     { label:'Market', price:390, cost:15, min:39, max:78, risk:'Medium', synergy:['warehouse','farm','orchard'], favored:['trade','commerce','caravans'] },
-    inn:        { label:'Inn', price:430, cost:18, min:46, max:88, risk:'Medium', synergy:['orchard','market','stable'], favored:['trade','commerce','caravans'] },
-    smithy:     { label:'Smithy', price:510, cost:23, min:54, max:102, risk:'Medium', synergy:['mine','warehouse','workshop'], favored:['smithing','mining'] },
-    apothecary: { label:'Apothecary', price:420, cost:17, min:45, max:86, risk:'Medium', synergy:['orchard','farm','conservatory'], favored:['herbs','alchemy'] },
-    workshop:   { label:'Workshop', price:470, cost:21, min:49, max:96, risk:'Medium', synergy:['warehouse','smithy','market'], favored:['smithing','relics'] },
-    stable:     { label:'Stable', price:460, cost:20, min:44, max:91, risk:'Medium', synergy:['inn','farm','orchard'], favored:['mounts','caravans'] },
-    warehouse:  { label:'Warehouse', price:500, cost:19, min:42, max:92, risk:'Low', synergy:['market','workshop','ferry'], favored:['shipping','trade','commerce'] },
-    orchard:    { label:'Orchard', price:310, cost:12, min:32, max:66, risk:'Medium', synergy:['inn','apothecary','market'], favored:['herbs','alchemy'] },
-    farm:       { label:'Farm', price:320, cost:13, min:32, max:68, risk:'Medium', synergy:['market','inn','stable'], favored:['herbs','commerce'] },
-    mine:       { label:'Mine', price:610, cost:31, min:67, max:132, risk:'High', synergy:['smithy','warehouse','workshop'], favored:['mining','smithing'] },
-    conservatory:{label:'Conservatory',price:650,cost:29,min:66,max:138,risk:'High',synergy:['apothecary','workshop'],favored:['aether','relics'] },
-    ferry:      { label:'Ferry', price:560, cost:25, min:58, max:116, risk:'Medium', synergy:['warehouse','market','inn'], favored:['shipping','trade'] },
-    lodge:      { label:'Lodge', price:400, cost:17, min:39, max:82, risk:'Low', synergy:['inn','stable'], favored:['mounts','timber'] },
-    land:       { label:'Land parcel', price:240, cost:0, min:0, max:0, risk:'Undeveloped', synergy:[], favored:[] }
+    home:       { label:'Residence', tier:0, price:850, cost:7, min:18, max:34, risk:'Low', synergy:['inn','market'], favored:['commerce'] },
+    land:       { label:'Land parcel', tier:0, price:1100, cost:0, min:0, max:0, risk:'Undeveloped', synergy:[], favored:[] },
+    orchard:    { label:'Orchard', tier:1, price:1500, build:1250, cost:12, min:32, max:64, risk:'Medium', synergy:['inn','apothecary','market'], favored:['herbs','alchemy'] },
+    farm:       { label:'Farm', tier:1, price:1550, cost:13, min:32, max:66, risk:'Medium', synergy:['market','inn','stable'], favored:['herbs','commerce'] },
+    lodge:      { label:'Lodge', tier:1, price:1900, cost:17, min:39, max:80, risk:'Low', synergy:['inn','stable'], favored:['mounts','timber'] },
+    market:     { label:'Market', tier:1, price:2200, cost:16, min:39, max:76, risk:'Medium', synergy:['warehouse','farm','orchard'], favored:['trade','commerce','caravans'] },
+    apothecary: { label:'Apothecary', tier:1, price:2400, build:2100, cost:18, min:45, max:84, risk:'Medium', synergy:['orchard','farm','conservatory'], favored:['herbs','alchemy'] },
+    inn:        { label:'Inn', tier:1, price:2600, build:2250, cost:19, min:46, max:86, risk:'Medium', synergy:['orchard','market','stable'], favored:['trade','commerce','caravans'] },
+    stable:     { label:'Stable', tier:2, price:3000, build:2700, cost:21, min:44, max:89, risk:'Medium', synergy:['inn','farm','orchard'], favored:['mounts','caravans'] },
+    workshop:   { label:'Workshop', tier:2, price:3200, build:2850, cost:22, min:49, max:94, risk:'Medium', synergy:['warehouse','smithy','market'], favored:['smithing','relics'] },
+    smithy:     { label:'Smithy', tier:2, price:3600, build:3200, cost:24, min:54, max:100, risk:'Medium', synergy:['mine','warehouse','workshop'], favored:['smithing','mining'] },
+    warehouse:  { label:'Warehouse', tier:2, price:4000, build:3500, cost:20, min:42, max:90, risk:'Low', synergy:['market','workshop','ferry'], favored:['shipping','trade','commerce'] },
+    ferry:      { label:'Ferry', tier:2, price:4800, cost:26, min:58, max:114, risk:'Medium', synergy:['warehouse','market','inn'], favored:['shipping','trade'] },
+    mine:       { label:'Mine', tier:3, price:6000, cost:32, min:67, max:130, risk:'High', synergy:['smithy','warehouse','workshop'], favored:['mining','smithing'] },
+    conservatory:{label:'Conservatory',tier:3,price:6800,cost:30,min:66,max:136,risk:'High',synergy:['apothecary','workshop'],favored:['aether','relics'] }
   });
   const NORTHFORD = Object.freeze([
     { id:'estate:inn', name:'The Mooncup Inn', zone:'inn', type:'inn', x:502, y:278 },
@@ -36,6 +43,8 @@
   const money = value => Math.round(Number(value) || 0);
   const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'})[char]);
   const pretty = value => String(value || '').replace(/([A-Z])/g, ' $1').replace(/[_-]/g, ' ').replace(/^./, c => c.toUpperCase());
+  const tierFor = (config, danger = 1) => ASSET_TIERS[Math.min(ASSET_TIERS.length - 1, (config.tier || 0) + Math.floor(Math.max(0, danger - 1) / 3))];
+  const clockLabel = seconds => `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
 
   function hash(text) {
     let value = 2166136261;
@@ -47,15 +56,19 @@
   function definition(input, danger = 1) {
     const type = BUSINESS[input.type] ? input.type : 'home';
     const config = BUSINESS[type];
-    const scale = 1 + Math.max(0, danger - 1) * 0.18;
-    const price = money((input.purchasePrice || config.price) * scale);
-    const cost = money((input.operatingCost ?? config.cost) * (1 + Math.max(0, danger - 1) * 0.11));
+    const dangerSteps = Math.max(0, danger - 1);
+    const priceScale = 1 + dangerSteps * 0.24;
+    const revenueScale = 1 + dangerSteps * 0.065;
+    const price = money((input.purchasePrice || config.price) * priceScale);
+    const cost = money((input.operatingCost ?? config.cost) * (1 + dangerSteps * 0.08));
+    const assetTier = tierFor(config, danger);
     return Object.freeze({
       id:input.id, name:input.name, zone:input.zone, settlementId:input.settlementId || input.zone,
       regionId:input.regionId || 'northford', regionName:input.regionName || 'Northford', type,
       purchasePrice:price, value:price, operatingCost:cost,
-      revenueMin:money((input.revenueMin ?? config.min) * scale), revenueMax:money((input.revenueMax ?? config.max) * scale),
+      revenueMin:money((input.revenueMin ?? config.min) * revenueScale), revenueMax:money((input.revenueMax ?? config.max) * revenueScale),
       level:0, upgrades:Object.freeze({quality:0,capacity:0,security:0}), risk:config.risk,
+      priceTier:assetTier.id, priceTierLabel:assetTier.label, priceTierRank:assetTier.rank,
       synergies:Object.freeze([...config.synergy]), regionalEconomy:input.regionalEconomy || 'commerce',
       source:input.source || 'building', x:input.x, y:input.y,
       choices:type === 'land' ? LAND_CHOICES : undefined
@@ -164,7 +177,8 @@
   function developmentCost(property, type) {
     const config = BUSINESS[type];
     if (!config || !LAND_CHOICES.includes(type)) return null;
-    return money(config.price * 0.72 + (property.purchasePrice || 240) * 0.22);
+    const regionalScale = Math.max(1, (property.purchasePrice || BUSINESS.land.price) / BUSINESS.land.price);
+    return money((config.build || config.price * .88) * regionalScale);
   }
 
   function develop(state, id, type, defs) {
@@ -177,8 +191,13 @@
     const gold = money(state.gold);
     if (gold < cost) return {ok:false,message:`Need ${cost - gold} more gold to build ${pretty(type)}.`};
     const config = BUSINESS[type];
-    const property = {...current, businessType:type, name:`${def?.regionName || 'Vale'} ${config.label}`, operatingCost:config.cost,
-      revenueMin:config.min, revenueMax:config.max, risk:config.risk, synergies:[...config.synergy], invested:money((current.invested || current.purchasePrice) + cost), value:money(current.value + cost * .82)};
+    const regionalScale = Math.max(1, (current.purchasePrice || BUSINESS.land.price) / BUSINESS.land.price);
+    const dangerSteps = Math.max(0, Math.round((regionalScale - 1) / .24));
+    const revenueScale = 1 + dangerSteps * .065, costScale = 1 + dangerSteps * .08;
+    const assetTier = tierFor(config, dangerSteps + 1);
+    const property = {...current, businessType:type, name:`${def?.regionName || 'Vale'} ${config.label}`, operatingCost:money(config.cost * costScale),
+      revenueMin:money(config.min * revenueScale), revenueMax:money(config.max * revenueScale), risk:config.risk, priceTier:assetTier.id, priceTierLabel:assetTier.label, priceTierRank:assetTier.rank,
+      synergies:[...config.synergy], invested:money((current.invested || current.purchasePrice) + cost), value:money(current.value + cost * .82)};
     state.gold = gold - cost;
     state.properties = {...state.properties,[id]:property};
     return {ok:true,message:`Development complete: ${property.name}.`,property,cost};
@@ -190,7 +209,13 @@
     if (current >= 3) return null;
     const total = TRACKS.reduce((sum, key) => sum + rank(property.upgrades?.[key]), 0);
     const factor = track === 'capacity' ? 1.08 : track === 'security' ? .92 : 1;
-    return money((property.purchasePrice || 350) * (0.18 + total * 0.055) * (1 + current * .48) * factor);
+    const basis = property.type === 'land' && property.businessType ? Math.max(property.purchasePrice || 0, property.invested || 0) : (property.purchasePrice || 350);
+    return money(basis * (0.18 + total * 0.055) * (1 + current * .48) * factor);
+  }
+
+  function settlementProgress(state = {}) {
+    const seconds = clamp(state.economyClock, 0, ACTIVE_DAY_SECONDS);
+    return Object.freeze({ seconds, required:ACTIVE_DAY_SECONDS, remaining:Math.max(0, ACTIVE_DAY_SECONDS - seconds), ready:seconds >= ACTIVE_DAY_SECONDS, label:clockLabel(seconds) });
   }
 
   function upgrade(state, id, track) {
@@ -288,7 +313,7 @@
   function propertyCard(state, def, owned, selected) {
     const property = owned || def, type = ownedType(property), isLand = property.type === 'land' && !property.businessType;
     const profit = owned ? `${property.lastProfit >= 0 ? '+' : ''}${property.lastProfit || 0}g` : `${def.revenueMin}–${def.revenueMax}g`;
-    return `<button class="econ26-card${selected ? ' is-selected' : ''}${owned ? ' is-owned' : ''}" data-estate-select="${esc(def.id)}"><span class="econ26-icon">${isLand?'◇':type==='smithy'?'⚒':type==='stable'?'♞':type==='apothecary'?'✤':type==='inn'?'☾':'⌂'}</span><span><small>${owned ? 'Owned' : esc(def.regionName)} · ${esc(isLand?'Land':pretty(type))}</small><strong>${esc(property.name)}</strong><em>${owned ? `Yesterday ${profit}` : `Forecast ${profit} before costs`}</em></span><b>${owned ? '›' : `${def.purchasePrice}g`}</b></button>`;
+    return `<button class="econ26-card${selected ? ' is-selected' : ''}${owned ? ' is-owned' : ''}" data-estate-select="${esc(def.id)}"><span class="econ26-icon">${isLand?'◇':type==='smithy'?'⚒':type==='stable'?'♞':type==='apothecary'?'✤':type==='inn'?'☾':'⌂'}</span><span><small>${owned ? 'Owned' : esc(def.regionName)} · ${esc(isLand?'Land':pretty(type))} · ${esc(property.priceTierLabel || 'Humble')}</small><strong>${esc(property.name)}</strong><em>${owned ? `Yesterday ${profit}` : `Forecast ${profit} before costs`}</em></span><b>${owned ? '›' : `${def.purchasePrice}g`}</b></button>`;
   }
 
   function detail(state, def, property) {
@@ -302,7 +327,7 @@
     const choices = owned && undeveloped ? `<div class="econ26-section"><h4>Choose a development</h4><div class="econ26-choice-grid">${LAND_CHOICES.map(choice=>{const business=BUSINESS[choice],cost=developmentCost(property,choice),short=Math.max(0,cost-money(state.gold));return `<button data-estate-develop="${esc(def.id)}" data-business="${choice}" ${short?'disabled':''}><strong>${esc(business.label)} <em>${cost}g</em></strong><span>${business.min}–${business.max}g revenue · ${business.cost}g cost</span><small>${short?`Need ${short}g · `:''}${business.risk} risk · Synergy: ${business.synergy.slice(0,2).map(pretty).join(' + ')}</small></button>`}).join('')}</div></div>` : '';
     const effects = {quality:'Revenue +10% · service discount +2%',capacity:'Revenue +14% · operating cost +6%',security:'Bad-day chance −3% · smaller incident costs'};
     const upgradeButtons = owned && !undeveloped ? `<div class="econ26-section"><h4>Property upgrades</h4><div class="econ26-upgrades">${TRACKS.map(track=>{const cost=upgradeCost(property,track),level=rank(upgrades[track]);return `<button data-estate-upgrade="${esc(def.id)}" data-track="${track}" ${cost!=null&&money(state.gold)>=cost?'':'disabled'}><span>${pretty(track)} <b>${'◆'.repeat(level)}${'◇'.repeat(3-level)}</b></span><em>${effects[track]}</em><small>${cost==null?'Max rank':money(state.gold)>=cost?`${cost}g`: `Need ${cost-money(state.gold)}g`}</small></button>`}).join('')}</div></div>` : '';
-    return `<article class="econ26-detail-card"><button class="econ26-back" data-estate-select="">‹ Back to properties</button><header><div><small>${esc(def.regionName)} · ${esc(undeveloped?'Land parcel':pretty(type))}</small><h3>${esc(property?.name || def.name)}</h3></div><span class="econ26-risk risk-${String(config.risk).toLowerCase()}">${esc(config.risk)} risk</span></header><p>${undeveloped?'Choose what to build. Development creates income and a useful local service.':`${config.label} revenue varies each adventure day with demand, events, operating costs, and upgrades.`}</p><div class="econ26-forecast"><div><small>Revenue range</small><strong>${property?.revenueMin ?? def.revenueMin}–${property?.revenueMax ?? def.revenueMax}g</strong></div><div><small>Operating cost</small><strong>${property?.operatingCost ?? def.operatingCost}g</strong></div><div><small>Current value</small><strong>${property?.value ?? def.value}g</strong></div><div><small>Yesterday</small><strong>${owned?`${property.lastProfit>=0?'+':''}${property.lastProfit||0}g`:'—'}</strong></div></div>${owned&&property.lastEvent?`<div class="econ26-event">Last report · ${esc(property.lastEvent)}</div>`:''}${track}${purchase}${choices}${upgradeButtons}</article>`;
+    return `<article class="econ26-detail-card"><button class="econ26-back" data-estate-select="">‹ Back to properties</button><header><div><small>${esc(def.regionName)} · ${esc(undeveloped?'Land parcel':pretty(type))} · ${esc((property || def).priceTierLabel || 'Humble')}</small><h3>${esc(property?.name || def.name)}</h3></div><span class="econ26-risk risk-${String(config.risk).toLowerCase()}">${esc(config.risk)} risk</span></header><p>${undeveloped?'Choose what to build. Development creates income and a useful local service.':`${config.label} revenue varies each adventure day with demand, events, operating costs, and upgrades.`}</p><div class="econ26-forecast"><div><small>Revenue range</small><strong>${property?.revenueMin ?? def.revenueMin}–${property?.revenueMax ?? def.revenueMax}g</strong></div><div><small>Operating cost</small><strong>${property?.operatingCost ?? def.operatingCost}g</strong></div><div><small>Current value</small><strong>${property?.value ?? def.value}g</strong></div><div><small>Yesterday</small><strong>${owned?`${property.lastProfit>=0?'+':''}${property.lastProfit||0}g`:'—'}</strong></div></div>${owned&&property.lastEvent?`<div class="econ26-event">Last report · ${esc(property.lastEvent)}</div>`:''}${track}${purchase}${choices}${upgradeButtons}</article>`;
   }
 
   function render(state = {}, defs = [], options = {}) {
@@ -312,7 +337,7 @@
       regionId:property.regionId || 'legacy',regionName:property.regionName || 'Legacy holdings',type:BUSINESS[property.type]?property.type:'home',source:'legacy-owned'
     }));
     const all = [...supplied,...legacy], byId = mapOf(all), view = options.view === 'market' ? 'market' : 'portfolio';
-    const sum = summary(state), owned = state.properties || {};
+    const sum = summary(state), owned = state.properties || {}, businessDay = settlementProgress(state);
     const availableRegions = new Map([['all','All regions'],['northford','Northford']]);
     for (const def of all) if (unlocked(state,def)) availableRegions.set(def.regionId,def.regionName);
     const region = availableRegions.has(options.region) ? options.region : 'all';
@@ -320,11 +345,11 @@
     const filtered = region === 'all' ? list : list.filter(def=>def.regionId===region || def.settlementId===region);
     const selected = options.selectedId ? byId.get(options.selectedId) : null, selectedProperty = selected ? owned[selected.id] : null;
     const historyBars = sum.history.length ? sum.history.map(row=>`<i class="${row.profit<0?'loss':''}" style="--v:${Math.min(100,Math.abs(row.profit)/Math.max(1,...sum.history.map(x=>Math.abs(x.profit||0)))*100)}%" title="Day ${row.day}: ${row.profit}g"></i>`).join('') : '';
-    return `<section class="econ26${selected?' has-selection':''}" aria-label="Property economy"><header class="econ26-header"><div><small>Vale holdings</small><h2>Property Ledger</h2></div><div class="econ26-purse"><strong>✦ ${money(state.gold)}g</strong><span>${sum.treasury}g treasury</span></div></header><div class="econ26-feedback" role="status" aria-live="polite">${esc(options.message||'')}</div><section class="econ26-summary"><div><small>Portfolio value</small><strong>${sum.value}g</strong><span>${sum.count} properties</span></div><div><small>Yesterday</small><strong class="${sum.last<0?'loss':''}">${sum.last>=0?'+':''}${sum.last}g</strong><span>Automatic treasury deposit</span></div><div><small>14-day average</small><strong>${sum.average>=0?'+':''}${sum.average}g</strong><span>Variable, never real-time</span></div><div class="econ26-history"><span>${historyBars||'<em>No settled days yet</em>'}</span></div></section><nav class="econ26-view"><button data-estate-view="portfolio" class="${view==='portfolio'?'active':''}">My portfolio</button><button data-estate-view="market" class="${view==='market'?'active':''}">Property market</button><button data-economy="collect" ${sum.treasury>0?'':'disabled'}>Transfer treasury</button><button data-economy="day">Advance day</button></nav><div class="econ26-workspace"><section class="econ26-list"><nav class="econ26-regions">${[...availableRegions].map(([id,name])=>`<button data-estate-region="${esc(id)}" class="${region===id?'active':''}">${esc(name)}</button>`).join('')}</nav><p class="econ26-note">${view==='market'?'Only discovered settlements are listed. The Guildhall is civic property and the Old Lantern Cistern is protected—not for sale.':'Profit settles after five minutes of active adventuring, resting, or Advance day. Treasury is spendable savings; property value is invested wealth.'}</p><div class="econ26-cards">${filtered.length?filtered.map(def=>propertyCard(state,def,owned[def.id],selected?.id===def.id)).join(''):`<div class="econ26-empty"><strong>${view==='market'?'No deeds available here':'Your portfolio is empty'}</strong><p>${view==='market'?'Explore another settlement to reveal its market.':'Open the property market to buy your first business or land parcel.'}</p></div>`}</div></section><aside class="econ26-detail">${detail(state,selected,selectedProperty)}</aside></div></section>`;
+    return `<section class="econ26${selected?' has-selection':''}" aria-label="Property economy"><header class="econ26-header"><div><small>Vale holdings</small><h2>Property Ledger</h2></div><div class="econ26-purse"><strong>✦ ${money(state.gold)}g</strong><span>${sum.treasury}g treasury</span></div></header><div class="econ26-feedback" role="status" aria-live="polite">${esc(options.message||'')}</div><section class="econ26-summary"><div><small>Portfolio value</small><strong>${sum.value}g</strong><span>${sum.count} properties</span></div><div><small>Yesterday</small><strong class="${sum.last<0?'loss':''}">${sum.last>=0?'+':''}${sum.last}g</strong><span>Automatic treasury deposit</span></div><div><small>14-day average</small><strong>${sum.average>=0?'+':''}${sum.average}g</strong><span>Variable, never real-time</span></div><div class="econ26-history"><span>${historyBars||'<em>No settled days yet</em>'}</span></div></section><nav class="econ26-view"><button data-estate-view="portfolio" class="${view==='portfolio'?'active':''}">My portfolio</button><button data-estate-view="market" class="${view==='market'?'active':''}">Property market</button><button data-economy="collect" ${sum.treasury>0?'':'disabled'}>Transfer treasury</button><button data-economy="day" ${businessDay.ready?'':'disabled'}>${businessDay.ready?'Settle business day':`Business day ${businessDay.label} / 5:00`}</button></nav><div class="econ26-workspace"><section class="econ26-list"><nav class="econ26-regions">${[...availableRegions].map(([id,name])=>`<button data-estate-region="${esc(id)}" class="${region===id?'active':''}">${esc(name)}</button>`).join('')}</nav><p class="econ26-note">${view==='market'?'Only discovered settlements are listed. The Guildhall is civic property and the Old Lantern Cistern is protected—not for sale.':'Profit settles after five minutes of active adventuring. Inns heal and save, but do not advance business time. Treasury is spendable savings; property value is invested wealth.'}</p><div class="econ26-cards">${filtered.length?filtered.map(def=>propertyCard(state,def,owned[def.id],selected?.id===def.id)).join(''):`<div class="econ26-empty"><strong>${view==='market'?'No deeds available here':'Your portfolio is empty'}</strong><p>${view==='market'?'Explore another settlement to reveal its market.':'Open the property market to buy your first business or land parcel.'}</p></div>`}</div></section><aside class="econ26-detail">${detail(state,selected,selectedProperty)}</aside></div></section>`;
   }
 
   window.EVERLIGHT_ECONOMY = Object.freeze({
-    version:26, tracks:TRACKS, landChoices:LAND_CHOICES,
-    catalog, unlocked, migrate, buy, develop, upgrade, upgradeCost, settleDay, perk, render
+    version:26, pricingVersion:27, tracks:TRACKS, landChoices:LAND_CHOICES, assetTiers:ASSET_TIERS, activeDaySeconds:ACTIVE_DAY_SECONDS,
+    catalog, unlocked, migrate, buy, develop, upgrade, upgradeCost, settlementProgress, settleDay, perk, render
   });
 })();

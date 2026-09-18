@@ -1,6 +1,8 @@
-const CACHE = 'everlight-v26-estates-and-enterprises-r1';
-const CURRENT_BUILD_URL = './index.html?v=26';
+const CACHE = 'everlight-v27-trials-and-treasures-r1';
+const CURRENT_BUILD_URL = './index.html?v=27';
 const CORE = [
+  './assets/interior-furniture-v27.png',
+  './js/progression-v27.js','./js/interiors-v27.js','./js/minimap-v27.js','./styles/journey-v27.css',
   './','./index.html','./manifest.webmanifest','./styles/game-v3.css','./styles/visual-v22.css','./js/visual-upgrade-v22.js','./js/world-atlas-v22.js','./js/game-v4.js','./js/exploration-v24.js','./js/actors-v24.js',
   './js/economy-v26.js','./styles/economy-v26.css','./js/camera-v25.js','./js/equipment-v25.js','./styles/equipment-v25.css',
   './assets/northford-twilight.jpg','./assets/hero-atlas-concept.png','./assets/hero-player-v2.png','./assets/hero-walk-v22.png','./assets/hero-attack-v22.png','./assets/enemies-v22.png',
@@ -25,7 +27,7 @@ self.addEventListener('activate', event => {
       .then(() => self.clients.matchAll({ type: 'window' }))
       .then(clients => Promise.all(clients.map(client => {
         const url = new URL(client.url);
-        return url.searchParams.get('v') === '26' ? null : client.navigate(CURRENT_BUILD_URL).catch(() => null);
+        return url.searchParams.get('v') === '27' ? null : client.navigate(CURRENT_BUILD_URL).catch(() => null);
       })))
   );
 });

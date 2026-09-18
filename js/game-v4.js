@@ -7,10 +7,12 @@
   const VIEW_H = 540;
   const SAVE_KEY = 'everlight-save-v6';
   const LEGACY_SAVE_KEY = 'everlight-save-v5';
-  const BUILD = '26';
+  const BUILD = '27';
   const EX = window.EVERLIGHT_EXPLORATION;
   const ATLAS = window.EVERLIGHT_ATLAS || null;
   const ECON = window.EVERLIGHT_ECONOMY;
+  const PROGRESSION = window.EVERLIGHT_PROGRESSION;
+  const INT = window.EVERLIGHT_INTERIORS;
   const ESTATES = ECON.catalog(ATLAS,EX);
   window.__EVERLIGHT_BUILD__ = BUILD;
   const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
@@ -26,7 +28,7 @@
     'hpProgress','manaProgress','stamProgress','hpText','manaText','levelText','goldText','objectiveBtn',
     'objectiveTitle','objectiveText','bossHud','bossBar','tutorial','toast','subtitle','joystick','joyKnob',
     'attackBtn','spellBtn','dodgeBtn','interactBtn','attackCooldown','spellCooldown','dodgeCooldown',
-    'fullscreenBtn','pauseBtn','runBtn','mapBtn','destinationHint','dialogue','speakerPortrait','speakerName','dialogueText','dialogueChoices',
+    'fullscreenBtn','pauseBtn','runBtn','mapBtn','minimapCanvas','minimapLabel','destinationHint','dialogue','speakerPortrait','speakerName','dialogueText','dialogueChoices',
     'dialogueNext','journal','journalBody','closeJournal','chapterComplete','chapterSummary','keepExploringBtn',
     'interactionPanel','interactionTitle','interactionBody','closeInteraction','lootFeed','zoneBanner','srUpdates'
   ].map(id => [id, $(id)]));
@@ -60,8 +62,8 @@
     lantern_charm: { id: 'lantern_charm', name: 'Mira\'s Lantern Charm', type: 'Charm', rarity: 'Rare', spell: 0.2, value: 180, description: 'A warm light that strengthens aethercraft.' },
     tonic: { id: 'tonic', name: 'Restorative Tonic', type: 'Consumable', rarity: 'Common', heal: 55, value: 22, description: 'Restores 55 health.' },
     aether_draught: { id: 'aether_draught', name: 'Aether Draught', type: 'Consumable', rarity: 'Uncommon', mana: 45, value: 38, description: 'Restores 45 aether.' },
-    echo_buckler: { id: 'echo_buckler', name: 'Echo Buckler', type: 'Charm', rarity: 'Legendary', armor: 7, dodge: 0.12, value: 720, description: 'A perfect dodge releases a protective echo.' },
-    aether_lens: { id: 'aether_lens', name: 'Aether Lens', type: 'Quest', rarity: 'Legendary', value: 0, description: 'The first piece of a machine that can cross the upper sky.' }
+    echo_buckler: { id: 'echo_buckler', name: 'Echo Buckler', type: 'Shield', rarity: 'Legendary', armor: 7, maxHp: 18, value: 720, description: 'A guardian’s shield, earned by recovering a lost keeper’s oath.' },
+    aether_lens: { id: 'aether_lens', name: 'Aether Lens', type: 'Quest', rarity: 'Rare', value: 0, description: 'Story relic—not equipment. The first piece of a machine that can cross the upper sky.' }
   };
   Object.assign(ITEM_TEMPLATES, {
     wayfarer_bow: { id:'wayfarer_bow', name:'Wayfarer Bow', type:'Weapon', rarity:'Uncommon', power:21, value:88, description:'A recurved road bow strung with echo-silk.' },
@@ -69,6 +71,20 @@
     frostveil_mail: { id:'frostveil_mail', name:'Frostveil Mail', type:'Armor', rarity:'Rare', armor:12, maxHp:18, value:290, description:'Layered mail made for whiteout hunts.' },
     saltglass_idol: { id:'saltglass_idol', name:'Saltglass Idol', type:'Charm', rarity:'Epic', spell:.35, value:480, description:'A desert relic that bends aether around its bearer.' },
     starfall_relic: { id:'starfall_relic', name:'Starfall Reliquary', type:'Charm', rarity:'Mythic', spell:.55, armor:9, value:1250, description:'A fragment of the night that fell beyond the crownlands.' }
+  });
+  Object.assign(ITEM_TEMPLATES,{
+    traveler_helm:{id:'traveler_helm',name:'Traveler’s Hood',type:'Helm',rarity:'Common',armor:1,maxHp:4,value:35,description:'Stitched wool and a discreet leather lining.'},
+    trail_helm:{id:'trail_helm',name:'Trailwatch Helm',type:'Helm',rarity:'Uncommon',armor:3,maxHp:6,value:95,description:'A scout’s light, open-faced helm.'},
+    rune_helm:{id:'rune_helm',name:'Runekeeper’s Circlet',type:'Helm',rarity:'Rare',armor:3,spell:.08,maxHp:10,value:240,description:'Weathered runes focus the bearer’s aether.'},
+    warden_helm:{id:'warden_helm',name:'Warden’s Visor',type:'Helm',rarity:'Epic',armor:6,maxHp:18,value:480,description:'A trophy from a guardian that never yielded.'},
+    crown_of_echoes:{id:'crown_of_echoes',name:'Crown of Echoes',type:'Helm',rarity:'Legendary',armor:7,spell:.14,maxHp:22,value:980,description:'Won from the most dangerous keepers of the old roads.'},
+    road_belt:{id:'road_belt',name:'Roadworn Belt',type:'Belt',rarity:'Common',armor:1,maxHp:4,value:28,description:'Reliable leather, many repairs, room for another journey.'},
+    scout_belt:{id:'scout_belt',name:'Scout’s Sash',type:'Belt',rarity:'Uncommon',armor:2,maxHp:6,crit:.01,value:80,description:'A balanced kit for quick footwork.'},
+    duelist_belt:{id:'duelist_belt',name:'Duelist’s Baldric',type:'Belt',rarity:'Rare',armor:3,maxHp:10,crit:.025,value:220,description:'Keeps your blade exactly where it belongs.'},
+    starwoven_belt:{id:'starwoven_belt',name:'Starwoven Girdle',type:'Belt',rarity:'Legendary',armor:5,maxHp:20,crit:.04,value:950,description:'Starlight threaded through an ancient champion’s sash.'},
+    oak_shield:{id:'oak_shield',name:'Ironbound Oak Shield',type:'Shield',rarity:'Uncommon',armor:3,maxHp:6,value:105,description:'An honest shield reinforced with iron bands.'},
+    sentinel_shield:{id:'sentinel_shield',name:'Sentinel’s Shield',type:'Shield',rarity:'Rare',armor:5,maxHp:12,value:280,description:'Carried by the watch on the longest nights.'},
+    sunward_shield:{id:'sunward_shield',name:'Sunward Aegis',type:'Shield',rarity:'Epic',armor:7,maxHp:16,value:520,description:'A boss-forged shield that carries the morning’s warmth.'}
   });
   const SKILLS = [
     { id: 'keen_edge', tree: 'Vanguard', name: 'Keen Edge', cost: 1, requires: null, text: '+20% melee damage.' },
@@ -85,10 +101,10 @@
     ashen: { name: 'Ashen Synod', color: '#ff8b70', description: 'Mages who study dangerous, useful power.', gift: 'Ember doctrine: +18 maximum aether.' }
   };
   const SHOP_STOCK = {
-    smithy: ['briar_edge','leather_coat','moonfall_saber'],
+    smithy: ['briar_edge','leather_coat','moonfall_saber','oak_shield','traveler_helm','road_belt'],
     apothecary: ['tonic','tonic','aether_draught'],
     archive: ['lantern_charm','aether_draught'],
-    road: ['tonic','aether_draught','wayfarer_bow','leather_coat']
+    road: ['tonic','aether_draught','wayfarer_bow','leather_coat','trail_helm','scout_belt']
   };
 
   const ZONES = {
@@ -132,14 +148,14 @@
   }
 
   const defaultSave = () => ({
-    schema: 8, build: BUILD, style: null, zone: 'northford', x: 965, y: 625,
+    schema: 9, build: BUILD, style: null, zone: 'northford', x: 965, y: 625,
     hp: 100, maxHp: 100, mana: 60, maxMana: 60, stam: 100, maxStam: 100,
     gold: 140, xp: 0, level: 1, skillPoints: 1, day: 1, playTime: 0, lastPlayed: Date.now(),
     mainStep: 0, mainKills: 0, storyChoice: null, endingChoice: null, chapterComplete: false,
     faction: null, factionRep: { ironbound: 0, archive: 0, gilded: 0, ashen: 0 },
     skills: [], mounts: [], activeMount: null, vehicles: { skiff: false, airshipParts: 0, airship: false },
     inventory: [{ ...ITEM_TEMPLATES.roadworn_blade, uid: 'starter-weapon' }, { ...ITEM_TEMPLATES.tonic, uid: 'starter-tonic-1' }, { ...ITEM_TEMPLATES.tonic, uid: 'starter-tonic-2' }],
-    equipment: { Weapon: 'starter-weapon', Armor: null, Charm: null }, materials: { moonleaf: 0, briarFiber: 0, wardenAlloy: 0 },
+    equipment: { Weapon: 'starter-weapon', Armor: null, Shield:null, Helm:null, Belt:null, Charm1:null, Charm2:null }, materials: { moonleaf: 0, briarFiber: 0, wardenAlloy: 0 },
     sideQuests: { apothecary: 'available', stable: 'available', lostScout: 'available', innRumor:'available', smithyLedger:'available', drownedBell:'available' }, sideProgress: { briars: 0 },
     discoveries: ['Northford'], atlasDiscovered: [], opened: [], properties: {}, treasury: 0, defeated: 0,
     dynamicQuests: {}, areaKills: {}, profitHistory: [], attunedWaystones: [], activeEvents: {},
@@ -157,7 +173,7 @@
     const base = defaultSave();
     if (!raw) return base;
     const oldQuestMap = [0, 2, 3, 6, 8];
-    const merged = { ...base, ...raw, schema: 8, build: BUILD };
+    const merged = { ...base, ...raw, schema: 9, build: BUILD };
     merged.settings = { ...base.settings, ...(raw.settings || {}) };
     merged.inventory = (raw.inventory?.length ? raw.inventory : base.inventory).map(normalizeItem);
     if (!raw.schema) {
@@ -166,7 +182,10 @@
       merged.gold = Math.max(140, raw.gold || 0);
     }
     merged.equipment = { ...base.equipment, ...(raw.equipment || {}) };
-    for(const type of ['Weapon','Armor','Charm'])if(merged.equipment[type]!==null&&!merged.inventory.some(i=>i.uid===merged.equipment[type]&&i.type===type))merged.equipment[type]=type==='Weapon'?merged.inventory.find(i=>i.type===type)?.uid||null:null;
+    // Preserve earned items; the old buckler becomes a shield, never disappears.
+    const oldBuckler=merged.inventory.find(i=>i.id==='echo_buckler'&&i.type==='Charm');
+    if(oldBuckler){oldBuckler.type='Shield';if([raw.equipment?.Charm,raw.equipment?.Charm1,raw.equipment?.Charm2].includes(oldBuckler.uid)&&!merged.equipment.Shield)merged.equipment.Shield=oldBuckler.uid;}
+    window.EVERLIGHT_EQUIPMENT.migrate(merged);
     merged.factionRep = { ...base.factionRep, ...(raw.factionRep || {}) };
     merged.materials = { ...base.materials, ...(raw.materials || {}) };
     merged.sideQuests = { ...base.sideQuests, ...(raw.sideQuests || {}) };
@@ -315,7 +334,7 @@
       wisp: { hp: 44, r: 18, speed: 58, damage: 9, xp: 16, telegraph: .72, recover: .46 },
       briar: { hp: 72, r: 23, speed: 48, damage: 13, xp: 24, telegraph: .88, recover: .58 },
       construct: { hp: 110, r: 27, speed: 42, damage: 17, xp: 36, telegraph: 1.0, recover: .7 },
-      warden: { hp: 480, r: 42, speed: 45, damage: 22, xp: 180, telegraph: 1.05, recover: .78 }
+      warden: { hp: 1380, r: 42, speed: 118, damage: 39, xp: 328, telegraph: .8, recover: .72 }
     }[kind];
     return { id: `${kind}-${index}-${Date.now()}`, kind, x, y, homeX: x, homeY: y, hp: stats.hp, maxHp: stats.hp, r: stats.r, speed: stats.speed, damage: stats.damage, xp: stats.xp, telegraphDuration: stats.telegraph, recoverDuration: stats.recover, state: 'idle', stateTimer: random(.1,.8), attackCd: random(.4,1.2), attackDir: { x: 0, y: 1 }, attackKind: kind === 'wisp' ? 'bolt' : kind === 'warden' ? 'slam' : 'melee', didHit: false, flash: 0, dead: false, phase: 1 };
   }
@@ -323,7 +342,7 @@
     if(['cistern','sluice','vault'].includes(S.zone)){
       if(S.zone==='cistern')[[410,280],[725,425],[275,485]].forEach((p,i)=>enemies.push(makeEnemy('wisp',...p,i)));
       if(S.zone==='sluice')[[510,275],[645,545],[910,620]].forEach((p,i)=>enemies.push(makeEnemy('construct',...p,i)));
-      if(S.zone==='vault'&&!S.opened.includes('drowned-keeper')){const boss=makeEnemy('warden',560,350,90);boss.hp=boss.maxHp=370;boss.damage=18;boss.xp=160;enemies.push(boss);}
+      if(S.zone==='vault'&&!S.opened.includes('drowned-keeper'))enemies.push(configureBoss(makeEnemy('warden',560,350,90)));
       return;
     }
     if (S.zone === 'greenwake') {
@@ -331,7 +350,7 @@
     }
     if (S.zone === 'moonfall') {
       [[420,420,'construct'],[730,760,'construct'],[1040,380,'construct'],[1320,720,'wisp']].forEach((p,i) => enemies.push(makeEnemy(p[2],p[0],p[1],i)));
-      if (S.mainStep >= 6 && !S.opened.includes('hollow-warden')) enemies.push(makeEnemy('warden', 1570, 560, 9));
+      if (S.mainStep >= 6 && !S.opened.includes('hollow-warden')) enemies.push(configureBoss(makeEnemy('warden', 1570, 560, 9)));
     }
     const area = atlasArea();
     if (area) {
@@ -344,11 +363,11 @@
       }
       if (area.hasElite && !S.opened.includes(`${area.id}:elite`)) {
         const elite = makeEnemy('warden', 900, 480, 99);
-        elite.hp = elite.maxHp = 260 + area.danger * 70; elite.damage += area.danger * 2; elite.xp += area.danger * 20;
-        enemies.push(elite);
+        enemies.push(configureBoss(elite));
       }
     }
   }
+  function configureBoss(e,rematch=false){const p=PROGRESSION.profile(S.zone,atlasArea(),rematch);Object.assign(e,{hp:p.hp,maxHp:p.hp,speed:p.speed,damage:p.damage,xp:p.xp,recommendedLevel:p.level,bossName:p.name,resistance:p.armor,rematch,cycle:0,engaged:false});return e;}
 
   function itemByUid(id) { return S.inventory.find(i => i.uid === id); }
   function equipped(type) { return window.EVERLIGHT_EQUIPMENT.effective(itemByUid(S.equipment[type])); }
@@ -369,8 +388,8 @@
   }
   function playerDamage(amount, sourceX, sourceY) {
     if (invuln > 0 || paused) return;
-    const reduced = Math.max(1, Math.round(amount * (100 / (100 + combatStats().armor * 6)) * (S.settings.assistMode ? .6 : 1)));
-    S.hp = Math.max(0, S.hp - reduced); invuln = .78; hurtFlash = .24; shake = 8; sfx('hurt');
+    const reduced = Math.max(1, Math.round(amount * (1-combatStats().damageReduction) * (S.settings.assistMode ? .6 : 1)));
+    S.hp = Math.max(0, S.hp - reduced); invuln = 1.05; hurtFlash = .24; shake = 8; sfx('hurt');
     const dx = S.x - sourceX, dy = S.y - sourceY, m = Math.hypot(dx,dy) || 1; moveActor(S, dx/m*24, dy/m*24, 13);
     floatText(S.x, S.y - 30, `-${reduced}`, '#ff9b8d');
     if (S.hp <= 0) defeatPlayer();
@@ -380,26 +399,27 @@
     setTimeout(() => { S.hp=combatStats().maxHp; S.mana=S.maxMana; S.stam=S.maxStam; S.gold=Math.max(0,S.gold-12); enterZone('northford', ZONES.northford.spawn); paused=false; toast('Returned to Northford · −12 gold'); save(); }, 1500);
   }
   function hitEnemy(e, damage, dx, dy, magic = false, canKill = true) {
-    if (e.dead) return; if(!canKill)damage=Math.min(damage,Math.max(0,e.hp-1));e.hp -= damage; e.flash = .13; moveActor(e,dx*8,dy*8,e.r*.65);
+    if (e.dead) return; damage*=1-(e.resistance||0);if(!canKill)damage=Math.min(damage,Math.max(0,e.hp-1));e.hp -= damage; e.flash = .13;e.engaged=true;moveActor(e,dx*(e.kind==='warden'?1:8),dy*(e.kind==='warden'?1:8),e.r*.65);
     spawnBurst(e.x,e.y,magic?'#79fff0':'#ffd77d',magic?10:7); floatText(e.x,e.y-e.r,`${Math.round(damage)}`,magic?'#8dfff0':'#ffe39a'); sfx('hit');
     if (e.hp <= 0) killEnemy(e);
   }
   function makeDrop(kind, x, y, data = {}) { loot.push({ id: uid('drop'), kind, x: x + random(-22,22), y: y + random(-14,18), vx: random(-45,45), vy: random(-85,-35), age: 0, collected: false, ...data }); }
   function dropLoot(e) {
-    const boss = e.kind === 'warden'; const storyBoss = boss && S.zone==='moonfall'; const coins = boss ? 14 : e.kind === 'construct' ? 7 : 5;
+    const boss = e.kind === 'warden'; const storyBoss = boss && S.zone==='moonfall'&&!e.rematch&&!S.opened.includes('hollow-warden'); const coins = boss ? 20 : e.kind === 'construct' ? 7 : 5;
     for (let i=0;i<coins;i++) makeDrop('gold', e.x, e.y, { amount: boss ? Math.ceil(random(5,10)) : Math.ceil(random(1,4)) });
     const material = e.kind === 'briar' ? 'briarFiber' : e.kind === 'warden' ? 'wardenAlloy' : Math.random() < .5 ? 'moonleaf' : null;
     if (material) for (let i=0;i<(boss?3:1);i++) makeDrop('material',e.x,e.y,{ material, amount: 1, rarity: boss?'Rare':'Uncommon' });
     const rareBonus = S.faction === 'archive' ? .1 : 0;
-    if (storyBoss) { makeDrop('item',e.x,e.y,{ itemId:'warden_plate',rarity:'Epic' }); makeDrop('item',e.x,e.y,{ itemId:'aether_lens',rarity:'Legendary' }); }
-    else if (boss) { const tier=atlasArea()?.treasureTier||'Epic';makeDrop('item',e.x,e.y,{itemId:choose(tier==='Mythic'?['starfall_relic','emberbrand']:['emberbrand','frostveil_mail','saltglass_idol']),rarity:tier}); }
-    else if (Math.random() < .2 + rareBonus) makeDrop('item',e.x,e.y,{ itemId: choose(e.kind==='construct'?['moonfall_saber','lantern_charm','aether_draught']:['briar_edge','leather_coat','tonic']), rarity: null });
+    if (storyBoss) { makeDrop('item',e.x,e.y,{ itemId:'warden_plate',rarity:'Epic' }); makeDrop('item',e.x,e.y,{ itemId:'aether_lens',rarity:'Rare' }); }
+    else if (boss) { const reward=PROGRESSION.treasure({source:'boss',danger:atlasArea()?.danger||3});makeDrop('item',e.x,e.y,{itemId:reward.itemId,rarity:reward.tier}); }
+    else if (Math.random() < .2 + rareBonus) {const reward=PROGRESSION.treasure({source:'enemy',danger:atlasArea()?.danger||1});makeDrop('item',e.x,e.y,{itemId:reward.itemId,rarity:reward.tier});}
   }
   function killEnemy(e) {
     e.dead=true; spawnBurst(e.x,e.y,e.kind==='warden'?'#ffe08a':'#7efbe7',e.kind==='warden'?42:18); shake=e.kind==='warden'?14:5; dropLoot(e); gainXp(e.xp); S.defeated++;
     if (S.zone==='greenwake' && S.mainStep===2 && (e.kind==='wisp'||e.kind==='briar')) { S.mainKills++; if(S.mainKills>=3){S.mainStep=3;sfx('success');subtitle('The echo storm breaks. Mira will want to hear what you found.',3);save();} }
     if (e.kind==='briar' && S.sideQuests.stable==='active') { S.sideProgress.briars++; if(S.sideProgress.briars>=4){S.sideQuests.stable='ready';toast('Stable quest complete · Return to Rowan');} }
-    if (e.kind==='warden' && S.zone==='moonfall') { if(!S.opened.includes('hollow-warden'))S.opened.push('hollow-warden'); S.mainStep=7; sfx('success'); subtitle('The Warden falls. Claim the Aether Lens from its hoard.',3); }
+    if (e.kind==='warden' && S.zone==='moonfall'&&!e.rematch) { if(!S.opened.includes('hollow-warden'))S.opened.push('hollow-warden'); S.mainStep=Math.max(S.mainStep,7); sfx('success'); subtitle('The Warden falls. Claim the Aether Lens from its hoard.',3); }
+    if(e.rematch){S.opened.push('warden-rematch-v27');save();subtitle('The old guardian acknowledges your mastery.',3);}
     if(e.kind==='warden'&&S.zone==='vault'){S.opened.push('drowned-keeper');S.sideQuests.drownedBell='ready';save();subtitle('The bell is free. Open the reliquary, then return to Ada.',4);}
     const area=atlasArea();
     if(area){
@@ -432,14 +452,15 @@
   }
   function castSpell(){
     if(paused||spellCd>0)return;wakeAudio();dismissTutorial();const cost=16;if(S.mana<cost){toast('Not enough aether');return;}S.mana-=cost;spellCd=1.05;sfx('spell');
-    const d=aimDirection(360);projectiles.push({kind:'player',x:S.x+d.x*24,y:S.y+d.y*16,vx:d.x*360,vy:d.y*360,r:9,life:1.7,damage:Math.round(25*combatStats().spell),chain:hasSkill('chain_light')});
+    const d=aimDirection(360);projectiles.push({kind:'player',x:S.x+d.x*24,y:S.y+d.y*16,vx:d.x*360,vy:d.y*360,r:9,life:1.7,damage:combatStats().spellDamage,chain:hasSkill('chain_light')});
   }
   function dodge(){
     if(paused||dodgeCd>0||S.stam<24)return;wakeAudio();dismissTutorial();const threatened=enemies.some(e=>e.state==='windup'&&distance(e,S)<e.r+110);const d=facing();S.stam-=24;dodgeCd=.82;invuln=.5;moveActor(S,d.x*78,d.y*78,13);if(threatened&&hasSkill('counter_light')){counterBuff=4;toast('Counterlight ready');}haptic(12);tone(260,.1,'triangle',.02,130);
     for(let i=0;i<12;i++)particles.push({x:S.x-d.x*i*5,y:S.y-d.y*i*5,vx:random(-12,12),vy:random(-12,12),life:.4,max:.4,color:'#78e8d3',size:random(2,5)});
   }
 
-  function solidRects(){return INTERIOR_LAYOUTS[S.zone]?.solids||EX?.roomSolids[S.zone]||(/^(home|business)@/.test(S.zone)?EX.roomSolids.bellkeeper:[]);}
+  function roomOptions(){const z=zone();return {zoneId:S.zone,name:z.name,building:z.building,businessType:z.estateId?S.properties[z.estateId]?.businessType:null,region:ATLAS.get(z.parent||z.estateParent)};}
+  function solidRects(){const z=zone();if(INT&&z.type==='room'&&z.theme!=='dungeon')return INT.solids(roomOptions());return INTERIOR_LAYOUTS[S.zone]?.solids||EX?.roomSolids[S.zone]||(/^(home|business)@/.test(S.zone)?EX.roomSolids.bellkeeper:[]);}
   function collides(x,y,r){
     const z=zone();if(x-r<18||y-r<(z.type==='room'?155:40)||x+r>z.width-18||y+r>z.height-35)return true;
     if(solidRects().some(([rx,ry,rw,rh])=>x+r>rx&&x-r<rx+rw&&y+r>ry&&y-r<ry+rh))return true;
@@ -460,26 +481,27 @@
   }
   function startEnemyWindup(e, dx, dy, d) {
     e.state='windup';e.stateTimer=e.telegraphDuration;e.attackDir={x:dx/d,y:dy/d};e.didHit=false;
-    if(e.kind==='warden'&&e.hp<e.maxHp*.5)e.attackKind=Math.random()<.55?'radial':'slam';else e.attackKind=e.kind==='wisp'?'bolt':'melee';
+    if(e.kind==='warden'){const plan=PROGRESSION.attackPlan(e,d);e.phase=plan.phase;e.attackKind=plan.kind;e.telegraphDuration=plan.windup;e.stateTimer=plan.windup;e.recoverDuration=plan.recovery;e.nextCooldown=plan.cooldown;e.attackDuration=plan.attackTime;e.cycle=(e.cycle||0)+1;e.engaged=true;}else e.attackKind=e.kind==='wisp'?'bolt':'melee';
   }
   function resolveEnemyAttack(e) {
-    e.state='attack';e.stateTimer=e.attackKind==='melee'?.2:.28;e.didHit=false;shake=Math.max(shake,e.kind==='warden'?6:2);
+    e.state='attack';e.stateTimer=e.attackDuration||(e.attackKind==='melee'?.2:.28);e.didHit=false;shake=Math.max(shake,e.kind==='warden'?6:2);
     if(e.attackKind==='bolt')projectiles.push({kind:'enemy',x:e.x+e.attackDir.x*e.r,y:e.y+e.attackDir.y*e.r,vx:e.attackDir.x*230,vy:e.attackDir.y*230,r:8,life:2.2,damage:e.damage});
-    if(e.attackKind==='radial')for(let i=0;i<10;i++){const a=i*Math.PI/5;projectiles.push({kind:'enemy',x:e.x,y:e.y,vx:Math.cos(a)*170,vy:Math.sin(a)*170,r:8,life:2.4,damage:14});}
+    if(e.attackKind==='volley'){const base=Math.atan2(e.attackDir.y,e.attackDir.x),count=e.phase===2?5:3;for(let i=0;i<count;i++){const a=base+(i-(count-1)/2)*.18;projectiles.push({kind:'enemy',x:e.x+Math.cos(a)*e.r,y:e.y+Math.sin(a)*e.r,vx:Math.cos(a)*310,vy:Math.sin(a)*310,r:9,life:3.2,damage:e.damage*.85});}}
+    if(e.attackKind==='radial')for(let i=0;i<12;i++){const a=i*Math.PI/6;projectiles.push({kind:'enemy',x:e.x,y:e.y,vx:Math.cos(a)*225,vy:Math.sin(a)*225,r:8,life:2.8,damage:e.damage*.75});}
   }
   function updateEnemies(dt){
     for(const e of enemies){if(e.dead)continue;e.flash=Math.max(0,e.flash-dt);e.attackCd=Math.max(0,e.attackCd-dt);const dx=S.x-e.x,dy=S.y-e.y,d=Math.hypot(dx,dy)||1,nx=dx/d,ny=dy/d;if(zoneGrace>0){e.state='idle';continue;}
       if(e.state==='windup'){e.stateTimer-=dt;if(e.stateTimer<=0)resolveEnemyAttack(e);continue;}
       if(e.state==='attack'){
         e.stateTimer-=dt;const progress=1-clamp(e.stateTimer/(e.attackKind==='melee'?.2:.28),0,1);
-        if(e.attackKind==='melee'||e.attackKind==='slam')moveActor(e,e.attackDir.x*e.speed*3.2*dt,e.attackDir.y*e.speed*3.2*dt,e.r*.7);
-        if(!e.didHit&&(e.attackKind==='melee'||e.attackKind==='slam')&&distance(e,S)<e.r+28){playerDamage(e.damage,e.x,e.y);e.didHit=true;}
-        if(e.stateTimer<=0){e.state='recover';e.stateTimer=e.recoverDuration;e.attackCd=random(.7,1.2);}continue;
+        if(['melee','slam','charge'].includes(e.attackKind)){const pace=e.attackKind==='charge'?4.6:e.attackKind==='slam'?1.8:3.2;moveActor(e,e.attackDir.x*e.speed*pace*dt,e.attackDir.y*e.speed*pace*dt,e.r*.7);}
+        if(!e.didHit&&['melee','slam','charge'].includes(e.attackKind)&&distance(e,S)<e.r+(e.attackKind==='slam'?72:28)){playerDamage(e.damage,e.x,e.y);e.didHit=true;}
+        if(e.stateTimer<=0){e.state='recover';e.stateTimer=e.recoverDuration;e.attackCd=e.kind==='warden'?e.nextCooldown:random(.7,1.2);}continue;
       }
       if(e.state==='recover'){e.stateTimer-=dt;if(e.stateTimer<=0)e.state='chase';continue;}
-      const reach=e.kind==='wisp'?150:e.r+38;if(d<reach&&e.attackCd<=0){startEnemyWindup(e,dx,dy,d);continue;}
-      if(d<440){moveActor(e,nx*e.speed*dt,ny*e.speed*dt,e.r*.65);e.state='chase';}else e.state='idle';
-      if(e.kind==='warden')e.phase=e.hp<e.maxHp*.5?2:1;
+      const reach=e.kind==='warden'?780:e.kind==='wisp'?150:e.r+38;if(d<reach&&e.attackCd<=0){startEnemyWindup(e,dx,dy,d);continue;}
+      if(d<(e.kind==='warden'?1000:440)||e.engaged){moveActor(e,nx*e.speed*(e.kind==='warden'&&e.phase===2?1.2:1)*dt,ny*e.speed*(e.kind==='warden'&&e.phase===2?1.2:1)*dt,e.r*.65);e.state='chase';}else e.state='idle';
+      if(e.kind==='warden')e.phase=e.hp<e.maxHp*.45?2:1;
     }
   }
   function companionActive(){return !!S.storyChoice&&['greenwake','moonfall'].includes(S.zone);}
@@ -584,6 +606,7 @@
     if(S.zone==='moonfall')return [
       {id:'valeRoad',kind:'portal',name:'Greenwake Road',x:90,y:620,label:'Return',target:'greenwake',spawn:{x:2020,y:650}},
       {id:'moonfallWaystone',kind:'waystone',name:'Moonfall Waystone',x:1060,y:560,label:'Travel'},
+      ...(S.opened.includes('hollow-warden')&&!S.opened.includes('warden-rematch-v27')?[{id:'warden-memory',kind:'trial',name:'Warden’s Remembrance · Level 6',x:1570,y:560,label:'Challenge'}]:[]),
       ...(ATLAS&&S.mainStep>=8?[{id:'worldRoad',kind:'portal',name:'The Wider Vale',x:1810,y:620,label:'Journey',target:ATLAS.firstArea,spawn:{x:150,y:550}}]:[])
     ];
     if(S.zone==='smithy')return [
@@ -632,8 +655,10 @@
       }
       for (let i=0;i<area.secretCount;i++) {
         const seed=hashNumber(`${area.id}:secret:${i}`);
-        out.push({id:`${area.id}:secret:${i}`,kind:'chest',secret:true,name:'Hidden Cache',x:210+(seed%1380),y:270+((seed>>>9)%570),label:'Open',tier:area.treasureTier});
+        const sealed=i===0&&area.kind==='dungeon'&&area.hasElite;
+        out.push({id:`${area.id}:secret:${i}`,kind:'chest',secret:true,sealed,name:sealed?'Keeper’s Sealed Hoard':'Travel Cache',x:210+(seed%1380),y:270+((seed>>>9)%570),label:'Open'});
       }
+      if(area.kind==='dungeon'&&area.hasElite)out.push(...[{x:300,y:840,suffix:'dawn'},{x:1490,y:280,suffix:'dusk'}].map(p=>({id:`${area.id}:seal:${p.suffix}`,kind:'seal',name:`${pretty(p.suffix)} Inscription`,x:p.x,y:p.y,label:S.opened.includes(`${area.id}:seal:${p.suffix}`)?'Read':'Attune'})));
       if(area.kind==='settlement')out.push(
         {id:`${area.id}:board`,kind:'notice',name:'Wayfarer Board',x:760,y:480,label:'Read'},
         {id:`${area.id}:merchant`,kind:'atlasShop',name:atlasNpcName(area,'merchant'),x:540,y:570,label:'Trade',shop:'road'},
@@ -659,9 +684,11 @@
     if(o.kind==='portal'){usePortal(o);return;}
     if(o.kind==='directory'){openJournal('world');return;}
     if(o.kind==='estate'){openEstate(o.estateId);return;}
+    if(o.kind==='seal'){if(!S.opened.includes(o.id)){S.opened.push(o.id);gainXp(18);save();}toast('A seal answers. Attune both inscriptions and defeat the keeper to open the hoard.');return;}
+    if(o.kind==='trial'){if(enemies.some(e=>e.kind==='warden'&&!e.dead)){toast('The remembrance is already awake.');return;}openInteraction('Warden’s Remembrance',`<p>A one-time mastery challenge for completed Chapter I saves. Recommended level 6 with upgraded gear. Dodge the gold charge lane, sidestep red volleys, and strike during recovery.</p><p>Your chapter completion stays intact. Victory awards a boss hoard.</p><button data-boss-trial>Awaken the Warden</button>`);return;}
     if(o.kind==='adventure'){interactAdventure(o);return;}
     if(o.kind==='shop'){if(o.id==='apothecary')talkApothecary();else openShop(o.shop,o.name);return;}
-    if(o.kind==='rest'){S.hp=combatStats().maxHp;S.mana=S.maxMana;S.stam=S.maxStam;advanceDay();toast('Rested until dawn · Progress saved');save();return;}
+    if(o.kind==='rest'){S.hp=combatStats().maxHp;S.mana=S.maxMana;S.stam=S.maxStam;const settled=advanceDay();toast(settled?'Rested · Business day settled':'Restored · Business days advance through adventuring, not repeated rest');save();return;}
     if(o.kind==='stable'){talkStable();return;}
     if(o.kind==='faction'){openFaction(o.id);return;}
     if(o.kind==='waystone'){openWaystone();return;}
@@ -762,14 +789,14 @@
   function openChest(o){
     if(o.id==='guildCache'&&S.sideQuests.lensEchoes!=='ready'&&S.sideQuests.lensEchoes!=='complete'){toast('Three memories seal this reliquary. Return with the Aether Lens.');return;}
     if(S.opened.includes(o.id)&&!(o.id==='guildCache'&&S.sideQuests.lensEchoes==='ready')){toast('The cache is empty');return;}
+    if(o.sealed){const id=atlasArea()?.id;if(!S.opened.includes(`${id}:elite`)||!['dawn','dusk'].every(s=>S.opened.includes(`${id}:seal:${s}`))){toast('Sealed hoard · Find both inscriptions and defeat this dungeon’s keeper.');return;}}
     S.opened.push(o.id);
     if(o.id==='guildCache'&&S.sideQuests.lensEchoes==='ready'){S.sideQuests.lensEchoes='complete';addItem('echo_buckler');S.skillPoints++;gainXp(90);save();lootMessage('Legendary · Echo Buckler','Legendary');openDialogue([{speaker:'The Eighth Keeper',portrait:'✦',text:'No faction claimed this keeper. Their oath belonged to everyone who walked the Ways. You recover the Echo Buckler, a skill point, and a Guildhall Waystone route.'}]);return;}
     if(o.id==='greenwakeCache'){
       S.gold+=65;const item=addItem('moonfall_saber');S.sideQuests.lostScout='complete';gainXp(60);spawnBurst(o.x,o.y,'#ffd86f',28);lootMessage(`${item.rarity} · ${item.name}`,item.rarity);save();return;
     }
-    const area=atlasArea(), tier=o.tier||area?.treasureTier||'Rare';
-    const table={Rare:['moonfall_saber','frostveil_mail'],Epic:['emberbrand','saltglass_idol'],Legendary:['echo_buckler','saltglass_idol'],Mythic:['starfall_relic','emberbrand']};
-    const item=addItem(choose(table[tier]||table.Rare),tier);const gold=30+(area?.danger||1)*18;
+    const area=atlasArea(),reward=PROGRESSION.treasure({source:'chest',danger:area?.danger||1,sealed:!!o.sealed}),tier=reward.tier;
+    const item=addItem(reward.itemId,tier);const gold=o.sealed?80+(area?.danger||1)*22:12+(area?.danger||1)*6;
     S.gold+=gold;gainXp(20+(area?.danger||1)*8);if(o.id==='innHearthCache'&&S.sideQuests.innRumor==='active'){S.sideQuests.innRumor='complete';S.gold+=40;gainXp(35);}spawnBurst(o.x,o.y,RARITY[tier]||'#ffd86f',34);lootMessage(`${tier} · ${item.name} · +${gold}g`,tier);save();
   }
 
@@ -838,15 +865,33 @@
   }
   function ensureAreaEvent(area){if(!area)return;if(area.kind==='settlement'){const old=S.activeEvents[area.id];if(old?.status==='active')old.status='expired';return;}const current=S.activeEvents[area.id];if(current&&current.status!=='expired')return;if((hashNumber(`${area.id}:${S.day}`)%5)===0||area.hasElite)S.activeEvents[area.id]=eventForArea(area);}
   function advanceDay(){
+    if((S.economyClock||0)<300)return false;
     S.day++;S.economyClock=0;ECON.settleDay(S,ESTATES);
     for(const event of Object.values(S.activeEvents))if(event.status==='active'&&S.day>event.expires)event.status='expired';
     if(S.day%3===0)toast('New world event rumors have reached the Wayfarer Boards');
+    save();return true;
   }
   function showChapterComplete(){el.chapterSummary.textContent='You recovered the Aether Lens, chose an ally, and opened the route toward the wider Vale. The next chapter begins at the Moonfall Waystone.';show(el.chapterComplete);el.gameScreen.inert=true;paused=true;el.keepExploringBtn.focus();}
 
   function pretty(text){return String(text).replace(/([A-Z])/g,' $1').replace(/_/g,' ').replace(/^./,c=>c.toUpperCase());}
   function objective(){const objectives=[['A Voice in the Vale','Find Mira near the lantern plaza'],['The South Road','Leave Northford through the south gate'],['Echoes in Greenwake',`Defeat corrupted echoes · ${Math.min(3,S.mainKills)}/3`],['A Mark in the Briars','Return to Mira in Northford'],['Choose an Ally','Visit the Guildhall and join a faction'],['Road to Moonfall','Take the east road through Greenwake'],['Keeper of the Seal','Defeat the Hollow Warden'],['The Fallen Warden','Collect the Aether Lens'],['The Road Remembers','Explore, grow stronger, and prepare for Chapter II']];return objectives[clamp(S.mainStep,0,objectives.length-1)];}
-  function updateHUD(){const stats=combatStats(),hpMax=S.maxHp+(equipped('Armor')?.maxHp||0);el.hpBar.style.width=`${clamp(S.hp/hpMax*100,0,100)}%`;el.manaBar.style.width=`${clamp(S.mana/S.maxMana*100,0,100)}%`;el.stamBar.style.width=`${clamp(S.stam/S.maxStam*100,0,100)}%`;el.hpText.textContent=Math.ceil(S.hp);el.manaText.textContent=Math.ceil(S.mana);el.hpProgress.setAttribute('aria-valuemax',hpMax);el.hpProgress.setAttribute('aria-valuenow',Math.ceil(S.hp));el.manaProgress.setAttribute('aria-valuemax',S.maxMana);el.manaProgress.setAttribute('aria-valuenow',Math.ceil(S.mana));el.stamProgress.setAttribute('aria-valuemax',S.maxStam);el.stamProgress.setAttribute('aria-valuenow',Math.ceil(S.stam));el.levelText.textContent=S.level;el.goldText.textContent=S.gold;const[t,x]=objective();el.objectiveTitle.textContent=t;el.objectiveText.textContent=x;const boss=enemies.find(e=>e.kind==='warden'&&!e.dead);show(el.bossHud,!!boss);if(boss){el.bossBar.style.width=`${Math.max(0,boss.hp/boss.maxHp*100)}%`;el.bossHud.querySelector('span').textContent=atlasArea()?`${pretty(atlasArea().eventFamily)} elite`:'Hollow Warden';}el.attackBtn.querySelector('small').textContent=counterBuff>0?'Counter':'Strike';el.runBtn.setAttribute('aria-pressed',String(runEnabled));el.runBtn.querySelector('small').textContent=sprinting?'Running':runEnabled?'Run on':'Run';if(trackedDoor&&S.zone===(trackedDoor.zone||'northford')){const dx=trackedDoor.x-S.x,dy=trackedDoor.y-S.y,d=Math.hypot(dx,dy);el.destinationHint.textContent=d<80?`${trackedDoor.name} · Walk onto the threshold`:`${Math.abs(dx)>Math.abs(dy)?dx>0?'→':'←':dy>0?'↓':'↑'} ${trackedDoor.name} · ${Math.round(d/10)} steps`;show(el.destinationHint,true);}else if(currentInteract?.door){el.destinationHint.textContent=`${currentInteract.name} · Walk in or tap ${currentInteract.label}`;show(el.destinationHint,true);}else show(el.destinationHint,false);void stats;}
+  function updateHUD(){const stats=combatStats(),hpMax=stats.maxHp;el.hpBar.style.width=`${clamp(S.hp/hpMax*100,0,100)}%`;el.manaBar.style.width=`${clamp(S.mana/S.maxMana*100,0,100)}%`;el.stamBar.style.width=`${clamp(S.stam/S.maxStam*100,0,100)}%`;el.hpText.textContent=Math.ceil(S.hp);el.manaText.textContent=Math.ceil(S.mana);el.hpProgress.setAttribute('aria-valuemax',hpMax);el.hpProgress.setAttribute('aria-valuenow',Math.ceil(S.hp));el.manaProgress.setAttribute('aria-valuemax',S.maxMana);el.manaProgress.setAttribute('aria-valuenow',Math.ceil(S.mana));el.stamProgress.setAttribute('aria-valuemax',S.maxStam);el.stamProgress.setAttribute('aria-valuenow',Math.ceil(S.stam));el.levelText.textContent=S.level;el.goldText.textContent=S.gold;const[t,x]=objective();el.objectiveTitle.textContent=t;el.objectiveText.textContent=x;const boss=enemies.find(e=>e.kind==='warden'&&!e.dead);show(el.bossHud,!!boss);if(boss){el.bossBar.style.width=`${Math.max(0,boss.hp/boss.maxHp*100)}%`;el.bossHud.querySelector('span').textContent=`${boss.bossName||'Waykeeper'} · Lv ${boss.recommendedLevel||6}${boss.phase===2?' · Unbound':''} · ${boss.state==='recover'?'COUNTER NOW':boss.state==='windup'?pretty(boss.attackKind):S.level<(boss.recommendedLevel||6)?'Train & upgrade':'Stay mobile'}`;}el.attackBtn.querySelector('small').textContent=counterBuff>0?'Counter':'Strike';el.runBtn.setAttribute('aria-pressed',String(runEnabled));el.runBtn.querySelector('small').textContent=sprinting?'Running':runEnabled?'Run on':'Run';if(trackedDoor&&S.zone===(trackedDoor.zone||'northford')){const dx=trackedDoor.x-S.x,dy=trackedDoor.y-S.y,d=Math.hypot(dx,dy);el.destinationHint.textContent=d<80?`${trackedDoor.name} · Walk onto the threshold`:`${Math.abs(dx)>Math.abs(dy)?dx>0?'→':'←':dy>0?'↓':'↑'} ${trackedDoor.name} · ${Math.round(d/10)} steps`;show(el.destinationHint,true);}else if(currentInteract?.door){el.destinationHint.textContent=`${currentInteract.name} · Walk in or tap ${currentInteract.label}`;show(el.destinationHint,true);}else show(el.destinationHint,false);void stats;}
+  function navigationTarget(){
+    const objects=objectsForZone(),z=zone();
+    if(trackedDoor&&S.zone===(trackedDoor.zone||'northford'))return trackedDoor;
+    if(z.type==='interior'||z.type==='room')return objects.find(o=>o.id==='exit');
+    if(S.zone==='northford'){if(S.mainStep===0||S.mainStep===3)return objects.find(o=>o.id==='mira');if(S.mainStep===4)return objects.find(o=>o.id==='guildDoor');return objects.find(o=>o.id==='southGate');}
+    if(S.zone==='greenwake'){if(S.mainStep===2)return enemies.find(e=>!e.dead)||objects.find(o=>o.id==='northGate');return objects.find(o=>o.id===(S.mainStep===3?'northGate':'moonfallRoad'));}
+    if(S.zone==='moonfall'){if(S.mainStep===6)return enemies.find(e=>e.kind==='warden'&&!e.dead);if(S.mainStep===7)return loot.find(d=>d.itemId==='aether_lens');return objects.find(o=>o.id==='worldRoad')||objects.find(o=>o.kind==='waystone');}
+    const area=atlasArea();if(area){
+      const contract=Object.values(S.dynamicQuests).find(q=>q.status==='active'||q.status==='ready');
+      const targetZone=trackedDoor?.zone|| (contract?(contract.status==='ready'?contract.areaId:contract.targetAreaId):null);
+      if(targetZone===S.zone)return contract?.status==='ready'?objects.find(o=>o.kind==='notice'):enemies.find(e=>!e.dead);
+      if(targetZone){const queue=[[area.id,[]]],seen=new Set();while(queue.length){const [id,route]=queue.shift();if(seen.has(id))continue;seen.add(id);if(id===targetZone)return objects.find(o=>o.target===route[0]);for(const next of Object.values(ATLAS.get(id)?.exits||{}))queue.push([next,[...route,next]]);}}
+      return objects.find(o=>o.kind==='notice')||objects.find(o=>o.kind==='waystone')||objects.find(o=>o.kind==='portal'&&!S.atlasDiscovered.includes(o.target));
+    }return null;
+  }
+  function updateMinimap(){if(!window.EVERLIGHT_MINIMAP)return;const z=zone(),target=navigationTarget();el.minimapLabel.textContent=target?.name||target?.bossName||(target?'Clear threats':z.name);el.mapBtn.setAttribute('aria-label',`${z.name} minimap. You are the cyan dot; gold diamond: ${el.minimapLabel.textContent}. Open map.`);window.EVERLIGHT_MINIMAP.draw(el.minimapCanvas,{zone:z,player:S,objects:objectsForZone(),enemies,solids:solidRects(),polygons:S.zone==='northford'?EX.townSolids:[],houses:EX.homes(atlasArea()),target,opened:S.opened,time:performance.now(),background:S.zone==='northford'&&imageReady.bg?bg:null});}
   function promptTutorial(text){el.tutorial.textContent=text;show(el.tutorial);}
   function dismissTutorial(){show(el.tutorial,false);}
 
@@ -868,6 +913,7 @@
   function closeJournal(){show(el.journal,false);el.gameScreen.inert=false;paused=false;last=performance.now();restoreFocus?.focus?.();restoreFocus=null;}
 
   function handleUiAction(target){
+    if(target.closest('[data-boss-trial]')){if(S.zone!=='moonfall'||!S.opened.includes('hollow-warden')||S.opened.includes('warden-rematch-v27')||enemies.some(e=>e.kind==='warden'&&!e.dead))return;closeInteraction();enemies.push(configureBoss(makeEnemy('warden',1570,560,109),true));S.x=1260;S.y=650;zoneGrace=1.5;toast('Warden’s Remembrance · Recommended level 6');return;}
     const estateTrack=target.closest('[data-estate-track]');if(estateTrack){const def=ESTATES.find(d=>d.id===estateTrack.dataset.estateTrack);if(def){trackedDoor={name:S.properties[def.id]?.name||def.name,x:def.x,y:def.y,zone:def.settlementId||def.zone};closeJournal();toast(`Tracked ${trackedDoor.name} · ${def.regionName}`);}return;}
     const estateAction=target.closest('[data-estate-buy],[data-estate-develop],[data-estate-upgrade]');
     if(estateAction){let result;if(estateAction.dataset.estateBuy)result=ECON.buy(S,estateAction.dataset.estateBuy,ESTATES);else if(estateAction.dataset.estateDevelop)result=ECON.develop(S,estateAction.dataset.estateDevelop,estateAction.dataset.business,ESTATES);else result=ECON.upgrade(S,estateAction.dataset.estateUpgrade,estateAction.dataset.track,ESTATES);estateView.message=result.message;if(result.ok){save();sfx('success');}updateHUD();renderJournal('economy');return;}
@@ -881,8 +927,8 @@
     const buy=target.closest('[data-buy]');if(buy){const item=ITEM_TEMPLATES[buy.dataset.buy],price=priceFor(item);if(S.gold>=price){S.gold-=price;const gained=addItem(item.id);lootMessage(`Purchased · ${gained.name}`,gained.rarity);save();openShop(currentInteract?.shop||'smithy',currentInteract?.name||'Merchant');}return;}
     const filter=target.closest('[data-gear-filter]');if(filter){gearView.filter=filter.dataset.gearFilter;gearView.selectedUid=null;gearView.message='';renderJournal('gear');return;}
     const inspect=target.closest('[data-inspect]');if(inspect){gearView.selectedUid=inspect.dataset.inspect;gearView.message='';renderJournal('gear');return;}
-    const equip=target.closest('[data-equip]');if(equip){const item=itemByUid(equip.dataset.equip);if(item&&['Weapon','Armor','Charm'].includes(item.type)){S.equipment[item.type]=item.uid;S.hp=Math.min(S.hp,combatStats().maxHp);gearView.message=`${item.name} equipped. Character stats updated.`;save();renderJournal('gear');updateHUD();}return;}
-    const unequip=target.closest('[data-unequip]');if(unequip&&['Weapon','Armor','Charm'].includes(unequip.dataset.unequip)){S.equipment[unequip.dataset.unequip]=null;S.hp=Math.min(S.hp,combatStats().maxHp);gearView.message='Slot cleared. Item remains in your pack.';save();renderJournal('gear');updateHUD();return;}
+    const equip=target.closest('[data-equip]');if(equip){const result=window.EVERLIGHT_EQUIPMENT.equip(S,equip.dataset.equip,equip.dataset.slot);gearView.message=result.message;if(result.ok){S.hp=Math.min(S.hp,combatStats().maxHp);save();}renderJournal('gear');updateHUD();return;}
+    const unequip=target.closest('[data-unequip]');if(unequip){const result=window.EVERLIGHT_EQUIPMENT.unequip(S,unequip.dataset.unequip);gearView.message=result.message;if(result.ok){S.hp=Math.min(S.hp,combatStats().maxHp);save();}renderJournal('gear');updateHUD();return;}
     const upgrade=target.closest('[data-upgrade]');if(upgrade){const item=itemByUid(upgrade.dataset.upgrade),cost=item&&window.EVERLIGHT_EQUIPMENT.upgradeCost(item);if(cost&&S.gold>=cost.gold&&(S.materials[cost.material]||0)>=cost.amount){S.gold-=cost.gold;S.materials[cost.material]-=cost.amount;item.rank=(item.rank||0)+1;gearView.message=`${item.name} upgraded to ${item.rank} of 5 stars. Stats updated.`;sfx('success');save();}else gearView.message=cost?'Not enough gold or crafting materials.':'This item cannot be upgraded further.';renderJournal('gear');updateHUD();return;}
     const use=target.closest('[data-use]');if(use){const index=S.inventory.findIndex(i=>i.uid===use.dataset.use),item=S.inventory[index];if(item?.type==='Consumable'){if(!(item.heal&&S.hp<combatStats().maxHp)&&!(item.mana&&S.mana<S.maxMana)){gearView.message='Already restored. Item kept in your pack.';renderJournal('gear');return;}if(item.heal)S.hp=Math.min(combatStats().maxHp,S.hp+item.heal);if(item.mana)S.mana=Math.min(S.maxMana,S.mana+item.mana);S.inventory.splice(index,1);gearView.selectedUid=null;gearView.message=`${item.name} used.`;save();renderJournal('gear');updateHUD();}return;}
     const skill=target.closest('[data-skill]');if(skill){const node=SKILLS.find(s=>s.id===skill.dataset.skill);if(node&&S.skillPoints>=node.cost&&(!node.requires||hasSkill(node.requires))){S.skillPoints-=node.cost;S.skills.push(node.id);sfx('success');toast(`${node.name} unlocked`);save();renderJournal('skills');}return;}
@@ -894,7 +940,7 @@
     const setting=target.closest('[data-setting]');if(setting){const key=setting.dataset.setting;S.settings[key]=!S.settings[key];applySettings();save();renderJournal('settings');return;}
     if(target.closest('[data-save]')){save();toast('Journey saved');return;}
     if(target.closest('[data-reset]')){if(confirm('Erase this journey and begin again?')){localStorage.removeItem(SAVE_KEY);localStorage.removeItem(LEGACY_SAVE_KEY);location.reload();}return;}
-    const econ=target.closest('[data-economy]');if(econ){if(econ.dataset.economy==='collect'){const amount=Math.max(0,S.treasury);S.gold+=amount;S.treasury-=amount;estateView.message=amount?`${amount} gold transferred to your purse.`:'No positive treasury balance to transfer.';}else{advanceDay();estateView.message=`Day ${S.day} settled. Profits and expenses are recorded below.`;}save();updateHUD();renderJournal('economy');return;}
+    const econ=target.closest('[data-economy]');if(econ){if(econ.dataset.economy==='collect'){const amount=Math.max(0,S.treasury);S.gold+=amount;S.treasury-=amount;estateView.message=amount?`${amount} gold transferred to your purse.`:'No positive treasury balance to transfer.';}else{const settled=advanceDay();estateView.message=settled?`Day ${S.day} settled. Profits and expenses are recorded below.`:'Keep adventuring to complete this business day. Resting cannot generate rent.';}save();updateHUD();renderJournal('economy');return;}
     const prop=target.closest('[data-property]');if(prop){openEstate('estate:smithy');return;}
   }
 
@@ -925,7 +971,7 @@
     }
     ctx.restore();
   }
-  function drawWorld(){const z=zone(),interior=INTERIOR_LAYOUTS[S.zone],art=interior&&imageReady.interiors[S.zone]?interiorArt[S.zone]:z.type==='town'&&imageReady.bg?bg:z.type==='wild'&&imageReady.greenwake?greenwakeBg:z.type==='ruins'&&imageReady.moonfall?moonfallBg:null;drawWorldSurroundings(z,art);if(z.type==='room')EX.drawRoom(ctx,z,solidRects());else if(z.type==='atlas')drawAtlasWorld(z.area,z);else{if(art){ctx.drawImage(art,0,0,z.width,z.height);ctx.fillStyle=z.type==='town'?'rgba(5,28,22,.08)':z.type==='interior'?'rgba(3,10,9,.03)':'rgba(2,18,15,.05)';ctx.fillRect(0,0,z.width,z.height);}else{const grad=ctx.createLinearGradient(0,0,0,z.height);grad.addColorStop(0,z.tint);grad.addColorStop(1,'#071713');ctx.fillStyle=grad;ctx.fillRect(0,0,z.width,z.height);drawGroundPattern(z);}}const development=landBuilding(S.zone);if(development)EX.drawHouse(ctx,development);for(const d of decor)drawDecor(d);}
+  function drawWorld(){const z=zone(),interior=INTERIOR_LAYOUTS[S.zone],art=interior&&imageReady.interiors[S.zone]?interiorArt[S.zone]:z.type==='town'&&imageReady.bg?bg:z.type==='wild'&&imageReady.greenwake?greenwakeBg:z.type==='ruins'&&imageReady.moonfall?moonfallBg:null;drawWorldSurroundings(z,art);if(z.type==='room'){if(INT&&z.theme!=='dungeon')INT.draw(ctx,roomOptions());else EX.drawRoom(ctx,z,solidRects());}else if(z.type==='atlas')drawAtlasWorld(z.area,z);else{if(art){ctx.drawImage(art,0,0,z.width,z.height);ctx.fillStyle=z.type==='town'?'rgba(5,28,22,.08)':z.type==='interior'?'rgba(3,10,9,.03)':'rgba(2,18,15,.05)';ctx.fillRect(0,0,z.width,z.height);}else{const grad=ctx.createLinearGradient(0,0,0,z.height);grad.addColorStop(0,z.tint);grad.addColorStop(1,'#071713');ctx.fillStyle=grad;ctx.fillRect(0,0,z.width,z.height);drawGroundPattern(z);}}const development=landBuilding(S.zone);if(development)EX.drawHouse(ctx,development);for(const d of decor)drawDecor(d);}
   function drawAtlasWorld(area,z){
     const grad=ctx.createLinearGradient(0,0,z.width,z.height);grad.addColorStop(0,area.palette[0]);grad.addColorStop(.62,area.palette[1]);grad.addColorStop(1,'#071713');ctx.fillStyle=grad;ctx.fillRect(0,0,z.width,z.height);
     ctx.save();ctx.globalAlpha=.22;ctx.fillStyle=area.palette[2];for(let i=0;i<28;i++){const seed=hashNumber(`${area.id}:ground:${i}`),x=seed%z.width,y=(seed>>>9)%z.height,r=45+(seed%95);ctx.beginPath();ctx.ellipse(x,y,r,r*.55,(seed%30)/10,0,7);ctx.fill();}ctx.restore();
@@ -956,15 +1002,20 @@
   function drawHero(){const moving=Math.hypot(input.x,input.y)>.12||[...keys].some(k=>/Arrow|Key[WASD]/.test(k));ctx.save();if(invuln>0&&Math.floor(invuln*20)%2===0)ctx.globalAlpha=.45;window.EVERLIGHT_ACTORS.draw(ctx,{id:'player',name:'Roadbearer',x:S.x,y:S.y,time:performance.now()/1000*(sprinting?1.4:1),moving,facing:lastFacing,role:S.style,player:true,attacking:attackCd>.18,casting:spellCd>.78,mounted:!!S.activeMount&&zone().type!=='interior'&&zone().type!=='room'});ctx.restore();}
   function drawNpc(o){window.EVERLIGHT_ACTORS.draw(ctx,{id:o.id,name:o.name,x:o.x,y:o.y,time:performance.now()/1000,moving:false,facing:distance(S,o)<130?{x:S.x-o.x,y:S.y-o.y}:{x:0,y:1},role:o.kind==='atlasShop'?'merchant':o.kind==='faction'?'guild':undefined});}
   function drawCompanion(){if(!companionActive())return;window.EVERLIGHT_ACTORS.draw(ctx,{id:'mira',name:'Mira',x:companion.x,y:companion.y,time:performance.now()/1000,moving:distance(companion,S)>60,facing:lastFacing,role:'scout'});}
-  function drawObject(o){if(o.door){drawDoor(o);return;}if(o.kind==='adventure'){drawAdventureObject(o);return;}if(o.kind==='directory'){drawDirectory(o);return;}if(o.secret&&distance(S,o)>210&&!S.opened.includes(o.id)){drawSecretClue(o);return;}if(o.kind==='npc'||o.kind==='shop'||o.kind==='rest'||o.kind==='stable'||o.kind==='faction'||o.kind==='localNpc'||o.kind==='atlasNpc'||o.kind==='atlasShop')drawNpc(o);else if(o.kind==='portal'){ctx.save();ctx.translate(o.x,o.y);const pulse=1+Math.sin(performance.now()/260+o.x)*.12;ctx.scale(pulse,pulse);ctx.fillStyle='#ffe086';ctx.shadowColor='#ffd15b';ctx.shadowBlur=18;ctx.beginPath();ctx.moveTo(0,-10);ctx.lineTo(8,0);ctx.lineTo(0,10);ctx.lineTo(-8,0);ctx.closePath();ctx.fill();ctx.strokeStyle='#fff4ba';ctx.lineWidth=2;ctx.stroke();ctx.restore();}else if(o.kind==='waystone'){ctx.save();ctx.translate(o.x,o.y);ctx.fillStyle='#62e4d0';ctx.shadowColor='#69ffea';ctx.shadowBlur=22;ctx.beginPath();ctx.moveTo(0,-30);ctx.lineTo(14,0);ctx.lineTo(0,28);ctx.lineTo(-14,0);ctx.closePath();ctx.fill();ctx.restore();}else if(o.kind==='chest'){drawChest(o);}else if(o.kind==='lore'||o.kind==='atlasLore'){ctx.save();ctx.translate(o.x,o.y);ctx.fillStyle='#77e6d2';ctx.shadowColor='#68ffe7';ctx.shadowBlur=10;ctx.rotate(Math.PI/4);ctx.fillRect(-8,-8,16,16);ctx.restore();}else if(o.kind==='notice'){ctx.fillStyle='#583b25';ctx.fillRect(o.x-26,o.y-32,52,48);ctx.fillStyle='#d5c590';ctx.fillRect(o.x-19,o.y-26,38,31);ctx.fillStyle='#2f2118';ctx.fillRect(o.x-3,o.y+14,6,28);}else if(o.kind==='property'||o.kind==='estate'){ctx.save();ctx.translate(o.x,o.y);ctx.fillStyle=S.properties[o.estateId||atlasArea()?.id]?'#64d69b':'#d8b65e';ctx.shadowColor=ctx.fillStyle;ctx.shadowBlur=12;ctx.beginPath();ctx.moveTo(0,-20);ctx.lineTo(20,-3);ctx.lineTo(13,22);ctx.lineTo(-13,22);ctx.lineTo(-20,-3);ctx.closePath();ctx.fill();ctx.fillStyle='#19352b';ctx.fillRect(-5,4,10,18);ctx.restore();}if(distance(S,o)<150){ctx.save();ctx.font='700 12px system-ui';ctx.textAlign='center';ctx.fillStyle='#fff3c5';ctx.strokeStyle='#04110e';ctx.lineWidth=4;const labelY=o.y-(['npc','shop','rest','stable','faction','localNpc','atlasNpc','atlasShop'].includes(o.kind)?72:42);ctx.strokeText(o.name,o.x,labelY);ctx.fillText(o.name,o.x,labelY);ctx.restore();}}
-  function drawEnemyTelegraph(e){const pulse=.5+.5*Math.sin(performance.now()/45);ctx.save();ctx.translate(e.x,e.y);ctx.strokeStyle=`rgba(255,73,56,${.68+.25*pulse})`;ctx.fillStyle=`rgba(255,45,34,${.09+.07*pulse})`;ctx.lineWidth=4;if(e.attackKind==='radial'){ctx.beginPath();ctx.arc(0,0,e.r+72*(1-e.stateTimer/e.telegraphDuration),0,7);ctx.fill();ctx.stroke();}else if(e.attackKind==='bolt'){ctx.rotate(Math.atan2(e.attackDir.y,e.attackDir.x));ctx.beginPath();ctx.moveTo(e.r,0);ctx.lineTo(230,-18);ctx.lineTo(230,18);ctx.closePath();ctx.fill();ctx.stroke();}else{ctx.rotate(Math.atan2(e.attackDir.y,e.attackDir.x));ctx.beginPath();ctx.moveTo(2,-e.r*.8);ctx.lineTo(e.r+76,-34);ctx.lineTo(e.r+76,34);ctx.lineTo(2,e.r*.8);ctx.closePath();ctx.fill();ctx.stroke();}ctx.restore();}
+  function drawObject(o){if(o.door){drawDoor(o);return;}if(o.kind==='adventure'){drawAdventureObject(o);return;}if(o.kind==='directory'){drawDirectory(o);return;}if(o.secret&&distance(S,o)>210&&!S.opened.includes(o.id)){drawSecretClue(o);return;}if(o.kind==='npc'||o.kind==='shop'||o.kind==='rest'||o.kind==='stable'||o.kind==='faction'||o.kind==='localNpc'||o.kind==='atlasNpc'||o.kind==='atlasShop')drawNpc(o);else if(o.kind==='portal'){ctx.save();ctx.translate(o.x,o.y);const pulse=1+Math.sin(performance.now()/260+o.x)*.12;ctx.scale(pulse,pulse);ctx.fillStyle='#ffe086';ctx.shadowColor='#ffd15b';ctx.shadowBlur=18;ctx.beginPath();ctx.moveTo(0,-10);ctx.lineTo(8,0);ctx.lineTo(0,10);ctx.lineTo(-8,0);ctx.closePath();ctx.fill();ctx.strokeStyle='#fff4ba';ctx.lineWidth=2;ctx.stroke();ctx.restore();}else if(o.kind==='waystone'){ctx.save();ctx.translate(o.x,o.y);ctx.fillStyle='#62e4d0';ctx.shadowColor='#69ffea';ctx.shadowBlur=22;ctx.beginPath();ctx.moveTo(0,-30);ctx.lineTo(14,0);ctx.lineTo(0,28);ctx.lineTo(-14,0);ctx.closePath();ctx.fill();ctx.restore();}else if(o.kind==='chest'){drawChest(o);}else if(o.kind==='lore'||o.kind==='atlasLore'||o.kind==='seal'||o.kind==='trial'){ctx.save();ctx.translate(o.x,o.y);ctx.fillStyle='#77e6d2';ctx.shadowColor='#68ffe7';ctx.shadowBlur=10;ctx.rotate(Math.PI/4);ctx.fillRect(-8,-8,16,16);ctx.restore();}else if(o.kind==='notice'){ctx.fillStyle='#583b25';ctx.fillRect(o.x-26,o.y-32,52,48);ctx.fillStyle='#d5c590';ctx.fillRect(o.x-19,o.y-26,38,31);ctx.fillStyle='#2f2118';ctx.fillRect(o.x-3,o.y+14,6,28);}else if(o.kind==='property'||o.kind==='estate'){ctx.save();ctx.translate(o.x,o.y);ctx.fillStyle=S.properties[o.estateId||atlasArea()?.id]?'#64d69b':'#d8b65e';ctx.shadowColor=ctx.fillStyle;ctx.shadowBlur=12;ctx.beginPath();ctx.moveTo(0,-20);ctx.lineTo(20,-3);ctx.lineTo(13,22);ctx.lineTo(-13,22);ctx.lineTo(-20,-3);ctx.closePath();ctx.fill();ctx.fillStyle='#19352b';ctx.fillRect(-5,4,10,18);ctx.restore();}if(distance(S,o)<150){ctx.save();ctx.font='700 12px system-ui';ctx.textAlign='center';ctx.fillStyle='#fff3c5';ctx.strokeStyle='#04110e';ctx.lineWidth=4;const labelY=o.y-(['npc','shop','rest','stable','faction','localNpc','atlasNpc','atlasShop'].includes(o.kind)?72:42);ctx.strokeText(o.name,o.x,labelY);ctx.fillText(o.name,o.x,labelY);ctx.restore();}}
+  function drawEnemyTelegraph(e){
+    const pulse=.5+.5*Math.sin(performance.now()/55);ctx.save();ctx.translate(e.x,e.y);ctx.strokeStyle=e.attackKind==='charge'?'#ffe28a':`rgba(255,90,65,${.7+.25*pulse})`;ctx.fillStyle=e.attackKind==='charge'?'#ffc24c22':'#ff452822';ctx.lineWidth=3;
+    if(e.attackKind==='radial'||e.attackKind==='slam'){ctx.beginPath();ctx.arc(0,0,e.attackKind==='slam'?e.r+72:105,0,Math.PI*2);ctx.fill();ctx.stroke();if(e.attackKind==='radial'){for(let i=0;i<12;i++){const a=i*Math.PI/6;ctx.beginPath();ctx.moveTo(Math.cos(a)*50,Math.sin(a)*50);ctx.lineTo(Math.cos(a)*180,Math.sin(a)*180);ctx.stroke();}}}
+    else{ctx.rotate(Math.atan2(e.attackDir.y,e.attackDir.x));const len=e.attackKind==='charge'?e.speed*4.6*.62+e.r: e.attackKind==='volley'?450:230;const half=e.attackKind==='charge'?e.r+13:e.attackKind==='volley'?len*(e.phase===2?.36:.18):18;ctx.beginPath();ctx.moveTo(0,-(e.attackKind==='charge'?half:4));ctx.lineTo(len,-half);ctx.lineTo(len,half);ctx.lineTo(0,e.attackKind==='charge'?half:4);ctx.closePath();ctx.fill();ctx.stroke();}
+    ctx.restore();
+  }
   function drawEnemy(e){if(e.state==='windup')drawEnemyTelegraph(e);shadow(e.x,e.y+e.r*.72,e.r*.9);ctx.save();ctx.translate(e.x,e.y);if(e.flash>0)ctx.filter='brightness(3)';let rot=0,scaleX=1,scaleY=1,offset=0;if(e.state==='windup'){const p=1-e.stateTimer/e.telegraphDuration;scaleX=1-.12*p;scaleY=1+.16*p;rot=Math.sin(p*Math.PI)*-.12;}if(e.state==='attack'){offset=10;scaleX=1.2;scaleY=.84;}if(e.state==='recover'){scaleX=1.08;scaleY=.92;}ctx.rotate(rot);ctx.translate(e.attackDir.x*offset,e.attackDir.y*offset);ctx.scale(scaleX,scaleY);if(e.kind==='wisp'){ctx.shadowColor='#69ffe8';ctx.shadowBlur=18;ctx.fillStyle='#74f4dd55';ctx.beginPath();ctx.arc(0,0,22,0,7);ctx.fill();ctx.fillStyle='#cafff3';ctx.beginPath();ctx.moveTo(0,-17);ctx.quadraticCurveTo(21,0,0,21);ctx.quadraticCurveTo(-21,0,0,-17);ctx.fill();ctx.fillStyle='#153b39';ctx.fillRect(-7,-4,4,4);ctx.fillRect(3,-4,4,4);}else if(e.kind==='warden'&&imageReady.warden){ctx.shadowColor='#69ffe8';ctx.shadowBlur=12;ctx.drawImage(wardenArt,-66,-94,132,122);}else{ctx.shadowColor=e.kind==='briar'?'#8ecf63':'#69ffe8';ctx.shadowBlur=10;ctx.fillStyle=e.kind==='briar'?'#45662f':'#536b65';ctx.beginPath();ctx.moveTo(0,-e.r*1.25);ctx.lineTo(e.r,-e.r*.55);ctx.lineTo(e.r*1.05,e.r*.75);ctx.lineTo(0,e.r);ctx.lineTo(-e.r*1.05,e.r*.75);ctx.lineTo(-e.r,-e.r*.55);ctx.closePath();ctx.fill();ctx.strokeStyle=e.kind==='briar'?'#9cbb62':'#9cb3a8';ctx.lineWidth=4;ctx.stroke();ctx.fillStyle='#ff685e';ctx.fillRect(-e.r*.45,-e.r*.55,e.r*.3,5);ctx.fillRect(e.r*.15,-e.r*.55,e.r*.3,5);}ctx.restore();if(e.hp<e.maxHp){ctx.fillStyle='#07100e';ctx.fillRect(e.x-e.r,e.y-e.r-19,e.r*2,6);ctx.fillStyle='#ed6d5b';ctx.fillRect(e.x-e.r+1,e.y-e.r-18,(e.r*2-2)*e.hp/e.maxHp,4);}}
   function drawLoot(){for(const d of loot){const bob=Math.sin(performance.now()/140+d.x)*3;ctx.save();ctx.translate(d.x,d.y+bob);if(d.kind==='gold'){ctx.fillStyle='#ffd963';ctx.shadowColor='#ffcb4f';ctx.shadowBlur=8;ctx.beginPath();ctx.ellipse(0,0,6,3,0,0,7);ctx.fill();ctx.strokeStyle='#8d5e1d';ctx.stroke();}else{const color=RARITY[d.rarity||ITEM_TEMPLATES[d.itemId]?.rarity||'Uncommon'];ctx.fillStyle=color;ctx.shadowColor=color;ctx.shadowBlur=14;ctx.fillRect(-7,-7,14,14);ctx.globalAlpha=.25;ctx.fillRect(-2,-Math.min(120,d.age*35+28),4,Math.min(120,d.age*35+28));}ctx.restore();}}
   function drawProjectiles(){for(const p of projectiles){const friendly=p.kind==='player'||p.kind==='companion';ctx.save();ctx.globalCompositeOperation='screen';ctx.shadowColor=friendly?'#68ffec':'#ff755f';ctx.shadowBlur=18;ctx.fillStyle=p.kind==='companion'?'#fff1a0':friendly?'#bcfff5':'#ff9278';ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.fill();ctx.strokeStyle=friendly?'#63ebdb':'#bf3b32';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(p.x-p.vx*.035,p.y-p.vy*.035);ctx.lineTo(p.x,p.y);ctx.stroke();ctx.restore();}}
   function drawEffects(){for(const p of particles){ctx.save();ctx.globalAlpha=clamp(p.life/(p.max||1),0,1);if(p.kind==='slash'){ctx.translate(p.x,p.y);ctx.rotate(p.angle);ctx.strokeStyle=p.color;ctx.lineWidth=5+p.size;ctx.shadowColor=p.color;ctx.shadowBlur=12;ctx.beginPath();ctx.arc(0,0,28+p.size*4,-1.2,1.2);ctx.stroke();}else{ctx.fillStyle=p.color;ctx.fillRect(p.x-p.size/2,p.y-p.size/2,p.size,p.size);}ctx.restore();}for(const t of damageTexts){ctx.save();ctx.globalAlpha=t.life/.85;ctx.fillStyle=t.color;ctx.strokeStyle='#06100e';ctx.lineWidth=3;ctx.font='bold 14px system-ui';ctx.textAlign='center';ctx.strokeText(t.text,t.x,t.y);ctx.fillText(t.text,t.x,t.y);ctx.restore();}}
   function draw(){ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,VIEW_W,VIEW_H);const sx=S.settings.reducedMotion?0:random(-shake,shake),sy=S.settings.reducedMotion?0:random(-shake,shake);ctx.save();ctx.translate(-camera.x+sx,-camera.y+sy);drawWorld();const objects=objectsForZone(),isNpc=o=>['npc','shop','rest','stable','faction','localNpc','atlasNpc','atlasShop'].includes(o.kind);for(const o of objects.filter(o=>!isNpc(o)))drawObject(o);const actors=[...objects.filter(isNpc).map(o=>({y:o.y,type:'npc',o})),...enemies.filter(e=>!e.dead).map(e=>({y:e.y,type:'enemy',o:e})),...(companionActive()?[{y:companion.y,type:'companion'}]:[]),{y:S.y,type:'hero'}].sort((a,b)=>a.y-b.y);for(const a of actors){if(a.type==='hero')drawHero();else if(a.type==='companion')drawCompanion();else if(a.type==='npc')drawObject(a.o);else drawEnemy(a.o);}drawLoot();drawProjectiles();drawEffects();ctx.restore();if(hurtFlash>0){ctx.fillStyle=`rgba(255,55,40,${hurtFlash*.35})`;ctx.fillRect(0,0,VIEW_W,VIEW_H);}if(screenFlash>0){ctx.fillStyle=`rgba(170,255,235,${screenFlash*.42})`;ctx.fillRect(0,0,VIEW_W,VIEW_H);}}
 
-  function update(dt){if(paused)return;S.playTime+=dt;S.economyClock=(S.economyClock||0)+dt;if(S.economyClock>=300){advanceDay();toast(`Day ${S.day} · Business accounts settled`);save();}saveClock+=dt;zoneGrace=Math.max(0,zoneGrace-dt);updatePlayer(dt);updateEnemies(dt);updateCompanion(dt);updateProjectiles(dt);updateLoot(dt);updateEffects(dt);updateInteraction();updateHUD();updateCamera(dt);el.attackCooldown.style.height=`${attackCd/.42*100}%`;el.spellCooldown.style.height=`${spellCd/1.05*100}%`;el.dodgeCooldown.style.height=`${dodgeCd/.82*100}%`;if(saveClock>4){save();saveClock=0;}}
+  function update(dt){if(paused)return;S.playTime+=dt;const adventuring=Math.hypot(input.x,input.y)>.1||['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','KeyW','KeyA','KeyS','KeyD'].some(k=>keys.has(k))||enemies.some(e=>!e.dead&&e.engaged&&distance(e,S)<900);if(adventuring)S.economyClock=(S.economyClock||0)+dt;if(S.economyClock>=300){advanceDay();toast(`Day ${S.day} · Business accounts settled`);save();}saveClock+=dt;zoneGrace=Math.max(0,zoneGrace-dt);updatePlayer(dt);updateEnemies(dt);updateCompanion(dt);updateProjectiles(dt);updateLoot(dt);updateEffects(dt);updateInteraction();updateHUD();updateCamera(dt);updateMinimap();el.attackCooldown.style.height=`${attackCd/.42*100}%`;el.spellCooldown.style.height=`${spellCd/1.05*100}%`;el.dodgeCooldown.style.height=`${dodgeCd/.82*100}%`;if(saveClock>4){save();saveClock=0;}}
   function loop(now){if(!running)return;const dt=Math.min(.034,(now-last)/1000);last=now;update(dt);draw();requestAnimationFrame(loop);}
 
   function isStandalone(){return navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;}
@@ -1000,7 +1051,7 @@
       objects:()=>objectsForZone(),collides:(x,y,r=13)=>collides(x,y,r),
       move:(dx,dy)=>moveActor(S,dx,dy,13),tick:dt=>update(dt),input:(x,y)=>{input={x,y};},run:on=>runEnabled=on,
       interact:()=>{updateInteraction();interact();},clearEnemies:()=>{enemies=[];},
-      get:()=>({state:structuredClone(S),enemies:structuredClone(enemies),camera:{...camera},paused,sprinting,doorCooldown}),
+      get:()=>({state:structuredClone(S),enemies:structuredClone(enemies),projectiles:structuredClone(projectiles),loot:structuredClone(loot),target:navigationTarget(),camera:{...camera},paused,sprinting,doorCooldown}),
       closeDialogue:()=>closeDialogue(),
     },
     contractVersion: 21,
@@ -1012,7 +1063,7 @@
     migrateSave: raw => migrateSave(raw),
     setPlayer: (x,y) => {S.x=x;S.y=y;updateCamera(.5);},
     enterZone: id => enterZone(id),
-    spawnEnemy: (kind='briar',x=S.x+100,y=S.y) => enemies.push(makeEnemy(kind,x,y,enemies.length)),
+    spawnEnemy: (kind='briar',x=S.x+100,y=S.y) => {const e=makeEnemy(kind,x,y,enemies.length);enemies.push(kind==='warden'?configureBoss(e):e);},
     forceWindup: () => {const e=enemies.find(x=>!x.dead);if(e){const dx=S.x-e.x,dy=S.y-e.y,d=Math.hypot(dx,dy)||1;startEnemyWindup(e,dx,dy,d);}},
     defeatNearest: () => {const e=enemies.find(x=>!x.dead);if(e)killEnemy(e);},
     spawnLoot: () => {makeDrop('gold',S.x+50,S.y,{amount:7});makeDrop('item',S.x+70,S.y,{itemId:'briar_edge'});},
@@ -1036,13 +1087,15 @@
   function startQaInterior(id){S=defaultSave();S.style='vanguard';S.storyChoice='mercy';S.mainStep=4;S.gold=500;beginGame(false);enterZone(id,null,false);const focusId=new URLSearchParams(location.search).get('focus'),focus=objectsForZone().find(o=>o.id===focusId);if(focus){S.x=focus.x;S.y=focus.y+72;}show(el.toast,false);paused=false;updateCamera(.5);updateHUD();}
 
   function mountPrice(){return Math.ceil((S.sideQuests.stable==='complete'?120:180)*ECON.perk(S,'stable'));}
-  function startQaEconomy(){startQaInterior('northford');S.gold=6000;S.atlasDiscovered=[ATLAS.firstArea];S.materials.briarFiber=30;estateView.view='market';estateView.selectedId=null;updateHUD();openJournal('economy');}
+  function startQaEconomy(){startQaInterior('northford');S.gold=18000;S.atlasDiscovered=[ATLAS.firstArea];S.materials.briarFiber=30;estateView.view='market';estateView.selectedId=null;updateHUD();openJournal('economy');}
+  function startQaBoss(){S=defaultSave();S.style='arcanist';S.mainStep=6;S.level=6;S.maxHp=160;S.hp=160;S.maxMana=100;S.mana=100;S.gold=1000;S.skills=['aether_surge'];for(const id of ['briar_edge','leather_coat','oak_shield','trail_helm','scout_belt','lantern_charm']){const item=addItem(id);window.EVERLIGHT_EQUIPMENT.equip(S,item.uid);}S.hp=combatStats().maxHp;beginGame(false);enterZone('moonfall',{x:1120,y:650},false);enemies=enemies.filter(e=>e.kind==='warden');paused=false;show(el.toast,false);updateHUD();}
+  function startQaDesign(theme){startQaInterior('northford');S.gold=100000;ECON.buy(S,'land:northford',ESTATES);ECON.develop(S,'land:northford',theme,ESTATES);if(S.properties['land:northford']?.businessType)enterZone('business@land:northford',null,false);else enterZone(EX.homes(ATLAS.get(ATLAS.firstArea))[0].id,null,false);show(el.toast,false);}
   function startQaEquipment(){
     startQaInterior('northford');S.gold=1500;S.hp=70;S.materials.briarFiber=30;S.materials.wardenAlloy=10;
-    for(const id of ['briar_edge','wayfarer_bow','leather_coat','warden_plate','lantern_charm','tonic','aether_lens'])addItem(id);
+    for(const id of ['briar_edge','wayfarer_bow','leather_coat','warden_plate','lantern_charm','saltglass_idol','oak_shield','trail_helm','scout_belt','tonic','aether_lens'])addItem(id);
     S.equipment.Armor=S.inventory.find(i=>i.id==='leather_coat').uid;updateHUD();openJournal('gear');
   }
 
   applySettings();updateFullscreenButton();
-  addEventListener('load',()=>setTimeout(()=>{show(el.loading,false);const local=['127.0.0.1','localhost'].includes(location.hostname),qa=new URLSearchParams(location.search).get('qa');if(local&&qa==='economy'){startQaEconomy();return;}if(local&&qa==='gear'){startQaEquipment();return;}if(local&&qa==='combat'){startQaCombatShowcase();return;}if(local&&['atlas','atlas-property','atlas-board','atlas-route'].includes(qa)){startQaAtlasShowcase(qa);return;}if(local&&qa?.startsWith('interior-')){const id=qa.replace('interior-','');if(INTERIOR_LAYOUTS[id]){startQaInterior(id);return;}}if(local&&qa==='town'){startQaInterior('northford');return;}if(local&&qa?.startsWith('room-')){const id=qa.slice(5);if(EX.roomDefs[id]){startQaInterior(id);return;}}show(el.titleScreen,true);if((localStorage.getItem(SAVE_KEY)||localStorage.getItem(LEGACY_SAVE_KEY))&&S.style)show(el.continueBtn,true);},520));
+  addEventListener('load',()=>setTimeout(()=>{show(el.loading,false);const local=['127.0.0.1','localhost'].includes(location.hostname),qa=new URLSearchParams(location.search).get('qa');if(local&&qa==='boss'){startQaBoss();return;}if(local&&qa?.startsWith('design-')){startQaDesign(qa.slice(7));return;}if(local&&qa==='economy'){startQaEconomy();return;}if(local&&qa==='gear'){startQaEquipment();return;}if(local&&qa==='combat'){startQaCombatShowcase();return;}if(local&&['atlas','atlas-property','atlas-board','atlas-route'].includes(qa)){startQaAtlasShowcase(qa);return;}if(local&&qa?.startsWith('interior-')){const id=qa.replace('interior-','');if(INTERIOR_LAYOUTS[id]){startQaInterior(id);return;}}if(local&&qa==='town'){startQaInterior('northford');return;}if(local&&qa?.startsWith('room-')){const id=qa.slice(5);if(EX.roomDefs[id]){startQaInterior(id);return;}}show(el.titleScreen,true);if((localStorage.getItem(SAVE_KEY)||localStorage.getItem(LEGACY_SAVE_KEY))&&S.style)show(el.continueBtn,true);},520));
 })();

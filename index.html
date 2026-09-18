@@ -9,10 +9,11 @@
   <meta name="description" content="Everlight: Vale of Echoes — a solo fantasy action RPG built for mobile.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles/game-v3.css?v=26">
-  <link rel="stylesheet" href="styles/visual-v22.css?v=26">
-  <link rel="stylesheet" href="styles/equipment-v25.css?v=26">
-  <link rel="stylesheet" href="styles/economy-v26.css?v=26">
+  <link rel="stylesheet" href="styles/game-v3.css?v=27">
+  <link rel="stylesheet" href="styles/visual-v22.css?v=27">
+  <link rel="stylesheet" href="styles/equipment-v25.css?v=27">
+  <link rel="stylesheet" href="styles/economy-v26.css?v=27">
+  <link rel="stylesheet" href="styles/journey-v27.css?v=27">
   <title>Everlight: Vale of Echoes</title>
 </head>
 <body>
@@ -75,7 +76,7 @@
         <div id="controls" class="controls" aria-label="Touch controls">
           <div id="joystick" class="joystick" aria-label="Movement joystick"><div id="joyKnob"></div></div>
           <button id="runBtn" class="travel-control run-control" aria-label="Toggle running" aria-pressed="false"><span>»</span><small>Run</small></button>
-          <button id="mapBtn" class="travel-control map-control" aria-label="Open area map and directory">⌘ <small>Map</small></button>
+          <button id="mapBtn" class="travel-control map-control" aria-label="Open area map and directory"><canvas id="minimapCanvas" width="168" height="94" aria-hidden="true"></canvas><small id="minimapLabel">Local map</small><span class="minimap-key">● YOU · ◆ GOAL · TAP MAP</span></button>
           <div id="destinationHint" class="destination-hint is-hidden"></div>
           <div class="action-cluster">
             <button id="interactBtn" class="action action--interact is-hidden" aria-label="Interact"><span>◆</span><small>Talk</small></button>
@@ -112,15 +113,18 @@
     </section>
   </main>
   <div id="srUpdates" class="sr-only" aria-live="assertive"></div>
-  <script>window.__EVERLIGHT_EXPECTED_BUILD__='26';window.__EVERLIGHT_EXPECTED_VISUAL_BUILD__='22';</script>
-  <script src="js/visual-upgrade-v22.js?v=26"></script>
-  <script src="js/world-atlas-v22.js?v=26"></script>
-  <script src="js/exploration-v24.js?v=26"></script>
-  <script src="js/actors-v24.js?v=26"></script>
-  <script src="js/camera-v25.js?v=26"></script>
-  <script src="js/equipment-v25.js?v=26"></script>
-  <script src="js/economy-v26.js?v=26"></script>
-  <script src="js/game-v4.js?v=26"></script>
+  <script>window.__EVERLIGHT_EXPECTED_BUILD__='27';window.__EVERLIGHT_EXPECTED_VISUAL_BUILD__='22';</script>
+  <script src="js/visual-upgrade-v22.js?v=27"></script>
+  <script src="js/world-atlas-v22.js?v=27"></script>
+  <script src="js/exploration-v24.js?v=27"></script>
+  <script src="js/actors-v24.js?v=27"></script>
+  <script src="js/camera-v25.js?v=27"></script>
+  <script src="js/equipment-v25.js?v=27"></script>
+  <script src="js/economy-v26.js?v=27"></script>
+  <script src="js/progression-v27.js?v=27"></script>
+  <script src="js/interiors-v27.js?v=27"></script>
+  <script src="js/minimap-v27.js?v=27"></script>
+  <script src="js/game-v4.js?v=27"></script>
   <script>
     (() => {
       const build = window.__EVERLIGHT_EXPECTED_BUILD__;
@@ -133,7 +137,7 @@
         return;
       }
       if ('serviceWorker' in navigator) addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=26', { updateViaCache: 'none' }).then(registration => registration.update());
+        navigator.serviceWorker.register('./sw.js?v=27', { updateViaCache: 'none' }).then(registration => registration.update());
       });
     })();
   </script>

@@ -1,8 +1,16 @@
 # Everlight Build
 
-Current mobile build marker: **v26-estates-and-enterprises**
+Current mobile build marker: **v27-trials-and-treasures**
 
-Version: **0.12.0**
+Version: **0.13.0**
+
+- Seven gear slots, two distinct charm slots, thirteen new gear templates, aggregate defensive stats and all-slot upgrades/comparisons.
+- Faster world-level bosses: ranged volleys, gap-closing charges, radial attacks, second phases, recovery windows, and a one-time post-Chapter-I rematch.
+- Always-visible local minimap with player, threats, working exits and objective marker.
+- Ordinary chests/monsters capped at Rare; premium loot reserved for bosses and multi-condition sealed dungeon hoards.
+- Ten themed regional interior layouts with collision-matched furnishings and a locally cached illustrated furniture atlas.
+- Humble-to-Prestige property tiers and substantially higher prices; no repeated-rest rent exploit.
+- Schema 9 retains completed story, earned items, property ownership and balances.
 
 - 295 individually tracked deeds: Northford businesses, ordinary settlement buildings, land parcels and existing regional investments.
 - Seven land-development choices; completed projects gain a world building, entrance, manager and ledger.

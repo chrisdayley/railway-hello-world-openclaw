@@ -152,6 +152,9 @@ function loadRuntime() {
     'js/camera-v25.js',
     'js/equipment-v25.js',
     'js/economy-v26.js',
+    'js/progression-v27.js',
+    'js/interiors-v27.js',
+    'js/minimap-v27.js',
     'js/game-v4.js'
   ]) {
     const source = fs.readFileSync(path.join(root, relativePath), 'utf8');
@@ -187,8 +190,8 @@ function byId(id) {
   return object;
 }
 
-function findCollisionPath(start, target, { step = 18, reach = 62, width = 1672, height = 941 } = {}) {
-  const directions = [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];
+function findCollisionPath(start, target, { step = 18, reach = 62, width = 1672, height = 941, diagonal = true } = {}) {
+  const directions = diagonal ? [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]] : [[1,0],[-1,0],[0,1],[0,-1]];
   const queue = [{ x: start.x, y: start.y, parent: -1 }];
   const visited = new Set(['0,0']);
   for (let head = 0; head < queue.length; head++) {
@@ -366,8 +369,8 @@ test('schema migration preserves exploration and economy progress', () => {
     properties: { smithy: { level: 2, value: 900 } },
     settings: { reducedMotion: true }
   });
-  assert.equal(migrated.schema, 8);
-  assert.equal(migrated.build, '26');
+  assert.equal(migrated.schema, 9);
+  assert.equal(migrated.build, '27');
   assert.equal(migrated.style, 'ranger');
   assert.equal(migrated.zone, 'sluice');
   assert.equal(migrated.x, 777);
@@ -551,6 +554,50 @@ test('all seven settlement doors resolve to distinct, enterable home rooms', () 
     assert.equal(state().zone, door.target, `${door.name} must enter its own room`);
     const exit = byId('exit');
     assert.equal(exit.target, settlementId, `${door.name} room exit must return to its settlement`);
+
+    const roomObjects = nav.objects();
+    const resident = roomObjects.find(object => ['atlasShop','rest','atlasNpc'].includes(object.kind));
+    const cache = roomObjects.find(object => object.id.includes(':houseCache:'));
+    const deed = roomObjects.find(object => object.id === 'building-deed');
+    assert(resident, `${door.name} needs its role-appropriate resident`);
+    assert(cache, `${door.name} needs a traveler keepsake`);
+    assert(deed, `${door.name} needs a purchasable deed or owned-property ledger`);
+
+    for (const [label, target, reach] of [['exit',exit,28],['resident',resident,82],['keepsake',cache,82],['deed',deed,82]]) {
+      const path = findCollisionPath({x:480,y:605},target,{step:18,reach,width:960,height:720,diagonal:false});
+      assert(path,`${door.name} ${label} must be collision-reachable in the actual runtime layout`);
+      setState({...state(),zone:door.target,x:480,y:605});
+      for(let index=1;index<path.length;index++)nav.move(path[index].x-path[index-1].x,path[index].y-path[index-1].y);
+      assert(Math.hypot(state().x-target.x,state().y-target.y)<=reach+2,`${door.name} ${label} path must replay through moveActor`);
+    }
+  }
+});
+
+test('all developed land businesses use collision-matched interiors with reachable staff and ledgers', () => {
+  const businessTypes=['orchard','inn','smithy','apothecary','workshop','stable','warehouse'];
+  const interiorApi=context.EVERLIGHT_INTERIORS;
+  for(const businessType of businessTypes){
+    const property={
+      id:'land:northford',name:`QA ${businessType}`,type:'land',businessType,
+      purchasePrice:240,value:700,operatingCost:12,revenueMin:30,revenueMax:60,
+      level:0,upgrades:{quality:0,capacity:0,security:0},daysOperated:0,total:0,invested:700
+    };
+    setState({zone:'business@land:northford',x:480,y:605,properties:{'land:northford':property}});
+    nav.clearEnemies();
+    assert.equal(state().zone,'business@land:northford',`${businessType} development room must resolve`);
+    const objects=nav.objects(),exit=objects.find(object=>object.id==='exit'),manager=objects.find(object=>object.id==='business-manager'),ledger=objects.find(object=>object.id==='business-deed');
+    assert(exit&&manager&&ledger,`${businessType} development needs an exit, manager, and ledger`);
+    const geometry=interiorApi.solids({zoneId:state().zone,name:`QA ${businessType}`,businessType});
+    assert(geometry.length>=5,`${businessType} development needs substantial collision-matched furnishing`);
+    const [firstSolid]=geometry;
+    assert(nav.collides(firstSolid[0]+firstSolid[2]/2,firstSolid[1]+firstSolid[3]/2,13),`${businessType} visible furniture must be solid in runtime`);
+    for(const [label,target,reach] of [['exit',exit,28],['manager',manager,82],['ledger',ledger,82]]){
+      const path=findCollisionPath({x:480,y:605},target,{step:18,reach,width:960,height:720,diagonal:false});
+      assert(path,`${businessType} ${label} must be collision-reachable`);
+      setState({...state(),zone:'business@land:northford',x:480,y:605});
+      for(let index=1;index<path.length;index++)nav.move(path[index].x-path[index-1].x,path[index].y-path[index-1].y);
+      assert(Math.hypot(state().x-target.x,state().y-target.y)<=reach+2,`${businessType} ${label} path must replay through moveActor`);
+    }
   }
 });
 

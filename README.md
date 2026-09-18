@@ -3,6 +3,8 @@
 This repository hosts **Everlight**, a mobile-first 2D fantasy action RPG designed to run as an offline-capable PWA on iPhone without the App Store.
 
 ## Current playable build
+**Trials & Treasures (v27)** adds seven equipment slots, thirteen new gear templates, source-aware loot, faster multi-pattern bosses, a local minimap, richly furnished regional interiors, and a save-up property economy. High-end gear comes from bosses or properly sealed dungeon hoards, not ordinary chests. Existing Chapter I players can challenge the Warden's Remembrance in Moonfall. Schema 9 preserves progress and earned possessions. See [v27 design notes](docs/TRIALS_V27.md).
+
 **Estates & Enterprises (v26)** adds individual building ownership, seven land-development choices, quality/capacity/security upgrades, deterministic daily business reports and a mobile property market. Northford has six purchasable businesses/residences and a land parcel; all seven ordinary buildings in each atlas settlement have individual deeds. Developed parcels become enterable businesses. Income goes to the central treasury as adventure days pass; ownership perks reduce relevant shop and mount prices. Civic buildings and dungeons are not for sale.
 
 **Character & Camera (v25)** replaces the old gear list with a mobile character view, equipped slots, filtered pack, exact before/after build stats and earned five-star equipment upgrades. Its camera gives full-character visibility priority over map boundaries so the HUD cannot hide the player. The Menu button opens Character; a persistent section rail keeps the rest of the adventure menus accessible. Existing saves migrate to schema 7 without resetting progress.
