@@ -151,6 +151,7 @@ function loadRuntime() {
     'js/actors-v24.js',
     'js/camera-v25.js',
     'js/equipment-v25.js',
+    'js/economy-v26.js',
     'js/game-v4.js'
   ]) {
     const source = fs.readFileSync(path.join(root, relativePath), 'utf8');
@@ -365,8 +366,8 @@ test('schema migration preserves exploration and economy progress', () => {
     properties: { smithy: { level: 2, value: 900 } },
     settings: { reducedMotion: true }
   });
-  assert.equal(migrated.schema, 7);
-  assert.equal(migrated.build, '25');
+  assert.equal(migrated.schema, 8);
+  assert.equal(migrated.build, '26');
   assert.equal(migrated.style, 'ranger');
   assert.equal(migrated.zone, 'sluice');
   assert.equal(migrated.x, 777);
@@ -375,7 +376,7 @@ test('schema migration preserves exploration and economy progress', () => {
   assert.deepEqual([...migrated.opened], ['moonValve', 'sunValve', 'bellReliquary']);
   assert.equal(migrated.sideQuests.drownedBell, 'ready');
   assert.equal(migrated.sideQuests.apothecary, 'available', 'migration must supply newly required defaults');
-  assert.equal(migrated.properties.smithy.level, 2);
+  assert.equal(migrated.properties['estate:smithy'].level, 2);
   assert.equal(migrated.settings.reducedMotion, true);
   assert.equal(migrated.settings.highContrast, false, 'migration must merge missing accessibility settings');
 });

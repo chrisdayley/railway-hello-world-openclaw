@@ -1,8 +1,14 @@
 # Everlight Build
 
-Current mobile build marker: **v25-character-and-camera**
+Current mobile build marker: **v26-estates-and-enterprises**
 
-Version: **0.11.0**
+Version: **0.12.0**
+
+- 295 individually tracked deeds: Northford businesses, ordinary settlement buildings, land parcels and existing regional investments.
+- Seven land-development choices; completed projects gain a world building, entrance, manager and ledger.
+- Quality, capacity and security upgrades capped at three ranks per track; variable daily income, operating costs, incidents and bounded synergies.
+- Portfolio/market navigation, forecasts, individual performance, treasury transfers and a rolling ledger.
+- Schema 8 preserves legacy investments and equipment; income uses in-game days, never a closed-game timer.
 
 - Mobile character paper doll, equipped weapon/armor/charm slots, filtered inventory and before/after stat comparisons.
 - Five-star gear upgrades with visible next-rank benefits, gold/material costs and real combat effects.

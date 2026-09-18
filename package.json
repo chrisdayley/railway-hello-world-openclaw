@@ -1,6 +1,6 @@
 {
   "name": "everlight-vale-of-echoes",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,6 +11,7 @@
     "test:exploration": "node scripts/exploration-v24-test.mjs",
     "test:camera": "node scripts/camera-v25-test.mjs",
     "test:equipment": "node scripts/equipment-v25-test.mjs",
+    "test:economy": "node scripts/economy-v26-test.mjs",
     "validate": "node scripts/validate-data.mjs",
     "balance": "node scripts/sim-balance.mjs"
   }

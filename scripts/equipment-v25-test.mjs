@@ -152,6 +152,7 @@ function loadRuntime() {
     'js/actors-v24.js',
     'js/camera-v25.js',
     'js/equipment-v25.js',
+    'js/economy-v26.js',
     'js/game-v4.js'
   ]) {
     const source = fs.readFileSync(path.join(root, relativePath), 'utf8');
