@@ -131,16 +131,18 @@
   function stats(state = {}, equipment = state.equipment || {}) {
     const gear = aggregate(state, equipment), skills = Array.isArray(state.skills) ? state.skills : [];
     const hasSkill = id => skills.includes(id);
+    const bonus = window.EVERLIGHT_SKILLS?.bonuses(state) || {};
     const levelBonus = 1 + Math.min(20, Math.max(0, (Number(state.level) || 1) - 1)) * 0.045;
-    const armor = gear.armor + (state.faction === 'ironbound' ? 8 : 0);
-    const spell = (1 + gear.spell) * (hasSkill('aether_surge') ? 1.25 : 1) * (state.style === 'arcanist' ? 1.25 : 1);
-    const speed = (state.activeMount ? 1.65 : 1) * (hasSkill('fleetstep') ? 1.12 : 1) * (state.style === 'ranger' ? 1.1 : 1);
-    const crit = (Number(state.crit) || 0) + gear.crit + (state.faction === 'archive' ? 0.04 : 0);
+    const armor = gear.armor + (state.faction === 'ironbound' ? 8 : 0) + (bonus.armor || 0);
+    const spell = (1 + gear.spell) * (hasSkill('aether_surge') ? 1.25 : 1) * (state.style === 'arcanist' ? 1.25 : 1) * (1+(bonus.spell||0));
+    const speed = (state.activeMount ? 1.65 : 1) * (hasSkill('fleetstep') ? 1.12 : 1) * (state.style === 'ranger' ? 1.1 : 1) * (1+(bonus.move||0));
+    const crit = Math.min(.65,(Number(state.crit) || 0) + gear.crit + (state.faction === 'archive' ? 0.04 : 0) + (bonus.crit||0));
     const weaponPower = gear.items.Weapon?.power || 8;
     return {
-      power:weaponPower * (hasSkill('keen_edge') ? 1.2 : 1) * levelBonus,
+      power:weaponPower * (hasSkill('keen_edge') ? 1.2 : 1) * levelBonus * (1+(bonus.power||0)+(gear.items.Weapon?.id==='wayfarer_bow'?(bonus.rangedPower||0):0)),
       armor, spell, speed, crit, dodge:gear.dodge,
-      maxHp:(Number(state.maxHp) || 100) + gear.maxHp,
+      maxHp:(Number(state.maxHp) || 100) + gear.maxHp + (bonus.maxHp||0),
+      maxMana:(Number(state.maxMana)||60)+(bonus.maxMana||0),maxStamina:(Number(state.maxStam)||100)+(bonus.maxStamina||0),
       levelBonus,
       damageReduction:Math.min(0.7, armor <= 0 ? 0 : 1 - (100 / (100 + armor * 3))),
       spellDamage:Math.round(25 * spell * levelBonus)

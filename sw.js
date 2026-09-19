@@ -1,6 +1,8 @@
-const CACHE = 'everlight-v27-trials-and-treasures-r1';
-const CURRENT_BUILD_URL = './index.html?v=27';
+const CACHE = 'everlight-v28-roads-remember-r1';
+const CURRENT_BUILD_URL = './index.html?v=28';
 const CORE = [
+  './js/story-v28.js','./styles/story-v28.css',
+  './js/merchants-v28.js','./styles/merchants-v28.css','./js/skills-v28.js','./styles/skills-v28.css',
   './assets/interior-furniture-v27.png',
   './js/progression-v27.js','./js/interiors-v27.js','./js/minimap-v27.js','./styles/journey-v27.css',
   './','./index.html','./manifest.webmanifest','./styles/game-v3.css','./styles/visual-v22.css','./js/visual-upgrade-v22.js','./js/world-atlas-v22.js','./js/game-v4.js','./js/exploration-v24.js','./js/actors-v24.js',
@@ -27,7 +29,7 @@ self.addEventListener('activate', event => {
       .then(() => self.clients.matchAll({ type: 'window' }))
       .then(clients => Promise.all(clients.map(client => {
         const url = new URL(client.url);
-        return url.searchParams.get('v') === '27' ? null : client.navigate(CURRENT_BUILD_URL).catch(() => null);
+        return url.searchParams.get('v') === '28' ? null : client.navigate(CURRENT_BUILD_URL).catch(() => null);
       })))
   );
 });
