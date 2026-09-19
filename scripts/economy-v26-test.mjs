@@ -154,6 +154,9 @@ function loadRuntime() {
     'js/progression-v27.js',
     'js/interiors-v27.js',
     'js/minimap-v27.js',
+    'js/merchants-v28.js',
+    'js/skills-v28.js',
+    'js/story-v28.js',
     'js/game-v4.js'
   ]) {
     const source = fs.readFileSync(path.join(root, relativePath), 'utf8');
