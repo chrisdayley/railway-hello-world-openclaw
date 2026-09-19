@@ -155,6 +155,9 @@ function loadRuntime() {
     'js/progression-v27.js',
     'js/interiors-v27.js',
     'js/minimap-v27.js',
+    'js/merchants-v28.js',
+    'js/skills-v28.js',
+    'js/story-v28.js',
     'js/game-v4.js'
   ]) {
     const source = fs.readFileSync(path.join(root, relativePath), 'utf8');
@@ -370,7 +373,7 @@ test('schema migration preserves exploration and economy progress', () => {
     settings: { reducedMotion: true }
   });
   assert.equal(migrated.schema, 9);
-  assert.equal(migrated.build, '27');
+  assert.equal(migrated.build, '28');
   assert.equal(migrated.style, 'ranger');
   assert.equal(migrated.zone, 'sluice');
   assert.equal(migrated.x, 777);

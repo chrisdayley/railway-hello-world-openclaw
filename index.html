@@ -9,11 +9,14 @@
   <meta name="description" content="Everlight: Vale of Echoes — a solo fantasy action RPG built for mobile.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles/game-v3.css?v=27">
-  <link rel="stylesheet" href="styles/visual-v22.css?v=27">
-  <link rel="stylesheet" href="styles/equipment-v25.css?v=27">
-  <link rel="stylesheet" href="styles/economy-v26.css?v=27">
-  <link rel="stylesheet" href="styles/journey-v27.css?v=27">
+  <link rel="stylesheet" href="styles/game-v3.css?v=28">
+  <link rel="stylesheet" href="styles/visual-v22.css?v=28">
+  <link rel="stylesheet" href="styles/equipment-v25.css?v=28">
+  <link rel="stylesheet" href="styles/economy-v26.css?v=28">
+  <link rel="stylesheet" href="styles/journey-v27.css?v=28">
+  <link rel="stylesheet" href="styles/story-v28.css?v=28">
+  <link rel="stylesheet" href="styles/merchants-v28.css?v=28">
+  <link rel="stylesheet" href="styles/skills-v28.css?v=28">
   <title>Everlight: Vale of Echoes</title>
 </head>
 <body>
@@ -109,22 +112,26 @@
     </section>
 
     <section id="chapterComplete" class="modal-layer is-hidden" role="dialog" aria-modal="true" aria-labelledby="chapterTitle">
-      <div class="chapter-card glass-heavy"><div class="sigil sigil--small"><i></i><i></i><i></i></div><span class="eyebrow">Prologue complete</span><h2 id="chapterTitle">The Road Remembers</h2><p id="chapterSummary">Northford's waystone burns again—and something beyond the mountains has answered.</p><div class="reward-row"><span>✦ <b>250</b> gold</span><span>◆ <b>Waystone attuned</b></span><span>↑ <b>New path opened</b></span></div><button id="keepExploringBtn" class="ui-btn ui-btn--primary">Keep exploring Northford</button></div>
+      <div class="chapter-card glass-heavy"><div class="sigil sigil--small"><i></i><i></i><i></i></div><span class="eyebrow">Prologue complete</span><h2 id="chapterTitle">The Road Remembers</h2><p id="chapterSummary">Northford's waystone burns again—and something beyond the mountains has answered.</p><div class="reward-row"><span>✦ <b>250</b> gold</span><span>◆ <b>Waystone attuned</b></span><span>↑ <b>New path opened</b></span></div><button id="keepExploringBtn" class="ui-btn ui-btn--primary">Begin Chapter II</button></div>
     </section>
   </main>
   <div id="srUpdates" class="sr-only" aria-live="assertive"></div>
-  <script>window.__EVERLIGHT_EXPECTED_BUILD__='27';window.__EVERLIGHT_EXPECTED_VISUAL_BUILD__='22';</script>
-  <script src="js/visual-upgrade-v22.js?v=27"></script>
-  <script src="js/world-atlas-v22.js?v=27"></script>
-  <script src="js/exploration-v24.js?v=27"></script>
-  <script src="js/actors-v24.js?v=27"></script>
-  <script src="js/camera-v25.js?v=27"></script>
-  <script src="js/equipment-v25.js?v=27"></script>
-  <script src="js/economy-v26.js?v=27"></script>
-  <script src="js/progression-v27.js?v=27"></script>
-  <script src="js/interiors-v27.js?v=27"></script>
-  <script src="js/minimap-v27.js?v=27"></script>
-  <script src="js/game-v4.js?v=27"></script>
+  <section id="levelUpPanel" class="level-up is-hidden" role="dialog" aria-modal="true" aria-labelledby="levelUpTitle"><div class="level-up__rays" aria-hidden="true"></div><div class="level-up__card"><span class="eyebrow">THE LIGHT WITHIN GROWS</span><h2 id="levelUpTitle">Level up!</h2><strong id="levelUpNumber">2</strong><p id="levelUpGains"></p><div><button id="levelUpSkills" class="ui-btn ui-btn--primary">Grow your skills</button><button id="levelUpContinue" class="ui-btn">Back to the adventure</button></div></div></section>
+  <script>window.__EVERLIGHT_EXPECTED_BUILD__='28';window.__EVERLIGHT_EXPECTED_VISUAL_BUILD__='22';</script>
+  <script src="js/visual-upgrade-v22.js?v=28"></script>
+  <script src="js/world-atlas-v22.js?v=28"></script>
+  <script src="js/exploration-v24.js?v=28"></script>
+  <script src="js/actors-v24.js?v=28"></script>
+  <script src="js/camera-v25.js?v=28"></script>
+  <script src="js/equipment-v25.js?v=28"></script>
+  <script src="js/economy-v26.js?v=28"></script>
+  <script src="js/progression-v27.js?v=28"></script>
+  <script src="js/interiors-v27.js?v=28"></script>
+  <script src="js/minimap-v27.js?v=28"></script>
+  <script src="js/merchants-v28.js?v=28"></script>
+  <script src="js/skills-v28.js?v=28"></script>
+  <script src="js/story-v28.js?v=28"></script>
+  <script src="js/game-v4.js?v=28"></script>
   <script>
     (() => {
       const build = window.__EVERLIGHT_EXPECTED_BUILD__;
@@ -137,7 +144,7 @@
         return;
       }
       if ('serviceWorker' in navigator) addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=27', { updateViaCache: 'none' }).then(registration => registration.update());
+        navigator.serviceWorker.register('./sw.js?v=28', { updateViaCache: 'none' }).then(registration => registration.update());
       });
     })();
   </script>

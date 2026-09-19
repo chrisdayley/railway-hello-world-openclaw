@@ -39,6 +39,6 @@ test('minimap chooses story, interior exit and tracked road destinations',()=>{
   nav.setState({zone:'northford',mainStep:0});assert.equal(nav.get().target.id,'mira');
   nav.setState({zone:'northford',mainStep:4});assert.equal(nav.get().target.target,'guildhall');
   nav.setState({zone:'bellkeeper',mainStep:8});assert.equal(nav.get().target.id,'exit');
-  nav.setState({zone:'moonfall',mainStep:8,opened:['hollow-warden']});assert.equal(nav.get().target.id,'worldRoad');
+  nav.setState({zone:'moonfall',mainStep:8,opened:['hollow-warden']});assert.equal(nav.get().target.id,'story:courier');
 });
 console.log(`✓ ${count} progression v27 source and actual-runtime groups passed`);

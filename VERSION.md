@@ -1,8 +1,15 @@
 # Everlight Build
 
-Current mobile build marker: **v27-trials-and-treasures**
+Current mobile build marker: **v28-roads-remember**
 
-Version: **0.13.0**
+Version: **0.14.0**
+
+- Two playable post-prologue arcs, 21 main objectives, three named guardian encounters and eight authored side stories.
+- Persistent main/side tracking, direction-and-distance hints, chapter migration, return routes, readable quest hubs and choices.
+- Merchant buy/sell mode with equipped/quest-item protection and explicit high-rarity sale confirmation.
+- Animated, reduced-motion-aware level-up celebration; combat freezes while reading menus and quest panels.
+- 32 skill nodes, six ranks each, 192 total one-point upgrades across four paths; legacy abilities preserved and all bonuses affect gameplay.
+- Authored story scope is stated honestly; the planned full 30–40-hour campaign remains in development.
 
 - Seven gear slots, two distinct charm slots, thirteen new gear templates, aggregate defensive stats and all-slot upgrades/comparisons.
 - Faster world-level bosses: ranged volleys, gap-closing charges, radial attacks, second phases, recovery windows, and a one-time post-Chapter-I rematch.
