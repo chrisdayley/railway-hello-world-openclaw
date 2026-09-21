@@ -1,6 +1,6 @@
 {
   "name": "everlight-vale-of-echoes",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -14,6 +14,7 @@
     "test:economy": "node scripts/economy-v26-test.mjs",
     "test:v27": "node scripts/equipment-v27-test.mjs && node scripts/economy-v27-test.mjs && node scripts/interiors-v27-test.mjs && node scripts/progression-v27-test.mjs",
     "test:v28": "node scripts/merchants-v28-test.mjs && node scripts/skills-v28-test.mjs && node scripts/story-v28-test.mjs",
+    "test:v29": "node scripts/hearth-v29-test.mjs",
     "validate": "node scripts/validate-data.mjs",
     "balance": "node scripts/sim-balance.mjs"
   }

@@ -1,8 +1,15 @@
 # Everlight Build
 
-Current mobile build marker: **v28-roads-remember**
+Current mobile build marker: **v29-remembered-house**
 
-Version: **0.14.0**
+Version: **0.15.0**
+
+- The House That Forgot You: a standalone mystery about Mira and Alden, available to existing saves without restarting.
+- Three furnished rooms, three nonlinear evidence discoveries, a physical chime puzzle and a clue-led hidden cache.
+- The Collector of Names: tether-breaking, marked ground attacks and multiple viable combat approaches.
+- A resolved character arc, changed home, two reattunable outcomes and a permanent Resonant Dodge ability.
+- Return-session context and an evidence notebook. Existing quests, gear, properties and skills preserved.
+- Research, scope and outstanding visual-playtest limitation: docs/HEARTH_V29.md.
 
 - Two playable post-prologue arcs, 21 main objectives, three named guardian encounters and eight authored side stories.
 - Persistent main/side tracking, direction-and-distance hints, chapter migration, return routes, readable quest hubs and choices.

@@ -157,6 +157,7 @@ function loadRuntime() {
     'js/merchants-v28.js',
     'js/skills-v28.js',
     'js/story-v28.js',
+    'js/hearth-v29.js',
     'js/game-v4.js'
   ]) {
     const source = fs.readFileSync(path.join(root, relativePath), 'utf8');
