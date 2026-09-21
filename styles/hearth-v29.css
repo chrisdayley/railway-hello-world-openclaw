@@ -1,0 +1,7 @@
+.hearth-card{padding:16px 18px;margin:0 0 14px;border:1px solid #a8cbb844;border-left:3px solid #d7b878;border-radius:12px;background:linear-gradient(120deg,#193b35,#102622)}
+.hearth-card h3{font:600 23px Georgia,serif;color:#ffdfa2;margin:9px 0 12px}
+.hearth-card p{line-height:1.65;color:#e1e9df;max-width:64ch}
+.hearth-card em{color:#f7dca5}.hearth-card button{min-height:46px;width:100%;white-space:normal;text-align:left;padding:12px 16px;margin:7px 0;border:1px solid #b6c8a866;background:#294b3f;color:#fff0c9;border-radius:9px;font:600 15px system-ui}
+.hearth-card button:hover,.hearth-card button:focus-visible{background:#3b604c;outline:2px solid #f1d28b;outline-offset:2px}
+.hearth-note,.hearth-notebook{color:#bcd1c4;font-size:13px;line-height:1.6}.hearth-notebook{padding:12px}.hearth-notebook summary{min-height:44px;cursor:pointer;color:#e7d39e}
+@media(max-height:430px){.hearth-card{padding:12px 14px}.hearth-card h3{font-size:20px}.hearth-card p{font-size:14px;line-height:1.5}}

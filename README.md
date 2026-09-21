@@ -3,6 +3,9 @@
 This repository hosts **Everlight**, a mobile-first 2D fantasy action RPG designed to run as an offline-capable PWA on iPhone without the App Store.
 
 ## Current playable build
+
+**The House That Forgot You (v29)** adds a character-focused mystery about Mira’s forgotten brother: three furnished rooms, nonlinear evidence, a physical chime puzzle, a tether-breaking boss and an aftermath that changes the house. Rescue Alden to earn Resonant Dodge and choose a refuge or traveling lantern companion. Continue an existing save and read the letter; no restart is needed. Automated runtime/regression checks pass, but visual mobile playtesting remains unverified because browser control was unavailable. See [research, scope and QA notes](docs/HEARTH_V29.md).
+
 **The Roads Remember (v28)** adds two authored post-prologue arcs: **The Broken Beacon** and **Ashes Under the Road**, with 21 main objectives, three named guardian encounters, eight side stories, persistent choices, rewards, and precise journal/minimap tracking. Completed-prologue saves receive Iona's next objective immediately. Merchants now buy spare inventory, level-ups have a safe celebratory screen, and four ranked skill paths provide 32 nodes/192 ranks. The complete planned 30–40-hour campaign is **not** finished; the new journal clearly identifies the end of the currently authored chapters. See [v28 notes](docs/ROADS_V28.md).
 
 **Trials & Treasures (v27)** adds seven equipment slots, thirteen new gear templates, source-aware loot, faster multi-pattern bosses, a local minimap, richly furnished regional interiors, and a save-up property economy. High-end gear comes from bosses or properly sealed dungeon hoards, not ordinary chests. Existing Chapter I players can challenge the Warden's Remembrance in Moonfall. Schema 9 preserves progress and earned possessions. See [v27 design notes](docs/TRIALS_V27.md).
